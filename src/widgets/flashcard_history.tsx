@@ -50,7 +50,7 @@ function FlashcardHistory() {
 
   return (
     <div
-      className="h-full overflow-y-auto rn-clr-background-primary"
+      className="h-full w-full overflow-y-auto rn-clr-background-primary"
       onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="p-2 text-lg font-bold">Flashcard History</div>
@@ -108,15 +108,22 @@ function HistoryItem({
           className="flex items-center justify-center flex-shrink-0 w-6 h-6 rounded-md cursor-pointer hover:bg-gray-200"
           onClick={() => setData({ open: !data.open })}
         >
-           {/* Simple chevron logic using standard chars or images if available */}
-           <span>{data.open ? "▼" : "▶"}</span>
+          <img
+            src={`${plugin.rootURL}chevron_down.svg`}
+            style={{
+              transform: `rotate(${data.open ? 0 : -90}deg)`,
+              transitionProperty: "transform",
+              transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+              transitionDuration: "150ms",
+            }}
+          />
         </div>
         <div className="flex-grow min-w-0" onClick={() => openRem(remId)}>
           <RemViewer
             remId={remId}
             constraintRef="parent"
-            maxWidth="100%"
-            className="font-semibold cursor-pointer line-clamp-2"
+            width="100%"
+            className="font-light cursor-pointer line-clamp-2"
           />
           <div className="text-xs rn-clr-content-tertiary">
             Seen {timeSince(new Date(data.time))}
@@ -126,12 +133,21 @@ function HistoryItem({
           className="flex items-center justify-center flex-shrink-0 w-6 h-6 rounded-md cursor-pointer hover:bg-red-100"
           onClick={closeIndex}
         >
-          <span>×</span>
+          <img
+            src={`${plugin.rootURL}close.svg`}
+            style={{
+              display: "inline-block",
+              fill: "var(--rn-clr-content-tertiary)",
+              color: "color",
+              width: 16,
+              height: 16,
+            }}
+          />
         </div>
       </div>
       {data.open && (
         <div className="m-2">
-          <RemHierarchyEditorTree height="expand" width="100%" remId={remId} />
+          <RemHierarchyEditorTree height="auto" width="100%" remId={remId} />
         </div>
       )}
     </div>

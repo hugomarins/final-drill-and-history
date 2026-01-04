@@ -48,7 +48,7 @@ function RightSidebar2() {
 
   return (
     <div
-      className="h-full overflow-y-auto rn-clr-background-primary"
+      className="h-full w-full overflow-y-auto rn-clr-background-primary"
       onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="p-2 text-lg font-bold">Visited Rem History</div>
@@ -103,7 +103,7 @@ function RemHistoryItem({
   };
 
   return (
-    <div className="px-1 py-4" key={remId}>
+    <div className="px-1 py-4 w-full" key={remId}>
       <div className="flex gap-2 mb-2">
         <div
           className="flex items-center justify-center flex-shrink-0 w-6 h-6 rounded-md cursor-pointer hover:rn-clr-background--hovered"
@@ -124,8 +124,8 @@ function RemHistoryItem({
           <RemViewer
             remId={remId}
             constraintRef="parent"
-            maxWidth="100%"
-            className="font-semibold cursor-pointer line-clamp-2"
+            width="100%"
+            className="font-medium cursor-pointer line-clamp-2"
           />
           <div className="text-xs rn-clr-content-tertiary">
             {timeSince(new Date(data.time))}
@@ -149,7 +149,7 @@ function RemHistoryItem({
       </div>
       {data.open && (
         <div className="m-2" style={{ borderBottomWidth: 1 }}>
-          <RemHierarchyEditorTree height="expand" width="100%" remId={remId} />
+          <RemHierarchyEditorTree height="auto" width="100%" remId={remId} />
         </div>
       )}
     </div>
