@@ -19,7 +19,7 @@ interface FlashcardHistoryData {
 async function onActivate(plugin: ReactRNPlugin) {
   // 1. Existing Document History Widget
   await plugin.app.registerWidget(
-    "right_sidebar",
+    "rem_history",
     WidgetLocation.RightSidebar,
     {
       dimensions: { height: "100%", width: "100%" },
