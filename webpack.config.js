@@ -47,16 +47,17 @@ const config = {
       {
         test: /\.css$/i,
         use: [
-          MiniCssExtractPlugin.loader,
-          { loader: "css-loader", options: { url: false } },
-          "postcss-loader",
+          isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { url: false } },
+          'postcss-loader',
         ],
       },
     ],
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: "App.css",
+    isDevelopment ? undefined : new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
     new HtmlWebpackPlugin({
       templateContent: `
@@ -89,7 +90,15 @@ const config = {
       raw: true,
     }),
     new CopyPlugin({
-      patterns: [{ from: "public", to: "" }],
+      patterns: [
+        {from: 'public', to: ''},
+        {from: 'README.md', to: ''},
+        {
+          from: 'src/style.css',
+          to: 'App.css',
+          noErrorOnMissing: true, // Don't fail if style.css doesn't exist
+        },
+      ]
     }),
     fastRefresh,
   ].filter(Boolean),
@@ -107,9 +116,15 @@ if (isProd) {
     open: true,
     hot: true,
     compress: true,
-    watchFiles: ["src/*"],
+    watchFiles: ['src/*'],
+    static: {  // Add this section
+      directory: resolve(__dirname, 'src'),
+      publicPath: '/',
+    },
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',  // Add this
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',  // Add this
     },
   };
 }

@@ -8,11 +8,12 @@ This plugin extends the standard RemNote History functionality with two powerful
 - **What it does:** Records a chronological history of the Rems you have navigated to in the Editor.
 - **Why use it:** Quickly jump back to documents you were just working on without losing your place.
 - **Interaction:** You can expand and edit the Rem directly in the right sidebar.
-![](https://raw.githubusercontent.com/remnoteio/remnote-official-plugins/main/images/history.gif)
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/rem-history-editing.gif)
 
 ### 2. Flashcard History
 - **What it does:** Records the chronological history of the Rems associated with the flashcards you have just seen in the Flashcard Queue.
 - **Why use it:** If you want to check context or edit a flashcard you just reviewed, you can easily find it here without interrupting your session flow.
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
 
 ### 3. Final Drill
 - **What it does:** Implements a "Final Drill" queue inspired by SuperMemo. 
@@ -20,6 +21,10 @@ This plugin extends the standard RemNote History functionality with two powerful
     - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Final Drill queue.
     - These cards stay in this separate queue until you rate them **Good** or **Easy** inside the Final Drill widget.
 - **Why use it:** Use this at the end of your learning day to review only the items you struggled with, ensuring you master them before finishing your session.
+
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
+
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-and-history.gif)
 
 ## How to Use
 
