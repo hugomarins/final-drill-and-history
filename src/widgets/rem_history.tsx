@@ -149,7 +149,7 @@ function RemHistoryItem({
       </div>
       {data.open && (
         <div className="m-2" style={{ borderBottomWidth: 1 }}>
-          <RemHierarchyEditorTree height="expand" width="300px" remId={remId} />
+          <RemHierarchyEditorTree height="expand" width="100%" remId={remId} />
         </div>
       )}
     </div>
