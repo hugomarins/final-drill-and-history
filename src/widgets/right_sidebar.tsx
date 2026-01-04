@@ -51,6 +51,7 @@ function RightSidebar2() {
       className="h-full overflow-y-auto rn-clr-background-primary"
       onMouseDown={(e) => e.stopPropagation()}
     >
+      <div className="p-2 text-lg font-bold">Visited Rem History</div>
       {remData.length == 0 && (
         <div className="rn-clr-content-primary">
           Navigate to other documents to automatically record history.
