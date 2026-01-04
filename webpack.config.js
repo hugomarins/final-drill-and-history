@@ -47,7 +47,7 @@ const config = {
       {
         test: /\.css$/i,
         use: [
-          isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
+          MiniCssExtractPlugin.loader,
           { loader: 'css-loader', options: { url: false } },
           'postcss-loader',
         ],
@@ -55,9 +55,8 @@ const config = {
     ],
   },
   plugins: [
-    isDevelopment ? undefined : new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css',
+    new MiniCssExtractPlugin({
+      filename: 'App.css',
     }),
     new HtmlWebpackPlugin({
       templateContent: `
@@ -93,11 +92,6 @@ const config = {
       patterns: [
         {from: 'public', to: ''},
         {from: 'README.md', to: ''},
-        {
-          from: 'src/style.css',
-          to: 'App.css',
-          noErrorOnMissing: true, // Don't fail if style.css doesn't exist
-        },
       ]
     }),
     fastRefresh,
