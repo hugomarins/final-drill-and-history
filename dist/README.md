@@ -1,20 +1,42 @@
+# Final Drill & History
+
+This plugin extends the standard RemNote History functionality with two powerful study tools: a history of reviewed flashcards and a "Final Drill" queue for targeting difficult material.
+
 ## Features
 
-- Records the history of the Rem you have visited in the right sidebar.
-- You can expand and edit the Rem directly in the right sidebar.
-
+### 1. Visited Rem History
+- **What it does:** Records a chronological history of the Rems you have navigated to in the Editor.
+- **Why use it:** Quickly jump back to documents you were just working on without losing your place.
+- **Interaction:** You can expand and edit the Rem directly in the right sidebar.
 ![](https://raw.githubusercontent.com/remnoteio/remnote-official-plugins/main/images/history.gif)
+
+### 2. Flashcard History
+- **What it does:** Records the chronological history of the Rems associated with the flashcards you have just seen in the Flashcard Queue.
+- **Why use it:** If you want to check context or edit a flashcard you just reviewed, you can easily find it here without interrupting your session flow.
+
+### 3. Final Drill
+- **What it does:** Implements a "Final Drill" queue inspired by SuperMemo. 
+- **How it works:** 
+    - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Final Drill queue.
+    - These cards stay in this separate queue until you rate them **Good** or **Easy** inside the Final Drill widget.
+- **Why use it:** Use this at the end of your learning day to review only the items you struggled with, ensuring you master them before finishing your session.
 
 ## How to Use
 
-- As you navigate to Rem, the history of Rem you have visited will be recorded in a tab in the right sidebar.
-- Click on the Rem to navigate back to it.
-- You can expand the Rem to edit it inside the right sidebar.
+1. **Open the Right Sidebar**: The plugin installs three widgets in the right sidebar.
+2. **Rem History Tab**: 
+   - Navigate through your knowledge base as usual.
+   - Click items in the list to navigate back to them.
+3. **Flashcard History Tab**: 
+   - Start a flashcard queue. As you rate cards, they will appear in this list.
+   - Click on a rem to open it in the main editor.
+4. **Final Drill Tab**: 
+   - If you rate a card "Forgot" or "Hard" during your regular queue (or anywhere else), a red badge will appear on this tab indicating cards are pending.
+   - Open the tab to practice these specific cards.
+   - The queue will automatically clear as you master the cards (rate them Good/Easy).
 
 ## Developers
 
-This plugin is an example plugin built by the RemNote team to demonstrate how to build plugins using the new plugin SDK.
+This plugin is a fork of the official RemNote History plugin, enhanced with Queue event listeners and synced storage implementation for the Final Drill logic.
 
-If you are interested in building your own plugins, taking a look through the source code for this plugin (as well as the other example plugins and plugins built by the community) would be a great starting point. Of course, you should also check out the official documentation, guides and tutorials on our [plugin website](https://plugins.remnote.com/).
-
-If you are new to writing plugins, we recommend checking out the [dictionary plugin project tutorial](https://plugins.remnote.com/in-depth-tutorial/overview).
+If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
