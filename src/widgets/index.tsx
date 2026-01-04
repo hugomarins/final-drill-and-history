@@ -17,7 +17,7 @@ interface FlashcardHistoryData {
 }
 
 async function onActivate(plugin: ReactRNPlugin) {
-  // 1. Existing Document History Widget
+  // 1. Document History Widget
   await plugin.app.registerWidget(
     "rem_history",
     WidgetLocation.RightSidebar,
@@ -27,31 +27,59 @@ async function onActivate(plugin: ReactRNPlugin) {
     }
   );
 
-  // 2. New Flashcard History Widget (Enhancement 1)
+  // 2. Flashcard History Widget
   await plugin.app.registerWidget(
     "flashcard_history",
     WidgetLocation.RightSidebar,
     {
       dimensions: { height: "100%", width: "100%" },
-      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/9145/9145670.png", // Example Icon: Flashcard
+      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/9145/9145670.png",
       widgetTabTitle: "Flashcard History",
     }
   );
 
-  // 3. New Final Drill Widget (Enhancement 2)
+  // 3. Existing Final Drill Widget (Right Sidebar)
   await plugin.app.registerWidget(
     "final_drill",
     WidgetLocation.RightSidebar,
     {
       dimensions: { height: "100%", width: "100%" },
-      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/3534/3534117.png", // Example Icon: Drill/Target
+      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/3534/3534117.png",
       widgetTabTitle: "Final Drill",
     }
   );
 
+  // 4. NEW: Final Drill Pane Widget (Full Screen)
+  // This widget uses the logic from 'src/widgets/final_drill_pane.tsx'
+  await plugin.app.registerWidget(
+    "final_drill_pane",
+    WidgetLocation.Pane,
+    {
+      dimensions: { height: "100%", width: "100%" },
+      widgetTabTitle: "Final Drill Practice",
+    }
+  );
+
+  // 5. NEW: Command to open the Final Drill
+  await plugin.app.registerCommand({
+    id: "start-final-drill",
+    name: "Final Drill: Practice poorly rated Cards (Forgot and Hard)",
+    description: "Open the Final Drill queue in the main window.",
+    action: async () => {
+      const finalDrillIds = (await plugin.storage.getSynced("finalDrillIds")) || [];
+      
+      if (finalDrillIds.length === 0) {
+        await plugin.app.toast("Final Drill is empty! Good job.");
+      } else {
+        // Open the pane widget we just registered
+        await plugin.window.openWidgetInPane("final_drill_pane");
+      }
+    },
+  });
+
   // --- Event Listeners ---
 
-  // Document History Listener (Existing)
+  // Document History Listener
   plugin.event.addListener(
     AppEvents.GlobalOpenRem,
     undefined,
@@ -73,14 +101,11 @@ async function onActivate(plugin: ReactRNPlugin) {
     }
   );
 
-  // Flashcard Queue Listener (New for Enhancements 1 & 2)
-  // AppEvents.QueueCompleteCard fires when a card is rated/finished.
+  // Flashcard Queue Listener
   plugin.event.addListener(
     AppEvents.QueueCompleteCard,
     undefined,
     async (message) => {
-      // Extract data from the event. 
-      // Note: We cast message to any because the strict type definition might not expose all fields in all SDK versions.
       const { cardId, score } = message as { cardId: string; score: QueueInteractionScore };
       
       if (!cardId) return;
@@ -90,9 +115,8 @@ async function onActivate(plugin: ReactRNPlugin) {
 
       const remId = card.remId;
 
-      // --- Logic for Enhancement 1: Flashcard History ---
+      // History Logic
       const historyData = (await plugin.storage.getSynced("flashcardHistoryData")) || [];
-      // Prevent duplicate consecutive entries
       if (historyData[0]?.cardId !== cardId) {
          await plugin.storage.setSynced("flashcardHistoryData", [
           {
@@ -101,21 +125,20 @@ async function onActivate(plugin: ReactRNPlugin) {
             cardId: cardId,
             time: new Date().getTime(),
           },
-          ...historyData.slice(0, 99), // Limit history size
+          ...historyData.slice(0, 99),
         ]);
       }
 
-      // --- Logic for Enhancement 2: Final Drill ---
-      // Get current drill list
+      // Final Drill Logic
       let finalDrillIds = (await plugin.storage.getSynced("finalDrillIds")) || [];
       
-      // If score is Forgot (0) or Hard (0.5), ADD to Final Drill
+      // AGAIN (0) or HARD (0.5) -> ADD to drill
       if (score <= QueueInteractionScore.HARD) {
         if (!finalDrillIds.includes(cardId)) {
           finalDrillIds = [...finalDrillIds, cardId];
         }
       } 
-      // If score is Good (1) or Easy (1.5), REMOVE from Final Drill
+      // GOOD (1) or EASY (1.5) -> REMOVE from drill
       else if (score >= QueueInteractionScore.GOOD) {
         finalDrillIds = finalDrillIds.filter((id: string) => id !== cardId);
       }
