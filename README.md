@@ -45,3 +45,13 @@ This plugin extends the standard RemNote History functionality with two powerful
 This plugin is a fork of the official RemNote History plugin, enhanced with Queue event listeners and synced storage implementation for the Final Drill logic.
 
 If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
+
+## Changelog
+
+### v. 0.0.2 January 05th, 2026
+
+- Plugin features (Rem History, Flashcard History and Final Drill) are now Knowledge Base aware (you can use multiple KBs, and the widgets will show the data of the current selected KB only).
+
+### v. 0.0.1 January 04th, 2026
+
+- Initial release.

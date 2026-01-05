@@ -1,14 +1,14 @@
 {
   "manifestVersion": 1,
   "id": "final_drill_and_history",
-  "name": "Final Drill and Card History",
+  "name": "History and Final Drill",
   "author": "hugomarins",
   "repoUrl": "https://github.com/hugomarins/final-drill-and-history",
   "enableOnMobile": false,
   "version": {
     "major": 0,
     "minor": 0,
-    "patch": 1
+    "patch": 2
   },
   "unlisted": false,
   "description": "Adds a Final Drill to deliberately practice poorly rated cards; adds a right sidebar showing Rem and Card history.",
@@ -17,6 +17,10 @@
     {
       "type": "All",
       "level": "ReadCreateModifyDelete"
+    },
+    {
+      "type": "KnowledgeBaseInfo",
+      "level": "Read"
     }
   ]
 }

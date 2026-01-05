@@ -6,15 +6,12 @@ import {
   AppEvents,
   QueueInteractionScore,
 } from "@remnote/plugin-sdk";
+import { FlashcardHistoryData } from "./flashcard_history"
+import { RemHistoryData } from "./rem_history"
 import "../style.css";
 
-// Interface for our storage data
-interface FlashcardHistoryData {
-  key: number;
-  remId: RemId;
-  cardId: string;
-  time: number;
-}
+// Union type for Final Drill to support legacy (string) and new (object) formats
+type FinalDrillItem = string | { cardId: string; kbId?: string };
 
 async function onActivate(plugin: ReactRNPlugin) {
   // 1. Existing Document History Widget
@@ -27,37 +24,41 @@ async function onActivate(plugin: ReactRNPlugin) {
     }
   );
 
-  // 2. New Flashcard History Widget (Enhancement 1)
+  // 2. New Flashcard History Widget
   await plugin.app.registerWidget(
     "flashcard_history",
     WidgetLocation.RightSidebar,
     {
       dimensions: { height: "100%", width: "100%" },
-      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/9145/9145670.png", // Example Icon: Flashcard
+      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/9145/9145670.png",
       widgetTabTitle: "Flashcard History",
     }
   );
 
-  // 3. New Final Drill Widget (Enhancement 2)
+  // 3. New Final Drill Widget
   await plugin.app.registerWidget(
     "final_drill",
     WidgetLocation.RightSidebar,
     {
       dimensions: { height: "100%", width: "100%" },
-      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/3534/3534117.png", // Example Icon: Drill/Target
+      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/3534/3534117.png",
       widgetTabTitle: "Final Drill",
     }
   );
 
   // --- Event Listeners ---
 
-  // Document History Listener (Existing)
+  // Document History Listener
   plugin.event.addListener(
     AppEvents.GlobalOpenRem,
     undefined,
     async (message) => {
       const currentRemId = message.remId as RemId;
-      const currentRemData = (await plugin.storage.getSynced("remData")) || [];
+      const currentRemData = (await plugin.storage.getSynced("remData")) as RemHistoryData[] || [];
+
+      // Get current KB ID
+      const kbData = await plugin.kb.getCurrentKnowledgeBaseData();
+      const currentKbId = kbData._id;
 
       if (currentRemData[0]?.remId != currentRemId) {
         await plugin.storage.setSynced("remData", [
@@ -66,6 +67,7 @@ async function onActivate(plugin: ReactRNPlugin) {
             remId: currentRemId,
             open: false,
             time: new Date().getTime(),
+            kbId: currentKbId, // Save KB ID
           },
           ...currentRemData,
         ]);
@@ -73,14 +75,11 @@ async function onActivate(plugin: ReactRNPlugin) {
     }
   );
 
-  // Flashcard Queue Listener (New for Enhancements 1 & 2)
-  // AppEvents.QueueCompleteCard fires when a card is rated/finished.
+  // Flashcard Queue Listener
   plugin.event.addListener(
     AppEvents.QueueCompleteCard,
     undefined,
     async (message) => {
-      // Extract data from the event. 
-      // Note: We cast message to any because the strict type definition might not expose all fields in all SDK versions.
       const { cardId, score } = message as { cardId: string; score: QueueInteractionScore };
       
       if (!cardId) return;
@@ -90,34 +89,44 @@ async function onActivate(plugin: ReactRNPlugin) {
 
       const remId = card.remId;
 
+      // Get current KB ID
+      const kbData = await plugin.kb.getCurrentKnowledgeBaseData();
+      const currentKbId = kbData._id;
+
       // --- Logic for Enhancement 1: Flashcard History ---
-      const historyData = (await plugin.storage.getSynced("flashcardHistoryData")) || [];
-      // Prevent duplicate consecutive entries
+      const historyData = (await plugin.storage.getSynced("flashcardHistoryData")) as FlashcardHistoryData[] || [];
+      
       if (historyData[0]?.cardId !== cardId) {
          await plugin.storage.setSynced("flashcardHistoryData", [
           {
             key: Math.random(),
             remId: remId,
+            open: false,
             cardId: cardId,
             time: new Date().getTime(),
+            kbId: currentKbId, // Save KB ID
           },
-          ...historyData.slice(0, 99), // Limit history size
+          ...historyData.slice(0, 99),
         ]);
       }
 
       // --- Logic for Enhancement 2: Final Drill ---
-      // Get current drill list
-      let finalDrillIds = (await plugin.storage.getSynced("finalDrillIds")) || [];
+      // Type is now mixed (string | object) to support legacy data
+      let finalDrillIds = (await plugin.storage.getSynced("finalDrillIds")) as FinalDrillItem[] || [];
       
-      // If score is Forgot (0) or Hard (0.5), ADD to Final Drill
+      // Helper to extract ID regardless of format
+      const getCardId = (item: FinalDrillItem) => typeof item === 'string' ? item : item.cardId;
+
       if (score <= QueueInteractionScore.HARD) {
-        if (!finalDrillIds.includes(cardId)) {
-          finalDrillIds = [...finalDrillIds, cardId];
+        // Add if not present
+        if (!finalDrillIds.some(item => getCardId(item) === cardId)) {
+          // Store as object with KB ID
+          finalDrillIds = [...finalDrillIds, { cardId, kbId: currentKbId }];
         }
       } 
-      // If score is Good (1) or Easy (1.5), REMOVE from Final Drill
       else if (score >= QueueInteractionScore.GOOD) {
-        finalDrillIds = finalDrillIds.filter((id: string) => id !== cardId);
+        // Remove
+        finalDrillIds = finalDrillIds.filter((item) => getCardId(item) !== cardId);
       }
 
       await plugin.storage.setSynced("finalDrillIds", finalDrillIds);

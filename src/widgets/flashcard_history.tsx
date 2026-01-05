@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   RemHierarchyEditorTree,
   RemId,
@@ -11,41 +11,76 @@ import { timeSince } from "../lib/utils";
 
 const NUM_TO_LOAD_IN_BATCH = 50;
 
-interface FlashcardHistoryData {
+export interface FlashcardHistoryData {
   key: number;
   remId: RemId;
   cardId: string;
   time: number;
-  open?: boolean; // UI state for showing the tree
+  open?: boolean;  // UI state for showing the tree
+  kbId?: string; // Added kbId
 }
 
 function FlashcardHistory() {
-  const [historyData, setHistoryData] = useSyncedStorageState<FlashcardHistoryData[]>(
+  const plugin = usePlugin();
+  const [historyDataRaw, setHistoryData] = useSyncedStorageState<FlashcardHistoryData[]>(
     "flashcardHistoryData",
     []
   );
 
-  const closeIndex = (index: number) => {
-    historyData.splice(index, 1);
-    setHistoryData([...historyData]);
+  // Filtered data state
+  const [filteredData, setFilteredData] = useState<FlashcardHistoryData[]>([]);
+
+  // Effect to filter data by Knowledge Base
+  useEffect(() => {
+    async function filterData() {
+      const currentKb = await plugin.kb.getCurrentKnowledgeBaseData();
+      const isPrimary = await plugin.kb.isPrimaryKnowledgeBase();
+      const currentKbId = currentKb._id;
+
+      const filtered = historyDataRaw.filter((item) => {
+        if (!item.kbId) {
+          // Legacy: Include if this is the Primary KB
+          return isPrimary;
+        }
+        // New: Include if KB ID matches
+        return item.kbId === currentKbId;
+      });
+      setFilteredData(filtered);
+    }
+    filterData();
+  }, [historyDataRaw, plugin]);
+
+  // Note: We need to handle updates (delete/toggle) on the ORIGINAL list (historyDataRaw)
+  // to persist changes correctly.
+
+  const closeIndex = (itemKey: number) => {
+    // Find index in original list
+    const originalIndex = historyDataRaw.findIndex(x => x.key === itemKey);
+    if (originalIndex !== -1) {
+      historyDataRaw.splice(originalIndex, 1);
+      setHistoryData([...historyDataRaw]);
+    }
   };
 
-  const setData = (index: number, changes: Partial<FlashcardHistoryData>) => {
-    const oldData = historyData[index];
-    const newData = { ...oldData, ...changes };
-    historyData.splice(index, 1, newData);
-    setHistoryData([...historyData]);
+  const setData = (itemKey: number, changes: Partial<FlashcardHistoryData>) => {
+    const originalIndex = historyDataRaw.findIndex(x => x.key === itemKey);
+    if (originalIndex !== -1) {
+      const oldData = historyDataRaw[originalIndex];
+      const newData = { ...oldData, ...changes };
+      historyDataRaw.splice(originalIndex, 1, newData);
+      setHistoryData([...historyDataRaw]);
+    }
   };
 
   const [numLoaded, setNumLoaded] = React.useState(1);
 
   useEffect(() => {
     setNumLoaded(1);
-  }, [historyData.length]);
+  }, [filteredData.length]);
 
   const numUnloaded = Math.max(
     0,
-    historyData.length - NUM_TO_LOAD_IN_BATCH * numLoaded
+    filteredData.length - NUM_TO_LOAD_IN_BATCH * numLoaded
   );
 
   return (
@@ -54,18 +89,18 @@ function FlashcardHistory() {
       onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="p-2 text-lg font-bold">Flashcard History</div>
-      {historyData.length === 0 && (
+      {filteredData.length === 0 && (
         <div className="p-2 rn-clr-content-primary">
           Practice some flashcards to see your history here.
         </div>
       )}
-      {historyData.slice(0, NUM_TO_LOAD_IN_BATCH * numLoaded).map((data, i) => (
+      {filteredData.slice(0, NUM_TO_LOAD_IN_BATCH * numLoaded).map((data) => (
         <HistoryItem
           data={data}
           remId={data.remId}
           key={data.key || Math.random()}
-          setData={(c) => setData(i, c)}
-          closeIndex={() => closeIndex(i)}
+          setData={(c) => setData(data.key, c)}
+          closeIndex={() => closeIndex(data.key)}
         />
       ))}
       {numUnloaded > 0 && (
@@ -80,7 +115,6 @@ function FlashcardHistory() {
   );
 }
 
-// Reusing the item structure from the original plugin
 function HistoryItem({
   data,
   remId,

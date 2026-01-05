@@ -1,20 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   renderWidget,
   useSyncedStorageState,
-  Queue, // Imported from @remnote/plugin-sdk
+  Queue,
+  usePlugin, // Added usePlugin
 } from "@remnote/plugin-sdk";
 
-function FinalDrill() {
-  // Access the synced list of cards marked as Hard/Forgot
-  const [finalDrillIds] = useSyncedStorageState<string[]>("finalDrillIds", []);
+// Define the mixed type here as well
+type FinalDrillItem = string | { cardId: string; kbId?: string };
 
-  if (!finalDrillIds || finalDrillIds.length === 0) {
+function FinalDrill() {
+  const plugin = usePlugin();
+  // Access the synced list (now using the mixed type)
+  const [finalDrillIdsRaw] = useSyncedStorageState<FinalDrillItem[]>("finalDrillIds", []);
+  
+  // State for IDs filtered by current KB
+  const [filteredIds, setFilteredIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function filterByKb() {
+      // Fetch KB Metadata
+      const currentKb = await plugin.kb.getCurrentKnowledgeBaseData();
+      const isPrimary = await plugin.kb.isPrimaryKnowledgeBase();
+      const currentKbId = currentKb._id;
+
+      const relevantIds = finalDrillIdsRaw.reduce<string[]>((acc, item) => {
+        if (typeof item === 'string') {
+          // Legacy Item: Include only if we are in the Primary KB
+          if (isPrimary) acc.push(item);
+        } else {
+          // New Item: Include only if KB ID matches
+          if (item.kbId === currentKbId) acc.push(item.cardId);
+        }
+        return acc;
+      }, []);
+
+      setFilteredIds(relevantIds);
+    }
+
+    if (plugin) {
+      filterByKb();
+    }
+  }, [finalDrillIdsRaw, plugin]);
+
+  if (!filteredIds || filteredIds.length === 0) {
     return (
       <div className="h-full flex items-center justify-center p-4 text-center rn-clr-content-primary">
         <div>
           <h2 className="text-xl font-bold mb-2">Final Drill Clear!</h2>
-          <p>No cards rated "Hard" or "Forgot" are currently in the drill queue.</p>
+          <p>No cards rated "Hard" or "Forgot" are currently in the drill queue for this Knowledge Base.</p>
         </div>
       </div>
     );
@@ -25,7 +59,7 @@ function FinalDrill() {
       <div className="p-2 border-b rn-clr-border-primary flex justify-between items-center">
         <span className="font-bold text-lg">Final Drill</span>
         <span className="text-xs px-2 py-1 rounded bg-red-100 text-red-800">
-          {finalDrillIds.length} Remaining
+          {filteredIds.length} Remaining
         </span>
       </div>
       <div className="p-2 border-b rn-clr-border-primary flex flex-col gap-1">
@@ -40,7 +74,7 @@ function FinalDrill() {
       */}
       <div className="flex-grow relative">
          <Queue 
-           cardIds={finalDrillIds} 
+           cardIds={filteredIds} 
            width="100%" 
            height="100%" 
          />

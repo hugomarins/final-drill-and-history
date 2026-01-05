@@ -91,7 +91,7 @@ const config = {
     new CopyPlugin({
       patterns: [
         {from: 'public', to: ''},
-        {from: 'README.md', to: ''},
+        {from: 'README.md', to: 'README.md'},
       ]
     }),
     fastRefresh,
@@ -117,8 +117,6 @@ if (isProd) {
     },
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',  // Add this
-      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',  // Add this
     },
   };
 }

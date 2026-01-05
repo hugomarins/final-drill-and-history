@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   RemHierarchyEditorTree,
   RemId,
@@ -10,40 +10,69 @@ import {
 import { timeSince } from "../lib/utils";
 
 const NUM_TO_LOAD_IN_BATCH = 20;
-interface HistoryData {
+export interface RemHistoryData {
   key: number;
   remId: RemId;
   open: boolean;
   time: number;
+  kbId?: string; // Added kbId
 }
 
 function RightSidebar2() {
-  const [remData, setRemData] = useSyncedStorageState<HistoryData[]>(
+  const plugin = usePlugin();
+  const [remDataRaw, setRemData] = useSyncedStorageState<RemHistoryData[]>(
     "remData",
     []
   );
+  
+  const [filteredRemData, setFilteredRemData] = useState<RemHistoryData[]>([]);
 
-  const closeIndex = (index: number) => {
-    remData.splice(index, 1);
-    setRemData(remData);
+  useEffect(() => {
+    async function filterData() {
+      const currentKb = await plugin.kb.getCurrentKnowledgeBaseData();
+      const isPrimary = await plugin.kb.isPrimaryKnowledgeBase();
+      const currentKbId = currentKb._id;
+
+      const filtered = remDataRaw.filter((item) => {
+        if (!item.kbId) {
+          // Legacy: Include if this is the Primary KB
+          return isPrimary;
+        }
+        // New: Include if KB ID matches
+        return item.kbId === currentKbId;
+      });
+      setFilteredRemData(filtered);
+    }
+    filterData();
+  }, [remDataRaw, plugin]);
+
+  const closeIndex = (itemKey: number) => {
+    const originalIndex = remDataRaw.findIndex(x => x.key === itemKey);
+    if (originalIndex !== -1) {
+      remDataRaw.splice(originalIndex, 1);
+      setRemData([...remDataRaw]);
+    }
   };
 
-  const setData = (index: number, changes: Partial<HistoryData>) => {
-    const oldData = remData[index];
-    const newData = { ...oldData, ...changes };
-    remData.splice(index, 1, newData);
-    setRemData(remData);
+  const setData = (itemKey: number, changes: Partial<RemHistoryData>) => {
+    const originalIndex = remDataRaw.findIndex(x => x.key === itemKey);
+    if (originalIndex !== -1) {
+      const oldData = remDataRaw[originalIndex];
+      const newData = { ...oldData, ...changes };
+      remDataRaw.splice(originalIndex, 1, newData);
+      setRemData([...remDataRaw]);
+    }
   };
 
   const [numLoaded, setNumLoaded] = React.useState(1);
 
   useEffect(() => {
     setNumLoaded(1);
-  }, [remData.length]);
+  }, [filteredRemData.length]);
 
   const numUnloaded = Math.max(
     0,
-    remData.length - NUM_TO_LOAD_IN_BATCH * numLoaded
+    filteredRemData.length - NUM_TO_LOAD_IN_BATCH * numLoaded
   );
 
   return (
@@ -52,18 +81,18 @@ function RightSidebar2() {
       onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="p-2 text-lg font-bold">Visited Rem History</div>
-      {remData.length == 0 && (
+      {filteredRemData.length == 0 && (
         <div className="rn-clr-content-primary">
           Navigate to other documents to automatically record history.
         </div>
       )}
-      {remData.slice(0, NUM_TO_LOAD_IN_BATCH * numLoaded).map((data, i) => (
+      {filteredRemData.slice(0, NUM_TO_LOAD_IN_BATCH * numLoaded).map((data, i) => (
         <RemHistoryItem
           data={data}
           remId={data.remId}
           key={data.key || Math.random()}
-          setData={(c) => setData(i, c)}
-          closeIndex={() => closeIndex(i)}
+          setData={(c) => setData(data.key, c)}
+          closeIndex={() => closeIndex(data.key)}
         />
       ))}
       {numUnloaded > 0 && (
@@ -80,10 +109,11 @@ function RightSidebar2() {
   );
 }
 
+// ... RemHistoryItem interface and component remain unchanged ...
 interface RemHistoryItemProps {
-  data: HistoryData;
+  data: RemHistoryData;
   remId: string;
-  setData: (changes: Partial<HistoryData>) => void;
+  setData: (changes: Partial<RemHistoryData>) => void;
   closeIndex: () => void;
 }
 
