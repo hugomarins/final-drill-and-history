@@ -1,6 +1,8 @@
 # Final Drill & History
 
-This plugin extends the standard RemNote History functionality with two powerful study tools: a history of reviewed flashcards and a "Final Drill" queue for targeting difficult material.
+[Español](README_ES.md) | [Português Brasileiro](README_PT-BR.md)
+
+This plugin extends the official RemNote History plugin functionality with two powerful study tools: a history of reviewed flashcards and a "Final Drill" queue for targeting difficult material.
 
 ## Features
 
@@ -25,6 +27,9 @@ This plugin extends the standard RemNote History functionality with two powerful
     - These cards stay in this separate queue until you rate them **Good** or **Easy** inside the Final Drill widget.
 - **Why use it:** Use this at the end of your learning day (or whenever you are in the mood for it) to review only the items you struggled with recently, ensuring you master them before finishing your session. It is designed to ensure you have raised retrievability of the most difficult material close to 100% (in other words, that you have ingrained the content and knows it).
 - **Do I have to use it?:** Have in mind that this is an optional stage of the learning process. Not using it will not bring negative consequences for your learning process, as in the next scheduled repetition, you'll be tested again, and failures will be treated accordingly by the algorithm. But using the drill will not cost much and will increase the chances of success in the subsequent repetitions.
+- **Queue Management:**
+    - **Old Items:** If items linger in the queue for too long (default 7 days), a warning will appear. You can clear these stale items with a single click to keep your drill session focused on fresh material. The threshold can be configured in the plugin settings.
+    - **Clear Queue:** A "Clear Queue" button allows you to empty the Final Drill queue at any time if you want to start fresh or simply declutter.
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
@@ -51,6 +56,13 @@ This plugin is a fork of the official RemNote History plugin, enhanced with Queu
 If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.1.3 January 06th, 2026
+
+- **Final Drill Improvements:** 
+    - Added a "Clear Queue" button to easy empty the drill queue.
+    - Added an "Old Items" warning to help identify and clear stale items (added > 7 days ago).
+    - Added a new setting to configure the "Old Items Threshold" (default: 7 days).
 
 ### v. 0.0.2 January 05th, 2026
 

@@ -11,9 +11,17 @@ import { RemHistoryData } from "./rem_history"
 import "../style.css";
 
 // Union type for Final Drill to support legacy (string) and new (object) formats
-type FinalDrillItem = string | { cardId: string; kbId?: string };
+type FinalDrillItem = string | { cardId: string; kbId?: string; addedAt?: number };
 
 async function onActivate(plugin: ReactRNPlugin) {
+  // Register Setting for Old Items Threshold
+  await plugin.settings.registerNumberSetting({
+    id: "old_item_threshold",
+    title: "Final Drill: Old Items Threshold (Days)",
+    description: "Items older than this number of days will trigger a warning.",
+    defaultValue: 7,
+  });
+
   // 1. Existing Document History Widget
   await plugin.app.registerWidget(
     "rem_history",
@@ -120,8 +128,12 @@ async function onActivate(plugin: ReactRNPlugin) {
       if (score <= QueueInteractionScore.HARD) {
         // Add if not present
         if (!finalDrillIds.some(item => getCardId(item) === cardId)) {
-          // Store as object with KB ID
-          finalDrillIds = [...finalDrillIds, { cardId, kbId: currentKbId }];
+          // Store as object with KB ID and addedAt timestamp
+          finalDrillIds = [...finalDrillIds, { 
+            cardId, 
+            kbId: currentKbId, 
+            addedAt: Date.now() 
+          }];
         }
       } 
       else if (score >= QueueInteractionScore.GOOD) {

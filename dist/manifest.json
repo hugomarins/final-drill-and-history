@@ -8,10 +8,10 @@
   "version": {
     "major": 0,
     "minor": 0,
-    "patch": 2
+    "patch": 3
   },
   "unlisted": false,
-  "description": "Adds a Final Drill to deliberately practice poorly rated cards; adds a right sidebar showing Rem and Card history.",
+  "description": "Adds right sidebar tabs showing Rem and Card history. \n Adds Final Drill to deliberately practice poorly rated cards: a queue of cards to be drilled.",
   "requestNative": true,
   "requiredScopes": [
     {

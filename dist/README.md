@@ -1,6 +1,8 @@
 # Final Drill & History
 
-This plugin extends the standard RemNote History functionality with two powerful study tools: a history of reviewed flashcards and a "Final Drill" queue for targeting difficult material.
+[Español](README_ES.md) | [Português Brasileiro](README_PT-BR.md)
+
+This plugin extends the official RemNote History plugin functionality with two powerful study tools: a history of reviewed flashcards and a "Final Drill" queue for targeting difficult material.
 
 ## Features
 
@@ -19,8 +21,15 @@ This plugin extends the standard RemNote History functionality with two powerful
 - **What it does:** Implements a "Final Drill" queue inspired by SuperMemo. 
 - **How it works:** 
     - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Final Drill queue.
+      - **Forgot** usually already have a relearning step. If you do this relearning step successfully, the card will be cleared from the Final Drill queue; if not, doing it in the Final Drill will be the same as doing it away from it. The purpose of having these cards in the drill is to ensure you accomplish the relearning step (in case you usually make flashcards in document queues rather than in the global queue).
+      - **Hard** is what brings the real difference. Drilling these cards is as if you were reviewing ahead of time; algorithms (especially FSRS) account for that, and the interval rendered will be practically the same as the one already assigned. The purpose of having them in the drill is to ensure you have raised retrievability close to 100% (the same purpose of the relearning step for forgotten items).
+      - Unlike _SuperMemo_, these reviews will be recorded in your repetition history.
     - These cards stay in this separate queue until you rate them **Good** or **Easy** inside the Final Drill widget.
-- **Why use it:** Use this at the end of your learning day to review only the items you struggled with, ensuring you master them before finishing your session.
+- **Why use it:** Use this at the end of your learning day (or whenever you are in the mood for it) to review only the items you struggled with recently, ensuring you master them before finishing your session. It is designed to ensure you have raised retrievability of the most difficult material close to 100% (in other words, that you have ingrained the content and knows it).
+- **Do I have to use it?:** Have in mind that this is an optional stage of the learning process. Not using it will not bring negative consequences for your learning process, as in the next scheduled repetition, you'll be tested again, and failures will be treated accordingly by the algorithm. But using the drill will not cost much and will increase the chances of success in the subsequent repetitions.
+- **Queue Management:**
+    - **Old Items:** If items linger in the queue for too long (default 7 days), a warning will appear. You can clear these stale items with a single click to keep your drill session focused on fresh material. The threshold can be configured in the plugin settings.
+    - **Clear Queue:** A "Clear Queue" button allows you to empty the Final Drill queue at any time if you want to start fresh or simply declutter.
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
@@ -47,6 +56,13 @@ This plugin is a fork of the official RemNote History plugin, enhanced with Queu
 If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.1.3 January 06th, 2026
+
+- **Final Drill Improvements:** 
+    - Added a "Clear Queue" button to easy empty the drill queue.
+    - Added an "Old Items" warning to help identify and clear stale items (added > 7 days ago).
+    - Added a new setting to configure the "Old Items Threshold" (default: 7 days).
 
 ### v. 0.0.2 January 05th, 2026
 
