@@ -19,8 +19,12 @@ This plugin extends the standard RemNote History functionality with two powerful
 - **What it does:** Implements a "Final Drill" queue inspired by SuperMemo. 
 - **How it works:** 
     - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Final Drill queue.
+      - **Forgot** usually already have a relearning step. If you do this relearning step successfully, the card will be cleared from the Final Drill queue; if not, doing it in the Final Drill will be the same as doing it away from it. The purpose of having these cards in the drill is to ensure you accomplish the relearning step (in case you usually make flashcards in document queues rather than in the global queue).
+      - **Hard** is what brings the real difference. Drilling these cards is as if you were reviewing ahead of time; algorithms (especially FSRS) account for that, and the interval rendered will be practically the same as the one already assigned. The purpose of having them in the drill is to ensure you have raised retrievability close to 100% (the same purpose of the relearning step for forgotten items).
+      - Unlike _SuperMemo_, these reviews will be recorded in your repetition history.
     - These cards stay in this separate queue until you rate them **Good** or **Easy** inside the Final Drill widget.
-- **Why use it:** Use this at the end of your learning day to review only the items you struggled with, ensuring you master them before finishing your session.
+- **Why use it:** Use this at the end of your learning day (or whenever you are in the mood for it) to review only the items you struggled with recently, ensuring you master them before finishing your session. It is designed to ensure you have raised retrievability of the most difficult material close to 100% (in other words, that you have ingrained the content and knows it).
+- **Do I have to use it?:** Have in mind that this is an optional stage of the learning process. Not using it will not bring negative consequences for your learning process, as in the next scheduled repetition, you'll be tested again, and failures will be treated accordingly by the algorithm. But using the drill will not cost much and will increase the chances of success in the subsequent repetitions.
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
