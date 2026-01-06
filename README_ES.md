@@ -1,6 +1,6 @@
 # Final Drill & History
 
-[English](README.md) | [Português Brasileiro](README_PT-BR.md)
+🇬🇧 [English](README.md) | 🇧🇷 [Português Brasileiro](README_PT-BR.md)
 
 Este complemento amplía la funcionalidad del plugin oficial **History** de RemNote con dos poderosas herramientas de estudio: un historial de tarjetas revisadas y una cola de "Final Drill" (Práctica Final) para enfocarse en material difícil.
 

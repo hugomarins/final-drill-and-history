@@ -1,6 +1,6 @@
 # Final Drill & History
 
-[English](README.md) | [Español](README_ES.md)
+🇬🇧 [English](README.md) | 🇪🇸 [Español](README_ES.md)
 
 Este plugin estende as funcionalidades do plugin oficial do RemNote **History** com duas ferramentas de estudo poderosas: um histórico de flashcards revisados e uma fila de "Final Drill" (Prática Final) para focar em material difícil.
 

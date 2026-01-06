@@ -1,6 +1,6 @@
 # Final Drill & History
 
-[Español](README_ES.md) | [Português Brasileiro](README_PT-BR.md)
+🇪🇸 [Español](https://github.com/hugomarins/final-drill-and-history/blob/main/README_ES.md) | 🇧🇷 [Português Brasileiro](https://github.com/hugomarins/final-drill-and-history/blob/main/README_PT-BR.md)
 
 This plugin extends the official RemNote History plugin functionality with two powerful study tools: a history of reviewed flashcards and a "Final Drill" queue for targeting difficult material.
 
