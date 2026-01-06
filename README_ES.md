@@ -16,8 +16,20 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 - **Qué hace:** Registra el historial cronológico de los Rems asociados con las tarjetas que acabas de ver en la Cola de Flashcards.
 - **Por qué usarlo:** Si quieres verificar el contexto o editar una tarjeta que acabas de revisar, puedes encontrarla fácilmente aquí sin interrumpir el flujo de tu sesión.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
+- **Interacción:** Hacer clic en una tarjeta abrirá el rem en el Editor.
 
-### 3. Final Drill
+### 3. Histórico de Colas Practicadas
+- **Qué hace:** Rastrea tus sesiones de práctica y métricas.
+- **Métricas Recopiladas:**
+    - Tiempo total de estudio.
+    - Número de tarjetas revisadas y tiempo dedicado a ellas.
+    - Número de "Rems Incrementales" analizados y tiempo dedicado a ellos.
+    - Velocidad promedio por tarjeta.
+- **Por qué usarlo:** Obtén información sobre tus hábitos de estudio y monitorea tu uso de herramientas de lectura incremental.
+- **Interacción:** Hacer clic en una sesión abrirá el documento en el Editor, para que puedas revisar el material nuevamente.
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
+
+### 4. Final Drill
 - **Qué hace:** Implementa una cola de "Práctica Final" inspirada en SuperMemo.
 - **Cómo funciona:**
     - Cualquier tarjeta que califiques como **Olvidé (Forgot)** o **Difícil (Hard)** se agrega automáticamente a la cola de Final Drill.
@@ -56,6 +68,12 @@ Este complemento es una bifurcación (fork) del complemento oficial RemNote Hist
 Si estás interesado en construir tus propios complementos, consulta la documentación oficial, guías y tutoriales en el [Sitio Web de Plugins de RemNote](https://plugins.remnote.com/).
 
 ## Registro de Cambios (Changelog)
+
+### v. 0.1.4 06 de Enero de 2026
+
+- **Histórico de Colas Practicadas:**
+    - Implementado seguimiento de métricas, distinguiendo entre Tarjetas Regulares y Rems Incrementales.
+    - Implementado tablero para ver desgloses detallados de recuentos y tiempos de tarjetas vs IncRems para cada sesión.
 
 ### v. 0.1.3 06 de Enero de 2026
 

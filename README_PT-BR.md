@@ -16,8 +16,20 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 - **O que faz:** Registra o histórico cronológico dos Rems associados aos flashcards que você acabou de ver na Fila de Flashcards.
 - **Por que usar:** Se você quiser verificar o contexto ou editar um flashcard que acabou de revisar, pode encontrá-lo facilmente aqui sem interromper o fluxo da sua sessão.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
+- **Interação:** Clicar em um flashcard abrirá o rem no Editor.
 
-### 3. Final Drill
+### 3. Histórico de Sessões Praticadas (Practiced Queues History)
+- **O que faz:** Rastreia suas sessões de prática e métricas.
+- **Métricas Coletadas:**
+    - Tempo total de estudo.
+    - Número de flashcards revisados e tempo gasto neles.
+    - Número de "Rems Incrementais" processados e tempo gasto neles.
+    - Velocidade média por cartão.
+- **Por que usar:** Obtenha insights sobre seus hábitos de estudo e monitore seu uso de ferramentas de leitura incremental.
+- **Interação:** Clicar em uma sessão abrirá o documento no Editor, para que você possa revisar o material novamente.
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
+
+### 4. Final Drill
 - **O que faz:** Implementa uma fila de "Prática Final" inspirada no SuperMemo.
 - **Como funciona:**
     - Qualquer flashcard que você classificar como **Esqueci (Forgot)** ou **Difícil (Hard)** é automaticamente adicionado à fila do Final Drill.
@@ -56,6 +68,12 @@ Este plugin é um fork do plugin oficial RemNote History, aprimorado com ouvinte
 Se você estiver interessado em criar seus próprios plugins, confira a documentação oficial, guias e tutoriais no [Site de Plugins do RemNote](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.1.4 06 de Janeiro de 2026
+
+- **Histórico de Sessões Praticadas (Practiced Queues History):**
+    - Implementado rastreamento de métricas, distinguindo entre Flashcards Regulares e Rems Incrementais.
+    - Implementado painel para visualizar detalhadamente contagens e tempos de cartões vs IncRems para cada sessão.
 
 ### v. 0.1.3 06 de Janeiro de 2026
 

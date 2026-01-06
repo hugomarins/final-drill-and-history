@@ -15,9 +15,22 @@ This plugin extends the official RemNote History plugin functionality with two p
 ### 2. Flashcard History
 - **What it does:** Records the chronological history of the Rems associated with the flashcards you have just seen in the Flashcard Queue.
 - **Why use it:** If you want to check context or edit a flashcard you just reviewed, you can easily find it here without interrupting your session flow.
+- **Interaction:** Clicking on a flashcard will open the rem in the Editor.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
 
-### 3. Final Drill
+
+### 3. Practiced Queues History
+- **What it does:** Tracks your practice sessions and metrics. 
+- **Metrics Collected:** 
+    - Total time spent studying.
+    - Number of Flashcards reviewed and time spent on them.
+    - Number of "Incremental Rems" (from Incremental Everything plugin) processed and time spent on them.
+    - Average speed per card.
+- **Why use it:** Gain insights into your study habits, track your velocity, and monitor your usage of incremental reading tools alongside standard flashcards.
+- **Interaction:** Clicking on a session will open the document in the Editor, so that you can review the material again.
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
+
+### 4. Final Drill
 - **What it does:** Implements a "Final Drill" queue inspired by SuperMemo. 
 - **How it works:** 
     - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Final Drill queue.
@@ -56,6 +69,12 @@ This plugin is a fork of the official RemNote History plugin, enhanced with Queu
 If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.1.4 January 06th, 2026
+
+- **Practiced Queues History:**
+    - Implemented metrics tracking, distinguishing between Regular Flashcards and Incremental Rems.
+    - Implemented dashboard to view detailed breakdowns of Cards vs IncRems counts and times for each session.
 
 ### v. 0.1.3 January 06th, 2026
 
