@@ -122,6 +122,11 @@ function FinalDrill() {
 
 
 
+
+  const isBlocked = useTrackerPlugin(async (reactivePlugin) => {
+    return await reactivePlugin.storage.getSession<boolean>("finalDrillBlocked");
+  }, [plugin]) ?? false;
+
   // --- Sync Active State for Index ---
   useEffect(() => {
     // Signal that Final Drill is open so index.tsx can name sessions correctly.
@@ -130,6 +135,17 @@ function FinalDrill() {
       plugin.storage.setSession("finalDrillActive", false);
     }
   }, [plugin]);
+
+  if (isBlocked) {
+    return (
+      <div className="h-full flex items-center justify-center p-4 text-center rn-clr-content-primary">
+        <div>
+          <h2 className="text-xl font-bold mb-2">Queue Active</h2>
+          <p>You are currently practicing another queue. Please finish it before using Final Drill.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!filteredIds || filteredIds.length === 0) {
     return (
