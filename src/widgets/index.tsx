@@ -24,7 +24,18 @@ async function onActivate(plugin: ReactRNPlugin) {
     defaultValue: 7,
   });
 
-  // 1. Existing Document History Widget
+  // 1. New Final Drill Widget
+  await plugin.app.registerWidget(
+    "final_drill",
+    WidgetLocation.RightSidebar,
+    {
+      dimensions: { height: "auto", width: "100%" },
+      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/3534/3534117.png",
+      widgetTabTitle: "Final Drill",
+    }
+  );
+
+  // 2. Existing Document History Widget
   await plugin.app.registerWidget(
     "rem_history",
     WidgetLocation.RightSidebar,
@@ -34,7 +45,7 @@ async function onActivate(plugin: ReactRNPlugin) {
     }
   );
 
-  // 2. New Flashcard History Widget
+  // 3. New Flashcard History Widget
   await plugin.app.registerWidget(
     "flashcard_history",
     WidgetLocation.RightSidebar,
@@ -46,7 +57,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   );
 
 
-  // 3. New Practiced Queues Widget
+  // 4. New Practiced Queues Widget
   await plugin.app.registerWidget(
     "practiced_queues",
     WidgetLocation.RightSidebar,
@@ -54,17 +65,6 @@ async function onActivate(plugin: ReactRNPlugin) {
       dimensions: { height: "auto", width: "100%" },
       widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/6688/6688557.png",
       widgetTabTitle: "Practiced Queues",
-    }
-  );
-
-  // 4. New Final Drill Widget
-  await plugin.app.registerWidget(
-    "final_drill",
-    WidgetLocation.RightSidebar,
-    {
-      dimensions: { height: "auto", width: "100%" },
-      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/3534/3534117.png",
-      widgetTabTitle: "Final Drill",
     }
   );
 
@@ -80,47 +80,164 @@ async function onActivate(plugin: ReactRNPlugin) {
   let currentIncRemStart: number | null = null;
 
   plugin.event.addListener(AppEvents.QueueLoadCard, undefined, async (data: any) => {
-    const now = Date.now();
+    try {
+      const now = Date.now();
+      console.log("DEBUG: QueueLoadCard", data);
 
-    // Check for IncRem (Type 15)
-    const type = await plugin.queue.getCurrentQueueScreenType();
+      // Check for IncRem (Type 15)
+      const type = await plugin.queue.getCurrentQueueScreenType();
+      console.log("DEBUG: Queue Type", type);
 
-    if (type === QueueItemType.Plugin) {
-      // If an IncRem was already open? Add its time.
-      if (currentIncRemStart) {
-        currentSession!.incRemsTime += (now - currentIncRemStart);
+      // If generic/plugin type OR if type is undefined but we see IncRem signs (data.remId and no cardId)
+      const isLikelyIncRem = type === QueueItemType.Plugin || (type === undefined && data?.remId && !data?.cardId);
+
+      if (isLikelyIncRem) {
+        // If an IncRem was already open? Add its time.
+        if (currentIncRemStart) {
+          if (currentSession) {
+            currentSession.incRemsTime += (now - currentIncRemStart);
+          }
+        }
+
+        if (currentSession) {
+          currentSession.incRemsCount++;
+        } else {
+          console.warn("DEBUG: currentSession is null in QueueLoadCard (IncRem). Skipping count.");
+        }
+
+        currentIncRemStart = now;
+
+        // --- Attempt to Capture Scope for Incremental Rem ---
+        if (currentSession && (currentSession.scopeName === "Untitled" || currentSession.scopeName === "Ad-hoc Queue" || !currentSession.scopeName)) {
+          console.log("DEBUG: Attempting to resolve IncRem scope name. Data:", data);
+          if (data && data.remId) {
+            const rem = await plugin.rem.findOne(data.remId);
+            if (rem) {
+              const text = rem.text ? await plugin.richText.toString(rem.text) : "";
+              console.log("DEBUG: Resolved IncRem scope name:", text);
+              if (text) currentSession.scopeName = text;
+            }
+          }
+        }
+
+      } else {
+        // If we switched to a non-plugin card, close any open IncRem session
+        if (currentIncRemStart) {
+          if (currentSession) {
+            currentSession.incRemsTime += (now - currentIncRemStart);
+          }
+          currentIncRemStart = null;
+        }
       }
-      currentSession!.incRemsCount++;
-      currentIncRemStart = now;
-    } else {
-      // If we switched to a non-plugin card, close any open IncRem session
-      if (currentIncRemStart) {
-        currentSession!.incRemsTime += (now - currentIncRemStart);
-        currentIncRemStart = null;
-      }
-    }
 
-    // Track Flashcard Start Time
-    if (data.cardId) {
-      cardStartTimes.set(data.cardId, now);
+      // Track Flashcard Start Time
+      if (data.cardId) {
+        cardStartTimes.set(data.cardId, now);
+
+        // --- Verify Final Drill Scope ---
+        // If we labeled this as Final Drill, but the card is NOT in our Final Drill list,
+        // it means it's an Embedded Queue collision (Ad-hoc).
+        // --- Verify Final Drill Scope ---
+        // If we labeled this as Final Drill, but the card is NOT in our Final Drill list,
+        // it means it's an Embedded Queue collision (Ad-hoc).
+        if (currentSession && currentSession.scopeName === "Final Drill") {
+          const finalDrillItems = (await plugin.storage.getSynced("finalDrillIds")) as (string | { cardId: string })[] || [];
+
+          let isOurCard = false;
+
+          // Handle legacy strings and new objects
+          if (finalDrillItems.length > 0) {
+            isOurCard = finalDrillItems.some(item => {
+              const id = typeof item === 'string' ? item : item.cardId;
+              // console.log(`DEBUG: Checking ${id} vs ${data.cardId}`);
+              return id === data.cardId;
+            });
+            console.log(`DEBUG: Verification result for ${data.cardId}: ${isOurCard}. List size: ${finalDrillItems.length}`);
+          } else {
+            console.log("DEBUG: Final Drill list is empty during verification.");
+          }
+
+          if (!isOurCard) {
+            console.log("DEBUG: Card not in Final Drill list. Renaming to Ad-hoc Session.");
+            currentSession.scopeName = "Ad-hoc Session";
+          } else {
+            console.log("DEBUG: Card verified as Final Drill item.");
+          }
+        }
+      }
+    } catch (error) {
+      console.error("ERROR in QueueLoadCard listener:", error);
     }
   });
 
   plugin.event.addListener(AppEvents.QueueEnter, undefined, async (data: any) => {
-    const kbData = await plugin.kb.getCurrentKnowledgeBaseData();
-    currentSession = {
-      id: Math.random().toString(36).substring(7),
-      startTime: Date.now(),
-      kbId: kbData._id,
-      queueId: data?.subQueueId,
-      totalTime: 0,
-      flashcardsCount: 0,
-      flashcardsTime: 0,
-      incRemsCount: 0,
-      incRemsTime: 0,
-    };
-    cardStartTimes.clear();
-    currentIncRemStart = null;
+    try {
+      console.log("DEBUG: QueueEnter Data", data);
+      const kbData = await plugin.kb.getCurrentKnowledgeBaseData();
+
+      // --- Attempt to get Scope Name ---
+      let scopeName = "Ad-hoc Queue";
+      let queueId = data?.subQueueId;
+      console.log("DEBUG: subQueueId", queueId);
+
+      // Validate queueId: check if it's a valid ID string (not a random specific number '0.xxxx')
+      const isValidId = queueId && typeof queueId === 'string' && !queueId.startsWith("0.");
+
+      if (isValidId) {
+        const rem = await plugin.rem.findOne(queueId);
+        if (rem) {
+          // Prefer text property, fallback to generic
+          const text = rem.text ? await plugin.richText.toString(rem.text) : "";
+          if (text && text.trim().length > 0) {
+            scopeName = text;
+          } else {
+            scopeName = "Untitled";
+          }
+        }
+      } else if (queueId && queueId.startsWith("0.")) {
+        // It is a generated ID. It could be "Practice All", "Final Drill", or "Embedded Queue".
+
+        // Check if Final Drill reports being active
+        // We wait a tiny bit for the Final Drill widget to potentially update status if it was just mounted?
+        // Actually, rely on the stored flag.
+        const isFinalDrillActive = await plugin.storage.getSession("finalDrillActive");
+
+        // Also check screen type to be sure
+        await new Promise(resolve => setTimeout(resolve, 200));
+        const type = await plugin.queue.getCurrentQueueScreenType();
+
+        console.log("DEBUG: Generic ID. Type:", type, "FinalDrillActive:", isFinalDrillActive);
+
+        if (type && type > 0) {
+          scopeName = "Ad-hoc Session";
+        } else {
+          if (isFinalDrillActive) {
+            scopeName = "Final Drill";
+          } else {
+            scopeName = "Ad-hoc Session";
+          }
+        }
+      }
+
+      console.log("DEBUG: Final Scope Name:", scopeName);
+
+      currentSession = {
+        id: Math.random().toString(36).substring(7),
+        startTime: Date.now(),
+        kbId: kbData._id,
+        queueId: isValidId ? queueId : undefined, // Don't store garbage IDs
+        scopeName: scopeName,
+        totalTime: 0,
+        flashcardsCount: 0,
+        flashcardsTime: 0,
+        incRemsCount: 0,
+        incRemsTime: 0,
+      };
+      cardStartTimes.clear();
+      currentIncRemStart = null;
+    } catch (error) {
+      console.error("ERROR in QueueEnter listener:", error);
+    }
   });
 
   plugin.event.addListener(AppEvents.QueueExit, undefined, async () => {
@@ -207,6 +324,8 @@ async function onActivate(plugin: ReactRNPlugin) {
       if (!card) return;
 
       const remId = card.remId;
+
+      // REMOVED Fallback Update Scope Name as per user request (Ancestor Traversal)
 
       // Get current KB ID
       const kbData = await plugin.kb.getCurrentKnowledgeBaseData();

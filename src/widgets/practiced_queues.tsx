@@ -106,6 +106,8 @@ function PracticedQueues() {
 
 function QueueSessionItem({ session, onDelete }: { session: PracticedQueueSession, onDelete: () => void }) {
     const plugin = usePlugin();
+    // DEBUG LOG
+    console.log("DEBUG: Rendering Session Item", session);
 
     const formatTime = (ms: number) => {
         if (!ms) return "0s";
@@ -136,9 +138,9 @@ function QueueSessionItem({ session, onDelete }: { session: PracticedQueueSessio
             <div className="flex justify-between items-start">
                 <div onClick={handleOpen} className="cursor-pointer flex-grow">
                     <div className="font-semibold text-lg hover:underline truncate" title={session.scopeName || "Ad-hoc Queue"}>
-                        {session.queueId ? (
+                        {session.scopeName ? session.scopeName : (session.queueId ? (
                             <RemViewer remId={session.queueId} width="100%" />
-                        ) : "Ad-hoc Queue"}
+                        ) : "Ad-hoc Queue")}
                     </div>
                     <div className="text-sm rn-clr-content-secondary flex flex-col gap-1 mt-1">
                         <div className="flex gap-2 items-center">
