@@ -183,6 +183,19 @@ async function onActivate(plugin: ReactRNPlugin) {
       // Validate queueId: check if it's a valid ID string (not a random specific number '0.xxxx')
       const isValidId = queueId && typeof queueId === 'string' && !queueId.startsWith("0.");
 
+      // --- DEBOUNCE / PRIORITY LOGIC ---
+      // If this is a generic ID ('0.xxx'), check if we ALREADY have a valid session established very recently.
+      if (!isValidId && queueId && queueId.startsWith("0.")) {
+        if (currentSession && currentSession.queueId && !currentSession.queueId.startsWith("0.")) {
+          const timeSinceStart = Date.now() - currentSession.startTime;
+          // If the valid session started less than 1000ms ago, assume this generic event is just noise (like Final Drill sidebar init)
+          if (timeSinceStart < 1000) {
+            console.log(`DEBUG: Ignoring generic queue ID ${queueId} because a valid session (${currentSession.scopeName}) started ${timeSinceStart}ms ago.`);
+            return;
+          }
+        }
+      }
+
       if (isValidId) {
         const rem = await plugin.rem.findOne(queueId);
         if (rem) {
