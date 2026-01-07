@@ -4,11 +4,11 @@
   "name": "History and Final Drill",
   "author": "hugomarins",
   "repoUrl": "https://github.com/hugomarins/final-drill-and-history",
-  "enableOnMobile": false,
+  "enableOnMobile": true,
   "version": {
     "major": 0,
     "minor": 0,
-    "patch": 6
+    "patch": 7
   },
   "unlisted": false,
   "description": "Adds right sidebar tabs showing Rem, Card and Queue history. \n Adds Final Drill to deliberately practice poorly rated cards: a queue of cards to be drilled.",

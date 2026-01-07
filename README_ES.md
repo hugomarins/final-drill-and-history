@@ -16,9 +16,11 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 ### 2. Historial de Flashcards
 - **Qué hace:** Registra el historial cronológico de los Rems asociados con las tarjetas que acabas de ver en la Cola de Flashcards.
 - **Por qué usarlo:** Si quieres verificar el contexto o editar una tarjeta que acabas de revisar, puedes encontrarla fácilmente aquí sin interrumpir el flujo de tu sesión.
-![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
 - **Interacción:** Hacer clic en una tarjeta abrirá el rem en el Editor.
 - **Búsqueda:** Encuentra sin esfuerzo una tarjeta que practicaste hace momentos o días. La búsqueda verifica tanto el frente (pregunta) como el reverso (respuesta/contexto) de tus tarjetas.
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
+
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/filter.gif)
 
 ### 3. Histórico de Colas Practicadas
 - **Qué hace:** Rastrea tus sesiones de práctica y métricas.

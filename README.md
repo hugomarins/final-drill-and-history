@@ -20,6 +20,8 @@ This plugin extends the official RemNote History plugin functionality with two p
 - **Search:** Effortlessly find a card you practiced moments or days ago. The search checks both the front (question) and back (answer/context) of your cards.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
 
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/filter.gif)
+
 
 ### 3. Practiced Queues History
 - **What it does:** Tracks your practice sessions and metrics. 

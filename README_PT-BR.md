@@ -16,9 +16,11 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 ### 2. Histórico de Flashcards
 - **O que faz:** Registra o histórico cronológico dos Rems associados aos flashcards que você acabou de ver na Fila de Flashcards.
 - **Por que usar:** Se você quiser verificar o contexto ou editar um flashcard que acabou de revisar, pode encontrá-lo facilmente aqui sem interromper o fluxo da sua sessão.
-![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
 - **Interação:** Clicar em um flashcard abrirá o rem no Editor.
 - **Busca:** Encontre sem esforço um cartão que você praticou momentos ou dias atrás. A busca verifica tanto a frente (pergunta) quanto o verso (resposta/contexto) dos seus cartões.
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
+
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/filter.gif)
 
 ### 3. Histórico de Sessões Praticadas (Practiced Queues History)
 - **O que faz:** Rastreia suas sessões de prática e métricas.

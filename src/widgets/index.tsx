@@ -313,7 +313,7 @@ async function onActivate(plugin: ReactRNPlugin) {
             text: text, // Save Text for Search
             _v: 1,
           },
-          ...currentRemData.slice(0, 199),
+          ...currentRemData.slice(0, 500),
         ]);
       }
     }
@@ -380,7 +380,7 @@ async function onActivate(plugin: ReactRNPlugin) {
             text: text, // Save Text for Search
             _v: 1,
           },
-          ...historyData.slice(0, 199),
+          ...historyData.slice(0, 1999),
         ]);
       }
 

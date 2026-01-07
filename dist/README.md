@@ -10,13 +10,17 @@ This plugin extends the official RemNote History plugin functionality with two p
 - **What it does:** Records a chronological history of the Rems you have navigated to in the Editor.
 - **Why use it:** Quickly jump back to documents you were just working on without losing your place.
 - **Interaction:** You can expand and edit the Rem directly in the right sidebar.
+- **Search:** Includes a search bar to instantly filter your history. Supports multi-word queries (e.g., "Biology Exam") and deep text search across all recorded items.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/rem-history-editing.gif)
 
 ### 2. Flashcard History
 - **What it does:** Records the chronological history of the Rems associated with the flashcards you have just seen in the Flashcard Queue.
 - **Why use it:** If you want to check context or edit a flashcard you just reviewed, you can easily find it here without interrupting your session flow.
 - **Interaction:** Clicking on a flashcard will open the rem in the Editor.
+- **Search:** Effortlessly find a card you practiced moments or days ago. The search checks both the front (question) and back (answer/context) of your cards.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
+
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/filter.gif)
 
 
 ### 3. Practiced Queues History
@@ -69,6 +73,14 @@ This plugin is a fork of the official RemNote History plugin, enhanced with Queu
 If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.0.7 January 07th, 2026
+
+- **Search Filter:** Added a powerful search bar to "Visited Rem History" and "Flashcard History".
+    - Filter history items instantly by text.
+    - Supports multi-word searches (prioritizes exact matches).
+    - **Flashcard Context:** Search includes the **Back Text** (content) of your flashcards, making it easier to find items based on their answer or context.
+    - **Backfill:** Existing history items are automatically updated in the background to include searchable text.
 
 ### v. 0.1.6 January 07th, 2026
 
