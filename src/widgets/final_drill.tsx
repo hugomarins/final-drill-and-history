@@ -6,6 +6,7 @@ import {
   Queue,
   usePlugin,
   useTrackerPlugin,
+  AppEvents,
 } from "@remnote/plugin-sdk";
 
 // Define the mixed type here as well
@@ -120,6 +121,15 @@ function FinalDrill() {
   };
 
 
+
+  // --- Sync Active State for Index ---
+  useEffect(() => {
+    // Signal that Final Drill is open so index.tsx can name sessions correctly.
+    plugin.storage.setSession("finalDrillActive", true);
+    return () => {
+      plugin.storage.setSession("finalDrillActive", false);
+    }
+  }, [plugin]);
 
   if (!filteredIds || filteredIds.length === 0) {
     return (
