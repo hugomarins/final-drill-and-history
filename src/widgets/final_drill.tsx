@@ -123,29 +123,24 @@ function FinalDrill() {
 
 
 
-  const isBlocked = useTrackerPlugin(async (reactivePlugin) => {
-    return await reactivePlugin.storage.getSession<boolean>("finalDrillBlocked");
-  }, [plugin]) ?? false;
-
   // --- Sync Active State for Index ---
   useEffect(() => {
-    // Signal that Final Drill is open so index.tsx can name sessions correctly.
+    // Only signal Active if NOT blocked.
+    // This prevents index.tsx from "seeing" the Final Drill when it's technically suppressed.
+    console.log(`DEBUG: FinalDrill useEffect. Setting finalDrillActive to true`);
     plugin.storage.setSession("finalDrillActive", true);
-    return () => {
-      plugin.storage.setSession("finalDrillActive", false);
-    }
-  }, [plugin]);
 
-  if (isBlocked) {
-    return (
-      <div className="h-full flex items-center justify-center p-4 text-center rn-clr-content-primary">
-        <div>
-          <h2 className="text-xl font-bold mb-2">Queue Active</h2>
-          <p>You are currently practicing another queue. Please finish it before using Final Drill.</p>
-        </div>
-      </div>
-    );
-  }
+    // Heartbeat: Signal we are alive every 2 seconds
+    const heartbeatInterval = setInterval(() => {
+      plugin.storage.setSession("finalDrillHeartbeat", Date.now());
+    }, 2000);
+
+    return () => {
+      clearInterval(heartbeatInterval);
+      console.log("DEBUG: FinalDrill Cleanup.");
+      plugin.storage.setSession("finalDrillActive", false);
+    };
+  }, [plugin]);
 
   if (!filteredIds || filteredIds.length === 0) {
     return (
@@ -281,6 +276,7 @@ function FinalDrill() {
       </div>
 
       <div className="flex-grow relative">
+        {console.log("DEBUG: FinalDrill Rendering Queue Component")}
         <Queue
           cardIds={filteredIds}
           width="100%"

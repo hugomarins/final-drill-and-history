@@ -27,13 +27,21 @@ async function onActivate(plugin: ReactRNPlugin) {
   // 1. New Final Drill Widget
   await plugin.app.registerWidget(
     "final_drill",
-    WidgetLocation.RightSidebar,
+    WidgetLocation.Popup,
     {
-      dimensions: { height: "auto", width: "100%" },
-      widgetTabIcon: "https://cdn-icons-png.flaticon.com/512/3534/3534117.png",
-      widgetTabTitle: "Final Drill",
+      dimensions: { height: "95vh" as any, width: "85vw" as any },
+
     }
   );
+
+  // Command to open Final Drill
+  await plugin.app.registerCommand({
+    id: "open_final_drill",
+    name: "Final Drill",
+    action: async () => {
+      await plugin.widget.openPopup("final_drill");
+    },
+  });
 
   // 2. Existing Document History Widget
   await plugin.app.registerWidget(
@@ -68,6 +76,23 @@ async function onActivate(plugin: ReactRNPlugin) {
     }
   );
 
+  // 5. Final Drill Notification Widget
+  await plugin.app.registerWidget(
+    "final_drill_notification",
+    // @ts-ignore - Assuming SidebarEnd exists or use valid fallback
+    WidgetLocation.SidebarEnd,
+    {
+      dimensions: { height: "auto", width: "100%" },
+    }
+  );
+
+  // Settings
+  await plugin.settings.registerBooleanSetting({
+    id: "disable_final_drill_notification",
+    title: "Disable Final Drill Notifications",
+    defaultValue: false,
+  });
+
 
   // --- Event Listeners ---
 
@@ -78,18 +103,25 @@ async function onActivate(plugin: ReactRNPlugin) {
   let cardStartTimes = new Map<string, number>();
   // Track IncRem start specifically since it might not trigger Complete
   let currentIncRemStart: number | null = null;
+  // Track last Main Queue Entry time to debounce Sidebar Queue Entry
+  let lastQueueEnterIsMain = 0;
 
   plugin.event.addListener(AppEvents.QueueLoadCard, undefined, async (data: any) => {
     try {
       const now = Date.now();
       console.log("DEBUG: QueueLoadCard", data);
 
-      // Check for IncRem (Type 15)
+      // Retry getting the queue type. When switching sidebar tabs, it can momentarily be undefined.
       const type = await plugin.queue.getCurrentQueueScreenType();
       console.log("DEBUG: Queue Type", type);
 
       // If generic/plugin type OR if type is undefined but we see IncRem signs (data.remId and no cardId)
-      const isLikelyIncRem = type === QueueItemType.Plugin || (type === undefined && data?.remId && !data?.cardId);
+      // Robust Check: If type is undefined, trust the data signature.
+      // IncRems ALWAYs have but NO cardId. Sometimes remId is also missing in the event data,
+      // so we assume anything without a cardId is an IncRem when Type is undefined.
+      const isLikelyIncRem = type === QueueItemType.Plugin || ((type === undefined || type === null) && !data?.cardId);
+
+      console.log(`DEBUG: isLikelyIncRem Check: Type=${type}, data.remId=${data?.remId}, data.cardId=${data?.cardId} -> RESULT=${isLikelyIncRem}`);
 
       if (isLikelyIncRem) {
         // If an IncRem was already open? Add its time.
@@ -132,6 +164,21 @@ async function onActivate(plugin: ReactRNPlugin) {
 
       // Track Flashcard Start Time
       if (data.cardId) {
+        // Robustness Fix: If there are lingering cards in cardStartTimes, it means the "Next" button
+        // was used (or card skipped) without triggering QueueCompleteCard (common in plugin queues).
+        // We must close them now to record the time.
+        if (cardStartTimes.size > 0 && currentSession) {
+          console.log(`DEBUG: Found ${cardStartTimes.size} lingering cards. Auto-completing them.`);
+          cardStartTimes.forEach((startTime, lingeringCardId) => {
+            const timeSpent = now - startTime;
+            currentSession!.totalTime += timeSpent;
+            currentSession!.flashcardsTime += timeSpent;
+            currentSession!.flashcardsCount++;
+            console.log(`DEBUG: Auto-completed card ${lingeringCardId}, Time: ${timeSpent}ms`);
+          });
+          cardStartTimes.clear();
+        }
+
         cardStartTimes.set(data.cardId, now);
 
         // --- Verify Final Drill Scope ---
@@ -183,22 +230,7 @@ async function onActivate(plugin: ReactRNPlugin) {
       // Validate queueId: check if it's a valid ID string (not a random specific number '0.xxxx')
       const isValidId = queueId && typeof queueId === 'string' && !queueId.startsWith("0.");
 
-      // --- DEBOUNCE / PRIORITY LOGIC ---
-      // If this is a generic ID ('0.xxx'), check if we ALREADY have a valid session established very recently.
-      if (!isValidId && queueId && queueId.startsWith("0.")) {
-        if (currentSession && currentSession.queueId && !currentSession.queueId.startsWith("0.")) {
-          const timeSinceStart = Date.now() - currentSession.startTime;
-          // If the valid session started less than 1000ms ago, assume this generic event is just noise (like Final Drill sidebar init)
-          if (timeSinceStart < 1000) {
-            console.log(`DEBUG: Ignoring generic queue ID ${queueId} because a valid session (${currentSession.scopeName}) started ${timeSinceStart}ms ago.`);
-            await plugin.storage.setSession("finalDrillBlocked", true);
-            return;
-          }
-        }
-      }
-
       if (isValidId) {
-        await plugin.storage.setSession("finalDrillBlocked", false);
         const rem = await plugin.rem.findOne(queueId);
         if (rem) {
           // Prefer text property, fallback to generic
@@ -209,28 +241,19 @@ async function onActivate(plugin: ReactRNPlugin) {
             scopeName = "Untitled";
           }
         }
-      } else if (queueId && queueId.startsWith("0.")) {
+      } else {
         // It is a generated ID. It could be "Practice All", "Final Drill", or "Embedded Queue".
 
-        // Check if Final Drill reports being active
-        // We wait a tiny bit for the Final Drill widget to potentially update status if it was just mounted?
-        // Actually, rely on the stored flag.
-        const isFinalDrillActive = await plugin.storage.getSession("finalDrillActive");
+        // Check if Final Drill reports being active (Robust check)
+        const isFinalDrillActive = await plugin.storage.getSession<boolean>("finalDrillActive");
+        // Also check Heartbeat for safety (if Active is stale)
+        const lastHeartbeat = await plugin.storage.getSession<number>("finalDrillHeartbeat");
+        const isFresh = lastHeartbeat && (Date.now() - lastHeartbeat < 4000);
 
-        // Also check screen type to be sure
-        await new Promise(resolve => setTimeout(resolve, 200));
-        const type = await plugin.queue.getCurrentQueueScreenType();
-
-        console.log("DEBUG: Generic ID. Type:", type, "FinalDrillActive:", isFinalDrillActive);
-
-        if (type && type > 0) {
-          scopeName = "Ad-hoc Session";
+        if (isFinalDrillActive || isFresh) {
+          scopeName = "Final Drill";
         } else {
-          if (isFinalDrillActive) {
-            scopeName = "Final Drill";
-          } else {
-            scopeName = "Ad-hoc Session";
-          }
+          scopeName = "Ad-hoc Session";
         }
       }
 
@@ -283,6 +306,37 @@ async function onActivate(plugin: ReactRNPlugin) {
     }
   });
 
+  // Listener to manually force save session (e.g. when Final Drill popup closes without QueueExit)
+  plugin.event.addListener("force_save_session", undefined, async () => {
+    console.log("DEBUG: Force Save Session triggered via Event.");
+    // Unblock Final Drill
+    await plugin.storage.setSession("finalDrillBlocked", false);
+
+    if (currentSession) {
+      // Finalize IncRem time if active
+      if (currentIncRemStart) {
+        currentSession.incRemsTime += (Date.now() - currentIncRemStart);
+      }
+      currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
+      currentSession.endTime = Date.now();
+
+      // Only save if data exists
+      if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
+        const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
+        await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history.slice(0, 99)]);
+        console.log("DEBUG: Session saved via Force Save Event.");
+      } else {
+        console.log("DEBUG: Session empty, not saving.");
+      }
+
+      currentSession = null;
+      cardStartTimes.clear();
+      currentIncRemStart = null;
+    } else {
+      console.log("DEBUG: No active session to save.");
+    }
+  });
+
   // Document History Listener
   plugin.event.addListener(
     AppEvents.GlobalOpenRem,
@@ -325,6 +379,7 @@ async function onActivate(plugin: ReactRNPlugin) {
     undefined,
     async (message) => {
       const { cardId, score } = message as { cardId: string; score: QueueInteractionScore };
+      console.log(`DEBUG: QueueCompleteCard fired for ${cardId}. Score: ${score}. Session Active: ${!!currentSession}`);
 
       if (currentSession && cardId) {
         // It's a Flashcard Completion (IncRems typically don't fire this or lack ID)
@@ -335,6 +390,9 @@ async function onActivate(plugin: ReactRNPlugin) {
           currentSession.flashcardsTime += timeSpent;
           currentSession.flashcardsCount++;
           cardStartTimes.delete(cardId);
+          console.log(`DEBUG: Successfully recorded time for card ${cardId}: ${timeSpent}ms`);
+        } else {
+          console.warn(`DEBUG: No start time found for completed card ${cardId}`);
         }
       } else {
         // Close any lingering IncRem
@@ -383,8 +441,41 @@ async function onActivate(plugin: ReactRNPlugin) {
           ...historyData.slice(0, 1999),
         ]);
       }
-
       // --- Logic for Enhancement 2: Final Drill ---
+
+      // Heartbeat Monitor
+      // Checks if Final Drill is active but heartbeat stopped (Popup Closed)
+      setInterval(async () => {
+        if (currentSession && currentSession.scopeName === "Final Drill") {
+          const lastHeartbeat = await plugin.storage.getSession<number>("finalDrillHeartbeat");
+          if (lastHeartbeat) {
+            const timeSinceHeartbeat = Date.now() - lastHeartbeat;
+            if (timeSinceHeartbeat > 5000) {
+              console.log(`DEBUG: Final Drill Heartbeat stale (${timeSinceHeartbeat}ms). Forcing session save (Popup Closed).`);
+
+              if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
+                if (currentIncRemStart) {
+                  currentSession.incRemsTime += (Date.now() - currentIncRemStart);
+                }
+                currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
+                currentSession.endTime = Date.now();
+
+                const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
+                await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history.slice(0, 99)]);
+                console.log("DEBUG: Final Drill Session saved via Heartbeat Monitor.");
+              }
+
+              currentSession = null;
+              cardStartTimes.clear();
+              currentIncRemStart = null;
+              await plugin.storage.setSession("finalDrillBlocked", false);
+              // Clear heartbeat to prevent loop
+              await plugin.storage.setSession("finalDrillHeartbeat", 0);
+            }
+          }
+        }
+      }, 2500);
+
       // Type is now mixed (string | object) to support legacy data
       let finalDrillIds = (await plugin.storage.getSynced("finalDrillIds")) as FinalDrillItem[] || [];
 
