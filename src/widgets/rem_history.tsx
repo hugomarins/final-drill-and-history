@@ -16,6 +16,8 @@ export interface RemHistoryData {
   open: boolean;
   time: number;
   kbId?: string; // Added kbId
+  text?: string; // text content for search
+  _v?: number; // version for cache invalidation
 }
 
 function RightSidebar2() {
@@ -24,16 +26,61 @@ function RightSidebar2() {
     "remData",
     []
   );
-  
+
   const [filteredRemData, setFilteredRemData] = useState<RemHistoryData[]>([]);
 
+  // Search State
+  const [searchText, setSearchText] = useState("");
+
+  // Backfill Effect: Fetch text for items that don't have it
+  useEffect(() => {
+    let mounted = true;
+    async function backfillData() {
+      // Find items needing backfill (missing text OR old version)
+      const needsBackfill = remDataRaw
+        .filter(item => typeof item.text === 'undefined' || item._v !== 1)
+        .slice(0, 5); // Batch size to avoid overload
+
+      if (needsBackfill.length === 0) return;
+
+      const updates = new Map<number, string>();
+
+      for (const item of needsBackfill) {
+        const rem = await plugin.rem.findOne(item.remId);
+        const frontText = rem?.text ? await plugin.richText.toString(rem.text) : "";
+        const backText = rem?.backText ? await plugin.richText.toString(rem.backText) : "";
+        const text = `${frontText} ${backText}`.trim();
+        updates.set(item.key, text);
+      }
+
+      if (!mounted) return;
+
+      // Batch update
+      setRemData(
+        remDataRaw.map(item => {
+          if (updates.has(item.key)) {
+            return { ...item, text: updates.get(item.key), _v: 1 };
+          }
+          return item;
+        })
+      );
+    }
+
+    // Run periodically if there are items effectively
+    if (remDataRaw.some(x => typeof x.text === 'undefined' || x._v !== 1)) {
+      const timer = setTimeout(backfillData, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [remDataRaw, plugin]);
+
+  // Effect to filter data by Knowledge Base AND Search Text
   useEffect(() => {
     async function filterData() {
       const currentKb = await plugin.kb.getCurrentKnowledgeBaseData();
       const isPrimary = await plugin.kb.isPrimaryKnowledgeBase();
       const currentKbId = currentKb._id;
 
-      const filtered = remDataRaw.filter((item) => {
+      let filtered = remDataRaw.filter((item) => {
         if (!item.kbId) {
           // Legacy: Include if this is the Primary KB
           return isPrimary;
@@ -41,10 +88,37 @@ function RightSidebar2() {
         // New: Include if KB ID matches
         return item.kbId === currentKbId;
       });
+
+      // 2. Search Filter
+      if (searchText.trim().length > 0) {
+        const lowerSearch = searchText.toLowerCase();
+        const tokens = lowerSearch.split(/\s+/).filter(t => t.length > 0);
+
+        filtered = filtered.map(item => {
+          if (!item.text) return { item, score: 0 };
+          const lowerText = item.text.toLowerCase();
+
+          let score = 0;
+          for (const token of tokens) {
+            if (lowerText.includes(token)) {
+              score++;
+            }
+          }
+          return { item, score };
+        })
+          .filter(x => x.score > 0)
+          .sort((a, b) => {
+            // Sort by matches (desc), then by time (desc)
+            if (b.score !== a.score) return b.score - a.score;
+            return b.item.time - a.item.time;
+          })
+          .map(x => x.item);
+      }
+
       setFilteredRemData(filtered);
     }
     filterData();
-  }, [remDataRaw, plugin]);
+  }, [remDataRaw, plugin, searchText]);
 
   const closeIndex = (itemKey: number) => {
     const originalIndex = remDataRaw.findIndex(x => x.key === itemKey);
@@ -81,6 +155,14 @@ function RightSidebar2() {
       onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="p-2 text-lg font-bold">Visited Rem History</div>
+      <div className="px-2 pb-2">
+        <input
+          className="w-full p-2 border rounded-md rn-clr-background-secondary rn-clr-content-primary border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          placeholder="Search history..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+      </div>
       {filteredRemData.length == 0 && (
         <div className="rn-clr-content-primary">
           Navigate to other documents to automatically record history.

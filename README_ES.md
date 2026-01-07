@@ -10,6 +10,7 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 - **Qué hace:** Registra un historial cronológico de los Rems a los que has navegado en el Editor.
 - **Por qué usarlo:** Vuelve rápidamente a los documentos en los que estabas trabajando sin perder tu lugar.
 - **Interacción:** Puedes expandir y editar el Rem directamente en la barra lateral derecha.
+- **Búsqueda:** Incluye una barra de búsqueda para filtrar instantáneamente tu historial. Soporta consultas de múltiples palabras (ej. "Examen Biología") y búsqueda profunda de texto en todos los elementos registrados.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/rem-history-editing.gif)
 
 ### 2. Historial de Flashcards
@@ -17,6 +18,7 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 - **Por qué usarlo:** Si quieres verificar el contexto o editar una tarjeta que acabas de revisar, puedes encontrarla fácilmente aquí sin interrumpir el flujo de tu sesión.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
 - **Interacción:** Hacer clic en una tarjeta abrirá el rem en el Editor.
+- **Búsqueda:** Encuentra sin esfuerzo una tarjeta que practicaste hace momentos o días. La búsqueda verifica tanto el frente (pregunta) como el reverso (respuesta/contexto) de tus tarjetas.
 
 ### 3. Histórico de Colas Practicadas
 - **Qué hace:** Rastrea tus sesiones de práctica y métricas.
@@ -68,6 +70,14 @@ Este complemento es una bifurcación (fork) del complemento oficial RemNote Hist
 Si estás interesado en construir tus propios complementos, consulta la documentación oficial, guías y tutoriales en el [Sitio Web de Plugins de RemNote](https://plugins.remnote.com/).
 
 ## Registro de Cambios (Changelog)
+
+### v. 0.0.7 07 de Enero de 2026
+
+- **Filtro de Búsqueda:** Se agregó una potente barra de búsqueda al "Historial de Rems Visitados" y al "Historial de Flashcards".
+    - Filtra elementos del historial instantáneamente por texto.
+    - Soporta búsquedas de múltiples palabras (prioriza coincidencias exactas).
+    - **Contexto de Flashcard:** La búsqueda incluye el **Texto Trasero** (contenido) de tus flashcards, facilitando encontrar elementos basados en su respuesta o contexto.
+    - **Relleno Automático (Backfill):** Los elementos existentes del historial se actualizan automáticamente en segundo plano para incluir texto buscable.
 
 ### v. 0.1.6 07 de Enero de 2026
 

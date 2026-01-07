@@ -10,6 +10,7 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 - **O que faz:** Registra um histórico cronológico dos Rems que você navegou no Editor.
 - **Por que usar:** Volte rapidamente para documentos em que você estava trabalhando sem perder seu lugar.
 - **Interação:** Você pode expandir e editar o Rem diretamente na barra lateral direita.
+- **Busca:** Inclui uma barra de busca para filtrar instantaneamente seu histórico. Suporta consultas de múltiplas palavras (ex: "Prova Biologia") e busca profunda de texto em todos os itens registrados.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/rem-history-editing.gif)
 
 ### 2. Histórico de Flashcards
@@ -17,6 +18,7 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 - **Por que usar:** Se você quiser verificar o contexto ou editar um flashcard que acabou de revisar, pode encontrá-lo facilmente aqui sem interromper o fluxo da sua sessão.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/flashcard-history.png)
 - **Interação:** Clicar em um flashcard abrirá o rem no Editor.
+- **Busca:** Encontre sem esforço um cartão que você praticou momentos ou dias atrás. A busca verifica tanto a frente (pergunta) quanto o verso (resposta/contexto) dos seus cartões.
 
 ### 3. Histórico de Sessões Praticadas (Practiced Queues History)
 - **O que faz:** Rastreia suas sessões de prática e métricas.
@@ -68,6 +70,14 @@ Este plugin é um fork do plugin oficial RemNote History, aprimorado com ouvinte
 Se você estiver interessado em criar seus próprios plugins, confira a documentação oficial, guias e tutoriais no [Site de Plugins do RemNote](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.0.7 07 de Janeiro de 2026
+
+- **Filtro de Busca:** Adicionada uma potente barra de busca ao "Histórico de Rems Visitados" e ao "Histórico de Flashcards".
+    - Filtre itens do histórico instantaneamente por texto.
+    - Suporta buscas de múltiplas palavras (prioriza correspondências exatas).
+    - **Contexto do Flashcard:** A busca inclui o **Texto do Verso** (conteúdo) dos seus flashcards, facilitando encontrar itens baseados em sua resposta ou contexto.
+    - **Preenchimento Retroativo (Backfill):** Itens existentes do histórico são atualizados automaticamente em segundo plano para incluir texto pesquisável.
 
 ### v. 0.1.6 07 de Janeiro de 2026
 

@@ -296,6 +296,13 @@ async function onActivate(plugin: ReactRNPlugin) {
       const currentKbId = kbData._id;
 
       if (currentRemData[0]?.remId != currentRemId) {
+        // Fetch text for search
+        // Fetch text for search
+        const rem = await plugin.rem.findOne(currentRemId);
+        const frontText = rem?.text ? await plugin.richText.toString(rem.text) : "";
+        const backText = rem?.backText ? await plugin.richText.toString(rem.backText) : "";
+        const text = `${frontText} ${backText}`.trim();
+
         await plugin.storage.setSynced("remData", [
           {
             key: Math.random(),
@@ -303,6 +310,8 @@ async function onActivate(plugin: ReactRNPlugin) {
             open: false,
             time: new Date().getTime(),
             kbId: currentKbId, // Save KB ID
+            text: text, // Save Text for Search
+            _v: 1,
           },
           ...currentRemData.slice(0, 199),
         ]);
@@ -353,6 +362,13 @@ async function onActivate(plugin: ReactRNPlugin) {
       const historyData = (await plugin.storage.getSynced("flashcardHistoryData")) as FlashcardHistoryData[] || [];
 
       if (historyData[0]?.cardId !== cardId) {
+        // Fetch text for search. Note: We use the REM's text, not the card's specific question/answer,
+        // as the scope is usually the Rem itself.
+        const rem = await plugin.rem.findOne(remId);
+        const frontText = rem?.text ? await plugin.richText.toString(rem.text) : "";
+        const backText = rem?.backText ? await plugin.richText.toString(rem.backText) : "";
+        const text = `${frontText} ${backText}`.trim();
+
         await plugin.storage.setSynced("flashcardHistoryData", [
           {
             key: Math.random(),
@@ -361,6 +377,8 @@ async function onActivate(plugin: ReactRNPlugin) {
             cardId: cardId,
             time: new Date().getTime(),
             kbId: currentKbId, // Save KB ID
+            text: text, // Save Text for Search
+            _v: 1,
           },
           ...historyData.slice(0, 199),
         ]);
