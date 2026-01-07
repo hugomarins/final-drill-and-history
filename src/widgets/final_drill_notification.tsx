@@ -52,8 +52,24 @@ export const FinalDrillNotification = () => {
     const settings = useTrackerPlugin(
         async (reactivePlugin) => {
             const disabled = await reactivePlugin.settings.getSetting("disable_final_drill_notification");
-            const ids = await reactivePlugin.storage.getSynced("finalDrillIds");
-            return { disabled, count: Array.isArray(ids) ? ids.length : 0 };
+            const ids = (await reactivePlugin.storage.getSynced("finalDrillIds")) as (string | { cardId: string; kbId?: string })[] || [];
+
+            // Filter by Current KB
+            const currentKb = await reactivePlugin.kb.getCurrentKnowledgeBaseData();
+            const isPrimary = await reactivePlugin.kb.isPrimaryKnowledgeBase();
+            const currentKbId = currentKb?._id;
+
+            const count = ids.filter(item => {
+                if (typeof item === 'string') {
+                    // Legacy items belong to Primary KB
+                    return isPrimary;
+                } else {
+                    // New items check KB ID
+                    return item.kbId === currentKbId;
+                }
+            }).length;
+
+            return { disabled, count };
         },
         []
     );
