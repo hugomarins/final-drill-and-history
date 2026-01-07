@@ -9,7 +9,7 @@ import {
 } from "@remnote/plugin-sdk";
 import { timeSince } from "../lib/utils";
 
-const NUM_TO_LOAD_IN_BATCH = 50;
+const NUM_TO_LOAD_IN_BATCH = 30;
 
 export interface FlashcardHistoryData {
   key: number;

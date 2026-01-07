@@ -70,6 +70,10 @@ If you are interested in building your own plugins, check out the official docum
 
 ## Changelog
 
+### v. 0.1.6 January 07th, 2026
+
+- Solved a bug where the Final Drill could clash with the main queue.
+
 ### v. 0.1.4 January 06th, 2026
 
 - **Practiced Queues History:**

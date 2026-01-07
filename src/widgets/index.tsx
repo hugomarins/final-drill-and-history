@@ -304,7 +304,7 @@ async function onActivate(plugin: ReactRNPlugin) {
             time: new Date().getTime(),
             kbId: currentKbId, // Save KB ID
           },
-          ...currentRemData,
+          ...currentRemData.slice(0, 199),
         ]);
       }
     }
@@ -362,7 +362,7 @@ async function onActivate(plugin: ReactRNPlugin) {
             time: new Date().getTime(),
             kbId: currentKbId, // Save KB ID
           },
-          ...historyData.slice(0, 99),
+          ...historyData.slice(0, 199),
         ]);
       }
 
