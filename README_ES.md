@@ -69,6 +69,11 @@ Si estás interesado en construir tus propios complementos, consulta la document
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.1.6 07 de Enero de 2026
+
+- **Mejoras en Final Drill:**
+    - Se solucionó un error donde la cola de Final Drill podía colisionar con la cola principal.
+
 ### v. 0.1.4 06 de Enero de 2026
 
 - **Histórico de Colas Practicadas:**

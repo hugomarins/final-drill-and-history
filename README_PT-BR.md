@@ -69,6 +69,11 @@ Se você estiver interessado em criar seus próprios plugins, confira a document
 
 ## Changelog
 
+### v. 0.1.6 07 de Janeiro de 2026
+
+- **Melhorias no Final Drill:**
+    - Solucionado um bug onde a fila de Final Drill podia colidir com a fila principal.
+
 ### v. 0.1.4 06 de Janeiro de 2026
 
 - **Histórico de Sessões Praticadas (Practiced Queues History):**
