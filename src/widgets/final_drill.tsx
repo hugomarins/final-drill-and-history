@@ -123,6 +123,8 @@ function FinalDrill() {
 
 
 
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
   // --- Sync Active State for Index ---
   useEffect(() => {
     // Only signal Active if NOT blocked.
@@ -130,12 +132,59 @@ function FinalDrill() {
     console.log(`DEBUG: FinalDrill useEffect. Setting finalDrillActive to true`);
     plugin.storage.setSession("finalDrillActive", true);
 
+    // Initial Focus for Keyboard Shortcuts
+    if (containerRef.current) {
+      containerRef.current.focus();
+    }
+
+    // Manual Keyboard Shortcuts Handler
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
+      console.log("DEBUG: KeyDown", e.key);
+
+      // helper to click button by text (Show Answer)
+      const clickButtonByText = (text: string) => {
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const btn = buttons.find(b => b.textContent?.toLowerCase().includes(text.toLowerCase()));
+        if (btn) {
+          console.log("DEBUG: Clicking button", text);
+          btn.click();
+          e.preventDefault();
+          return true;
+        }
+        return false;
+      };
+
+      if (e.key === ' ' || e.key === 'Enter') {
+        // Space/Enter -> Show Answer
+        clickButtonByText("show answer");
+      } else if (['1', '2', '3', '4'].includes(e.key)) {
+        // Ratings (1-based index from key)
+        switch (e.key) {
+          case '1': clickButtonByText("forgot"); break;
+          case '2': clickButtonByText("hard"); break;
+          case '3': clickButtonByText("good"); break;
+          case '4': clickButtonByText("easy"); break;
+        }
+        // Also try fallback labels
+        if (e.key === '2') { clickButtonByText("partially"); } // Partial recall?
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
     // Heartbeat: Signal we are alive every 2 seconds
     const heartbeatInterval = setInterval(() => {
       plugin.storage.setSession("finalDrillHeartbeat", Date.now());
     }, 2000);
 
     return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
       clearInterval(heartbeatInterval);
       console.log("DEBUG: FinalDrill Cleanup.");
       plugin.storage.setSession("finalDrillActive", false);
@@ -228,7 +277,11 @@ function FinalDrill() {
   }
 
   return (
-    <div className="h-full w-full flex flex-col relative">
+    <div
+      ref={containerRef}
+      tabIndex={-1}
+      className="h-full w-full flex flex-col relative focus:outline-none"
+    >
       {/* Confirmation Dialogs */}
       <div className="border-b rn-clr-border-primary flex flex-col">
         {/* Top Row: Title + Controls + Warning */}

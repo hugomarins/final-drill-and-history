@@ -19,7 +19,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   // Register Setting for Old Items Threshold
   await plugin.settings.registerNumberSetting({
     id: "old_item_threshold",
-    title: "Final Drill: Old Items Threshold (Days)",
+    title: "Old Items Threshold (Days) for Final Drill",
     description: "Items older than this number of days will trigger a warning.",
     defaultValue: 7,
   });
@@ -37,7 +37,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   // Command to open Final Drill
   await plugin.app.registerCommand({
     id: "open_final_drill",
-    name: "Final Drill",
+    name: "Final Drill: deliberately practice poorly rated cards",
     action: async () => {
       await plugin.widget.openPopup("final_drill");
     },
