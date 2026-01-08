@@ -144,7 +144,24 @@ function FinalDrill() {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // --- Sync Active State for Index ---
-  // ... (omitted)
+  useEffect(() => {
+    // Only signal Active if NOT blocked.
+    // This prevents index.tsx from "seeing" the Final Drill when it's technically suppressed.
+    console.log(`DEBUG: FinalDrill useEffect. Setting finalDrillActive to true`);
+    plugin.storage.setSession("finalDrillActive", true);
+
+    // Heartbeat: Signal we are alive every 2 seconds
+    const heartbeatInterval = setInterval(() => {
+      plugin.storage.setSession("finalDrillHeartbeat", Date.now());
+    }, 2000);
+
+    return () => {
+      clearInterval(heartbeatInterval);
+      console.log("DEBUG: FinalDrill Cleanup.");
+      plugin.storage.setSession("finalDrillActive", false);
+    };
+  }, [plugin]);
+
 
   // ... (omitted)
 
@@ -339,6 +356,7 @@ function FinalDrill() {
       <div className="flex-grow relative">
         {console.log("DEBUG: FinalDrill Rendering Queue Component")}
         <Queue
+          key={filteredIds.length}
           cardIds={filteredIds}
           width="100%"
           height="100%"

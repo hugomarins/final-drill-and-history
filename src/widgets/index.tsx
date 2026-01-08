@@ -106,6 +106,43 @@ async function onActivate(plugin: ReactRNPlugin) {
   // Track last Main Queue Entry time to debounce Sidebar Queue Entry
   let lastQueueEnterIsMain = 0;
 
+  // --- Heartbeat Monitor (Single Instance) ---
+  setInterval(async () => {
+    if (currentSession && currentSession.scopeName === "Final Drill") {
+      // Grace Period: Don't kill session if it just started (e.g. < 5s)
+      // This allows the UI to mount and send the first heartbeat.
+      if (Date.now() - currentSession.startTime < 5000) {
+        return;
+      }
+
+      const lastHeartbeat = await plugin.storage.getSession<number>("finalDrillHeartbeat");
+      if (lastHeartbeat) {
+        const timeSinceHeartbeat = Date.now() - lastHeartbeat;
+        if (timeSinceHeartbeat > 5000) {
+          console.log(`DEBUG: Final Drill Heartbeat stale (${timeSinceHeartbeat}ms). Forcing session save (Popup Closed).`);
+
+          if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
+            if (currentIncRemStart) {
+              currentSession.incRemsTime += (Date.now() - currentIncRemStart);
+            }
+            currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
+            currentSession.endTime = Date.now();
+
+            const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
+            await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history.slice(0, 99)]);
+            console.log("DEBUG: Final Drill Session saved via Heartbeat Monitor.");
+          }
+
+          currentSession = null;
+          cardStartTimes.clear();
+          currentIncRemStart = null;
+          // Clear heartbeat to prevent loop
+          await plugin.storage.setSession("finalDrillHeartbeat", 0);
+        }
+      }
+    }
+  }, 2500);
+
   plugin.event.addListener(AppEvents.QueueLoadCard, undefined, async (data: any) => {
     try {
       const now = Date.now();
@@ -171,20 +208,7 @@ async function onActivate(plugin: ReactRNPlugin) {
         }
         await plugin.storage.setSession("finalDrillCurrentCardId", data.cardId);
 
-        // Robustness Fix: If there are lingering cards in cardStartTimes, it means the "Next" button
-        // was used (or card skipped) without triggering QueueCompleteCard (common in plugin queues).
-        // We must close them now to record the time.
-        if (cardStartTimes.size > 0 && currentSession) {
-          console.log(`DEBUG: Found ${cardStartTimes.size} lingering cards. Auto-completing them.`);
-          cardStartTimes.forEach((startTime, lingeringCardId) => {
-            const timeSpent = now - startTime;
-            currentSession!.totalTime += timeSpent;
-            currentSession!.flashcardsTime += timeSpent;
-            currentSession!.flashcardsCount++;
-            console.log(`DEBUG: Auto-completed card ${lingeringCardId}, Time: ${timeSpent}ms`);
-          });
-          cardStartTimes.clear();
-        }
+
 
         cardStartTimes.set(data.cardId, now);
 
@@ -287,7 +311,6 @@ async function onActivate(plugin: ReactRNPlugin) {
 
   plugin.event.addListener(AppEvents.QueueExit, undefined, async () => {
     // Unblock Final Drill when leaving any queue
-    await plugin.storage.setSession("finalDrillBlocked", false);
 
     if (currentSession) {
       currentSession.endTime = Date.now();
@@ -317,7 +340,6 @@ async function onActivate(plugin: ReactRNPlugin) {
   plugin.event.addListener("force_save_session", undefined, async () => {
     console.log("DEBUG: Force Save Session triggered via Event.");
     // Unblock Final Drill
-    await plugin.storage.setSession("finalDrillBlocked", false);
 
     if (currentSession) {
       // Finalize IncRem time if active
@@ -450,38 +472,8 @@ async function onActivate(plugin: ReactRNPlugin) {
       }
       // --- Logic for Enhancement 2: Final Drill ---
 
-      // Heartbeat Monitor
-      // Checks if Final Drill is active but heartbeat stopped (Popup Closed)
-      setInterval(async () => {
-        if (currentSession && currentSession.scopeName === "Final Drill") {
-          const lastHeartbeat = await plugin.storage.getSession<number>("finalDrillHeartbeat");
-          if (lastHeartbeat) {
-            const timeSinceHeartbeat = Date.now() - lastHeartbeat;
-            if (timeSinceHeartbeat > 5000) {
-              console.log(`DEBUG: Final Drill Heartbeat stale (${timeSinceHeartbeat}ms). Forcing session save (Popup Closed).`);
+      // Heartbeat Monitor logic moved to onActivate to avoid multiple intervals
 
-              if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
-                if (currentIncRemStart) {
-                  currentSession.incRemsTime += (Date.now() - currentIncRemStart);
-                }
-                currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
-                currentSession.endTime = Date.now();
-
-                const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
-                await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history.slice(0, 99)]);
-                console.log("DEBUG: Final Drill Session saved via Heartbeat Monitor.");
-              }
-
-              currentSession = null;
-              cardStartTimes.clear();
-              currentIncRemStart = null;
-              await plugin.storage.setSession("finalDrillBlocked", false);
-              // Clear heartbeat to prevent loop
-              await plugin.storage.setSession("finalDrillHeartbeat", 0);
-            }
-          }
-        }
-      }, 2500);
 
       // Type is now mixed (string | object) to support legacy data
       let finalDrillIds = (await plugin.storage.getSynced("finalDrillIds")) as FinalDrillItem[] || [];
