@@ -66,12 +66,6 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
    - Abre la pestaña para practicar estas tarjetas específicas.
    - La cola se vaciará automáticamente a medida que domines las tarjetas (califícalas como Bien/Fácil).
 
-## Desarrolladores
-
-Este complemento es una bifurcación (fork) del complemento oficial RemNote History, mejorado con escuchas de eventos de Cola e implementación de almacenamiento sincronizado para la lógica de Final Drill.
-
-Si estás interesado en construir tus propios complementos, consulta la documentación oficial, guías y tutoriales en el [Sitio Web de Plugins de RemNote](https://plugins.remnote.com/).
-
 ## Registro de Cambios (Changelog)
 
 ### v. 0.0.8 07 de Enero de 2026

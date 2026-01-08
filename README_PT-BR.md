@@ -66,12 +66,6 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
    - Abra a aba para praticar esses cartões específicos.
    - A fila será limpa automaticamente à medida que você dominar os cartões (classifique-os como Bom/Fácil).
 
-## Desenvolvedores
-
-Este plugin é um fork do plugin oficial RemNote History, aprimorado com ouvintes de eventos de Fila e implementação de armazenamento sincronizado para a lógica do Final Drill.
-
-Se você estiver interessado em criar seus próprios plugins, confira a documentação oficial, guias e tutoriais no [Site de Plugins do RemNote](https://plugins.remnote.com/).
-
 ## Changelog
 
 ### v. 0.0.8 07 de Janeiro de 2026
