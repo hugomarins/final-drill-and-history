@@ -50,7 +50,7 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
-![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-and-history.gif)
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-editor.png)
 
 ## How to Use
 
@@ -73,6 +73,10 @@ This plugin is a fork of the official RemNote History plugin, enhanced with Queu
 If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.0.8 January 07th, 2026
+
+- **Final Drill:** now is shown in a popup. Know limitations: irresponsive to keyboard shortcuts, and no access to Edit / Preview buttons. As a workaound, a Editor UI is accessible by buttons (as it is still limited, there is a "Go to Rem" button to jump to the Rem in RemNote native Editor).
 
 ### v. 0.0.7 January 07th, 2026
 
