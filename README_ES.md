@@ -49,7 +49,7 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
-![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-and-history.gif)
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-editor.png)
 
 ## Cómo Usar
 
@@ -72,6 +72,10 @@ Este complemento es una bifurcación (fork) del complemento oficial RemNote Hist
 Si estás interesado en construir tus propios complementos, consulta la documentación oficial, guías y tutoriales en el [Sitio Web de Plugins de RemNote](https://plugins.remnote.com/).
 
 ## Registro de Cambios (Changelog)
+
+### v. 0.0.8 07 de Enero de 2026
+
+- **Final Drill:** Ahora se muestra en una ventana popup. Limitaciones: no es respondente a atajos de teclado, y no tiene acceso a los botones Editar / Previsualizar. Como una solución alternativa, un Editor UI es accesible por botones (como alternativa, un botón "Ir al Rem" para saltar al Rem en el Editor RemNote nativo).
 
 ### v. 0.0.7 07 de Enero de 2026
 

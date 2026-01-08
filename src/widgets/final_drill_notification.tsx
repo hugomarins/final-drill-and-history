@@ -69,10 +69,21 @@ export const FinalDrillNotification = () => {
                 }
             }).length;
 
-            return { disabled, count };
+            // Signal to force visibility (e.g., from "Go to Rem")
+            const resumeTrigger = await reactivePlugin.storage.getSession<number>("finalDrillResumeTrigger");
+
+            return { disabled, count, resumeTrigger };
         },
         []
     );
+
+    // Watch for Resume Signal
+    useEffect(() => {
+        if (settings?.resumeTrigger) {
+            setDismissed(false);
+            setVisible(true);
+        }
+    }, [settings?.resumeTrigger]);
 
     // Pick a new phrase whenever we become visible
     useEffect(() => {

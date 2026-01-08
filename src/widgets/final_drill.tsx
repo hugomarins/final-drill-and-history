@@ -7,6 +7,8 @@ import {
   usePlugin,
   useTrackerPlugin,
   AppEvents,
+  RemHierarchyEditorTree, // Import Editor
+  RemRichTextEditor,
 } from "@remnote/plugin-sdk";
 
 // Define the mixed type here as well
@@ -120,121 +122,118 @@ function FinalDrill() {
     setShowClearAllConfirm(false);
   };
 
+  // --- Edit Mode Logic ---
+  const [editingRemId, setEditingRemId] = useState<string | null>(null);
 
-
+  const startEditing = async (which: 'current' | 'previous') => {
+    const key = which === 'current' ? "finalDrillCurrentCardId" : "finalDrillPreviousCardId";
+    const cardId = await plugin.storage.getSession<string>(key);
+    if (!cardId) {
+      await plugin.app.toast(`No ${which} card found to edit.`);
+      return;
+    }
+    const card = await plugin.card.findOne(cardId);
+    if (card && card.remId) {
+      console.log(`DEBUG: Editing Rem ID: ${card.remId} for Card: ${cardId}`);
+      setEditingRemId(card.remId);
+    } else {
+      await plugin.app.toast(`Could not find Rem for card ${cardId}`);
+    }
+  };
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // --- Sync Active State for Index ---
-  useEffect(() => {
-    // Only signal Active if NOT blocked.
-    // This prevents index.tsx from "seeing" the Final Drill when it's technically suppressed.
-    console.log(`DEBUG: FinalDrill useEffect. Setting finalDrillActive to true`);
-    plugin.storage.setSession("finalDrillActive", true);
+  // ... (omitted)
 
-    // Initial Focus for Keyboard Shortcuts
-    if (containerRef.current) {
-      containerRef.current.focus();
-    }
+  // ... (omitted)
 
-    // Heartbeat: Signal we are alive every 2 seconds
-    const heartbeatInterval = setInterval(() => {
-      plugin.storage.setSession("finalDrillHeartbeat", Date.now());
-    }, 2000);
-
-    return () => {
-      clearInterval(heartbeatInterval);
-      console.log("DEBUG: FinalDrill Cleanup.");
-      plugin.storage.setSession("finalDrillActive", false);
-    };
-  }, [plugin]);
-
-
-  if (!filteredIds || filteredIds.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center p-4 text-center rn-clr-content-primary">
-        <div>
-          <h2 className="text-xl font-bold mb-2">Final Drill Clear!</h2>
-          <p>No cards rated "Hard" or "Forgot" are currently in the drill queue for this Knowledge Base.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (showClearOldConfirm) {
+  // Render Editor Mode
+  if (editingRemId) {
     return (
       <div
-        className="h-full w-full flex flex-col items-center justify-center p-4 text-center"
+        className="h-full w-full flex flex-col"
         style={{
           backgroundColor: 'var(--rn-clr-background-primary)',
           color: 'var(--rn-clr-content-primary)'
         }}
       >
-        <h3 className="text-lg font-bold mb-2">Clear Old Items?</h3>
-        <p className="mb-6 text-sm" style={{ color: 'var(--rn-clr-content-secondary)' }}>
-          This will remove {oldItemsCount} items that have been in the queue for more than {oldItemThreshold} days. {filteredIds.length - oldItemsCount} items will remain.
-        </p>
-        <div className="flex gap-4">
-          <button
-            onClick={() => setShowClearOldConfirm(false)}
-            className="px-4 py-2 rounded transition-colors"
-            style={{
-              border: '1px solid var(--rn-clr-border-primary)',
-              color: 'var(--rn-clr-content-primary)',
-              backgroundColor: 'var(--rn-clr-background-secondary)'
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={clearOldItems}
-            className="px-4 py-2 rounded text-white transition-colors"
-            style={{ backgroundColor: '#ea5e5e' }}
-          >
-            Clear Old Items
-          </button>
+        {/* Header */}
+        <div
+          className="w-full flex justify-between items-center p-2 border-b flex-shrink-0"
+          style={{
+            borderColor: 'var(--rn-clr-border-primary)',
+            backgroundColor: 'var(--rn-clr-background-secondary)'
+          }}
+        >
+          <div className="flex flex-col">
+            <span className="font-semibold text-lg px-2">Editing Card</span>
+            <span className="text-xs px-2 font-mono" style={{ color: 'var(--rn-clr-content-tertiary)' }}>ID: {editingRemId}</span>
+          </div>
+          <div className="flex gap-2" style={{ paddingRight: '60px' }}>
+            <button
+              onClick={async () => {
+                const rem = await plugin.rem.findOne(editingRemId);
+                if (rem) {
+                  await plugin.window.openRem(rem);
+                  await plugin.storage.setSession("finalDrillResumeTrigger", Date.now());
+                  await plugin.widget.closePopup();
+                }
+              }}
+              className="px-3 py-1.5 rounded font-medium transition-colors"
+              style={{
+                color: 'var(--rn-clr-content-primary)',
+                border: '1px solid var(--rn-clr-border-primary)',
+                backgroundColor: 'var(--rn-clr-background-primary)'
+              }}
+            >
+              Go to Rem
+            </button>
+            <button
+              onClick={() => setEditingRemId(null)}
+              className="px-3 py-1.5 rounded bg-blue-500 text-white hover:bg-blue-600 font-medium transition-colors shadow-sm"
+            >
+              Done / Back to Drill
+            </button>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-grow w-full overflow-hidden flex flex-col p-4 overflow-y-auto gap-6">
+
+          {/* 1. Rem Content Editor */}
+          <div className="flex-shrink-0">
+            <div className="text-sm font-bold mb-2 px-2 uppercase tracking-wide" style={{ color: 'var(--rn-clr-content-secondary)' }}>
+              Rem Content
+            </div>
+            <div className="border rounded-md p-2" style={{ borderColor: 'var(--rn-clr-border-primary)' }}>
+              <RemRichTextEditor
+                remId={editingRemId}
+                width="100%"
+              />
+            </div>
+          </div>
+
+          {/* 2. Hierarchy Tree (Children) */}
+          <div className="flex-grow flex flex-col min-h-[200px]">
+            <div className="text-sm font-bold mb-2 px-2 uppercase tracking-wide" style={{ color: 'var(--rn-clr-content-secondary)' }}>
+              Hierarchy / Details
+            </div>
+            <div className="flex-grow border rounded-md p-2" style={{ borderColor: 'var(--rn-clr-border-primary)' }}>
+              <RemHierarchyEditorTree
+                remId={editingRemId}
+                width="100%"
+                height="auto"
+              />
+            </div>
+          </div>
+
         </div>
       </div>
     );
   }
 
-  if (showClearAllConfirm) {
-    return (
-      <div
-        className="h-full w-full flex flex-col items-center justify-center p-4 text-center"
-        style={{
-          backgroundColor: 'var(--rn-clr-background-primary)',
-          color: 'var(--rn-clr-content-primary)'
-        }}
-      >
-        <h3 className="text-lg font-bold mb-2">Clear Final Drill Queue?</h3>
-        <p className="mb-6 text-sm" style={{ color: 'var(--rn-clr-content-secondary)' }}>
-          This will remove all {filteredIds.length} items from the final drill queue for this Knowledge Base.
-        </p>
-        <div className="flex gap-4">
-          <button
-            onClick={() => setShowClearAllConfirm(false)}
-            className="px-4 py-2 rounded transition-colors"
-            style={{
-              border: '1px solid var(--rn-clr-border-primary)',
-              color: 'var(--rn-clr-content-primary)',
-              backgroundColor: 'var(--rn-clr-background-secondary)'
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={clearAllItems}
-            className="px-4 py-2 rounded text-white transition-colors"
-            style={{ backgroundColor: '#ea5e5e' }}
-          >
-            Clear All
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Standard Drill View
   return (
     <div
       ref={containerRef}
@@ -260,6 +259,56 @@ function FinalDrill() {
                 {filteredIds.length} Remaining
               </span>
             </div>
+          </div>
+
+          {/* Center/Right: Edit Buttons */}
+          <div className="flex gap-2 items-center">
+            {/* Go to Rem (Current) */}
+            <button
+              onClick={async () => {
+                const cardId = await plugin.storage.getSession<string>("finalDrillCurrentCardId");
+                if (cardId) {
+                  const card = await plugin.card.findOne(cardId);
+                  if (card && card.remId) {
+                    const rem = await plugin.rem.findOne(card.remId);
+                    if (rem) {
+                      await plugin.window.openRem(rem);
+                      await plugin.storage.setSession("finalDrillResumeTrigger", Date.now()); // Signal Notification
+                      await plugin.widget.closePopup();
+                    }
+                  }
+                }
+              }}
+              className="px-3 py-1.5 text-sm rounded transition-colors shadow-sm font-medium"
+              style={{
+                backgroundColor: 'var(--rn-clr-background-primary)',
+                color: 'var(--rn-clr-content-primary)',
+                border: '1px solid var(--rn-clr-border-primary)'
+              }}
+              title="Go to the current Rem (closes popup)"
+            >
+              Go to Rem
+            </button>
+
+            <button
+              onClick={() => startEditing('previous')}
+              className="px-3 py-1.5 text-sm rounded font-medium transition-colors shadow-sm"
+              style={{
+                backgroundColor: 'var(--rn-clr-background-secondary)',
+                color: 'var(--rn-clr-content-primary)',
+                border: '1px solid var(--rn-clr-border-primary)'
+              }}
+              title="Edit the card you just rated"
+            >
+              Edit Previous
+            </button>
+            <button
+              onClick={() => startEditing('current')}
+              className="px-3 py-1.5 text-sm rounded bg-blue-500 text-white hover:bg-blue-600 font-medium transition-colors shadow-sm"
+              title="Edit the currently visible card"
+            >
+              Edit Current
+            </button>
           </div>
 
           {/* Right: Old Items Warning */}

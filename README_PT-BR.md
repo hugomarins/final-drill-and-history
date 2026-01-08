@@ -49,7 +49,7 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
-![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-and-history.gif)
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-editor.png)
 
 ## Como Usar
 
@@ -72,6 +72,10 @@ Este plugin é um fork do plugin oficial RemNote History, aprimorado com ouvinte
 Se você estiver interessado em criar seus próprios plugins, confira a documentação oficial, guias e tutoriais no [Site de Plugins do RemNote](https://plugins.remnote.com/).
 
 ## Changelog
+
+### v. 0.0.8 07 de Janeiro de 2026
+
+- **Final Drill:** Agora é mostrado em uma janela popup. Limitações: não é respondente a atalhos de teclado, e não tem acesso aos botões Editar / Pré-visualizar. Como uma solução alternativa, um Editor UI é acessível por botões (como alternativa, um botão "Ir para Rem" para pular ao Rem no Editor RemNote nativo).
 
 ### v. 0.0.7 07 de Janeiro de 2026
 

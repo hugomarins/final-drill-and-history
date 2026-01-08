@@ -29,7 +29,7 @@ async function onActivate(plugin: ReactRNPlugin) {
     "final_drill",
     WidgetLocation.Popup,
     {
-      dimensions: { height: "95vh" as any, width: "85vw" as any },
+      dimensions: { height: "95vh" as any, width: "min(85vw, 1100px)" as any },
 
     }
   );
@@ -164,6 +164,13 @@ async function onActivate(plugin: ReactRNPlugin) {
 
       // Track Flashcard Start Time
       if (data.cardId) {
+        // Track Previous and Current Card for Edit Features
+        const lastCurrentId = await plugin.storage.getSession<string>("finalDrillCurrentCardId");
+        if (lastCurrentId && lastCurrentId !== data.cardId) {
+          await plugin.storage.setSession("finalDrillPreviousCardId", lastCurrentId);
+        }
+        await plugin.storage.setSession("finalDrillCurrentCardId", data.cardId);
+
         // Robustness Fix: If there are lingering cards in cardStartTimes, it means the "Next" button
         // was used (or card skipped) without triggering QueueCompleteCard (common in plugin queues).
         // We must close them now to record the time.
