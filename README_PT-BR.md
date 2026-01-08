@@ -34,7 +34,7 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
 
 ### 4. Final Drill
-- **O que faz:** Implementa uma fila de "Prática Final" inspirada no SuperMemo.
+- **O que faz:** Implementa uma fila de "Prática Final" inspirada no SuperMemo, acessível pelo comando `Final Drill` na Omnibar ou por um botão no widget que aparece ocasionalmentena parte inferior da barra lateral esquerda.
 - **Como funciona:**
     - Qualquer flashcard que você classificar como **Esqueci (Forgot)** ou **Difícil (Hard)** é automaticamente adicionado à fila do Final Drill.
       - **Esqueci** geralmente já possui uma etapa de reaprendizagem. Se você realizar essa etapa de reaprendizagem com sucesso, o cartão será removido da fila do Final Drill; se não, fazê-lo no Final Drill será o mesmo que fazê-lo fora dele. O objetivo de ter esses cartões na prática é garantir que você cumpra a etapa de reaprendizagem (caso você geralmente faça flashcards em filas de documentos em vez da fila global).
@@ -61,10 +61,16 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 3. **Aba Histórico de Flashcards**:
    - Comece uma fila de flashcards. À medida que você classifica os cartões, eles aparecerão nesta lista.
    - Clique em um rem para abri-lo no editor principal.
-4. **Aba Final Drill**:
+4. **Aba Histórico de Sessões Praticadas**:
+   - Quer voltar a uma fila que você começou mas não terminou? Clique no nome da fila para navegar de volta para ela.
+   - Monitore aqui as estatísticas de suas filas praticadas.
+5.   **Comando Final Drill**:
    - Se você classificar um cartão como "Esqueci" ou "Difícil" durante sua fila regular (ou em qualquer outro lugar), um emblema vermelho aparecerá nesta aba indicando que há cartões pendentes.
-   - Abra a aba para praticar esses cartões específicos.
+   - Use o comando `Final Drill` na Omnibar para praticar esses cartões específicos.
    - A fila será limpa automaticamente à medida que você dominar os cartões (classifique-os como Bom/Fácil).
+   ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-notification.png)
+
+   ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-command.png)
 
 ## Changelog
 

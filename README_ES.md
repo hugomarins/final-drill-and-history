@@ -34,7 +34,7 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
 
 ### 4. Final Drill
-- **Qué hace:** Implementa una cola de "Práctica Final" inspirada en SuperMemo.
+- **Qué hace:** Implementa una cola de "Práctica Final" inspirada en SuperMemo, accesible usando el comando `Final Drill` en la Omnibar o desde el widget del extremo de la barra lateral izquierda.
 - **Cómo funciona:**
     - Cualquier tarjeta que califiques como **Olvidé (Forgot)** o **Difícil (Hard)** se agrega automáticamente a la cola de Final Drill.
       - **Olvidé** generalmente ya tiene un paso de reaprendizaje. Si realizas este paso de reaprendizaje con éxito, la tarjeta se borrará de la cola de Final Drill; si no, hacerlo en el Final Drill será lo mismo que hacerlo fuera de él. El propósito de tener estas tarjetas en la práctica es asegurar que cumplas con el paso de reaprendizaje (en caso de que usualmente hagas tarjetas en colas de documentos en lugar de en la cola global).
@@ -61,10 +61,16 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 3. **Pestaña Historial de Flashcards**:
    - Inicia una cola de flashcards. A medida que califiques las tarjetas, aparecerán en esta lista.
    - Haz clic en un rem para abrirlo en el editor principal.
-4. **Pestaña Final Drill**:
+4. **Pestaña Historial de Colas Practicadas**: 
+   - ¿Quieres volver a las colas que empezaste pero no pudiste terminar? Haz clic en el nombre de la cola para volver a ella.
+   - Supervisa aquí las estadísticas de tus colas practicadas.
+5. **Comando Final Drill**: 
    - Si calificas una tarjeta como "Olvidé" o "Difícil" durante tu cola regular (o en cualquier otro lugar), aparecerá una insignia roja en esta pestaña indicando que hay tarjetas pendientes.
-   - Abre la pestaña para practicar estas tarjetas específicas.
+   - Usa el comando `Final Drill` en la Omnibar para practicar estas tarjetas específicas (o presiona el botón del widget que aparece de vez en cuando en el extremo de la barra lateral izquierda).
    - La cola se vaciará automáticamente a medida que domines las tarjetas (califícalas como Bien/Fácil).
+   ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-notification.png)
+
+   ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-command.png)
 
 ## Registro de Cambios (Changelog)
 

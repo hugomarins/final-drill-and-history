@@ -35,7 +35,7 @@ This plugin extends the official RemNote History plugin functionality with two p
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
 
 ### 4. Final Drill
-- **What it does:** Implements a "Final Drill" queue inspired by SuperMemo. 
+- **What it does:** Implements a "Final Drill" queue inspired by SuperMemo, accessible using the command `Final Drill` in the Omnibar or from the Left Sidebar End widget. 
 - **How it works:** 
     - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Final Drill queue.
       - **Forgot** usually already have a relearning step. If you do this relearning step successfully, the card will be cleared from the Final Drill queue; if not, doing it in the Final Drill will be the same as doing it away from it. The purpose of having these cards in the drill is to ensure you accomplish the relearning step (in case you usually make flashcards in document queues rather than in the global queue).
@@ -62,10 +62,16 @@ This plugin extends the official RemNote History plugin functionality with two p
 3. **Flashcard History Tab**: 
    - Start a flashcard queue. As you rate cards, they will appear in this list.
    - Click on a rem to open it in the main editor.
-4. **Final Drill Tab**: 
+4. **Practiced Queue History Tab**: 
+   - Want to go back to queues you started but was not able to finish? Click on the queue name to navigate back to it.
+   - Monitor here the stats of your practiced queues.
+5. **Final Drill command**: 
    - If you rate a card "Forgot" or "Hard" during your regular queue (or anywhere else), a red badge will appear on this tab indicating cards are pending.
-   - Open the tab to practice these specific cards.
+   - Use the command `Final Drill` in the Omnibar to practice these specific cards (or press the button of the widget that appears from time to time in the Left Sidebar End).
    - The queue will automatically clear as you master the cards (rate them Good/Easy).
+   ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-notification.png)
+
+   ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-command.png)
 
 ## Changelog
 
