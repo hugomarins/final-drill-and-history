@@ -67,12 +67,6 @@ This plugin extends the official RemNote History plugin functionality with two p
    - Open the tab to practice these specific cards.
    - The queue will automatically clear as you master the cards (rate them Good/Easy).
 
-## Developers
-
-This plugin is a fork of the official RemNote History plugin, enhanced with Queue event listeners and synced storage implementation for the Final Drill logic.
-
-If you are interested in building your own plugins, check out the official documentation, guides, and tutorials on the [RemNote Plugin Website](https://plugins.remnote.com/).
-
 ## Changelog
 
 ### v. 0.0.8 January 07th, 2026
