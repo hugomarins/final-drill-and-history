@@ -40,6 +40,29 @@ const MOTIVATIONAL_PHRASES = [
     "Excellence is a habit. Drill it in.",
     "Identify. Attack. Overcome.",
     "Don't let the hard cards slide.",
+    "The gap between knowledge and mastery is practice.",
+    "Your potential is waiting on the other side of this drill.",
+    "Difficulty is just a signal to pay attention.",
+    "Small daily improvements are the key to staggering long-term results.",
+    "Make the unknown known.",
+    "Consistency beats intensity.",
+    "Build a brain that won't quit.",
+    "Today's struggle is tomorrow's strength.",
+    "Rewrite your forgetting curve.",
+    "Invest in your future self.",
+    "Knowledge earned is knowledge kept.",
+    "Hard work betrays none.",
+    "Clear the queue, clear your mind.",
+    "Be the master of your material.",
+    "Don't let the hard cards win.",
+    "Every rep counts.",
+    "Unlock your full potential.",
+    "Greatness is a lot of small things done well.",
+    "Practice is the price of proficiency.",
+    "Turn hurdles into stepping stones.",
+    "Success is the sum of small efforts, repeated.",
+    "Discipline defaults to success.",
+    "Don't wish for it, work for it.",
 ];
 
 export const FinalDrillNotification = () => {
@@ -113,7 +136,9 @@ export const FinalDrillNotification = () => {
         };
     }, []);
 
-    if (!settings || settings.disabled || settings.count === 0 || dismissed) {
+    const MIN_QUEUE_SIZE_FOR_NOTIFICATION = 10;
+
+    if (!settings || settings.disabled || settings.count < MIN_QUEUE_SIZE_FOR_NOTIFICATION || dismissed) {
         return null;
     }
 
