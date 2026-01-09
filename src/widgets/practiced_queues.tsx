@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
     RemViewer,
     renderWidget,
@@ -27,8 +27,203 @@ export interface PracticedQueueSession {
     currentCardAge?: number; // Timestamp of the FIRST repetition (creation date), strictly for live view
 }
 
+interface AggregatedStats {
+    label: string;
+    sessions: PracticedQueueSession[];
+    totalTime: number;
+    cardsCount: number;
+    cardsTime: number;
+    incRemsCount: number;
+    incRemsTime: number;
+    retentionRate: number; // percentage 0-100
+    avgSpeed: number; // cards per minute
+}
 
 const NUM_TO_LOAD_IN_BATCH = 20;
+
+const formatTimeShort = (ms: number) => {
+    if (!ms) return "0s";
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    if (hours > 0) return `${hours}h ${minutes % 60}m`;
+    if (minutes > 0) return `${minutes}m`;
+    return `${seconds}s`;
+};
+
+// --- Summary Logic ---
+
+function getStartOfDay(date: Date) {
+    const newDate = new Date(date);
+    newDate.setHours(0, 0, 0, 0);
+    return newDate.getTime();
+}
+
+function getStartOfWeek(date: Date) {
+    const newDate = new Date(date);
+    const day = newDate.getDay(); // 0 (Sun) to 6 (Sat)
+    const diff = newDate.getDate() - day + (day === 0 ? -6 : 1) - 1; // Start on Sunday? User said "This Week". Usually starts Sunday or Monday. Let's assume Sunday for simplicity.
+    // Actually, let's stick to standard start of week (Sunday)
+    const first = newDate.getDate() - day;
+    newDate.setDate(first);
+    newDate.setHours(0, 0, 0, 0);
+    return newDate.getTime();
+}
+
+function getStartOfMonth(date: Date) {
+    const newDate = new Date(date);
+    newDate.setDate(1);
+    newDate.setHours(0, 0, 0, 0);
+    return newDate.getTime();
+}
+
+function getStartOfYear(date: Date) {
+    const newDate = new Date(date);
+    newDate.setMonth(0, 1);
+    newDate.setHours(0, 0, 0, 0);
+    return newDate.getTime();
+}
+
+function calculateStats(sessions: PracticedQueueSession[], label: string): AggregatedStats {
+    let totalTime = 0;
+    let cardsCount = 0;
+    let cardsTime = 0;
+    let incRemsCount = 0;
+    let incRemsTime = 0;
+    let totalForgot = 0; // for retention
+
+    sessions.forEach(s => {
+        totalTime += s.totalTime || 0;
+        cardsCount += s.flashcardsCount || 0;
+        cardsTime += s.flashcardsTime || 0;
+        incRemsCount += s.incRemsCount || 0;
+        incRemsTime += s.incRemsTime || 0;
+        totalForgot += s.againCount || 0;
+    });
+
+    const totalRemembered = Math.max(0, cardsCount - totalForgot);
+    const retentionRate = cardsCount > 0 ? (totalRemembered / cardsCount) * 100 : 0; // If 0 cards, 0 retention or N/A. Let's start with 0 or 100? Usually 0 if no practice.
+
+    // Avg Speed = Total Cards / (Total Flashcard Time in Minutes)
+    // Avoid division by zero
+    const cardsTimeMin = cardsTime / 1000 / 60;
+    const avgSpeed = cardsTimeMin > 0 ? cardsCount / cardsTimeMin : 0;
+
+    return {
+        label,
+        sessions,
+        totalTime,
+        cardsCount,
+        cardsTime,
+        incRemsCount,
+        incRemsTime,
+        retentionRate,
+        avgSpeed
+    };
+}
+
+function SummaryTable({ allSessions }: { allSessions: PracticedQueueSession[] }) {
+    const stats = useMemo(() => {
+        const now = new Date();
+        const startOfToday = getStartOfDay(now);
+        const startOfYesterday = startOfToday - 86400000;
+        const startOfWeek = getStartOfWeek(now);
+        const startOfLastWeek = startOfWeek - (7 * 24 * 60 * 60 * 1000);
+        const startOfMonth = getStartOfMonth(now);
+        const startOfYear = getStartOfYear(now);
+
+        // Last Month logic: strict previous month
+        const lastMonthDate = new Date(now);
+        lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+        const startOfLastMonth = getStartOfMonth(lastMonthDate);
+        // End of last month is start of this month
+
+        // Last Year logic
+        const lastYearDate = new Date(now);
+        lastYearDate.setFullYear(lastYearDate.getFullYear() - 1);
+        const startOfLastYear = getStartOfYear(lastYearDate);
+        // End of last year is start of this year
+
+        const today = allSessions.filter(s => s.startTime >= startOfToday);
+        const yesterday = allSessions.filter(s => s.startTime >= startOfYesterday && s.startTime < startOfToday);
+        const thisWeek = allSessions.filter(s => s.startTime >= startOfWeek);
+        const lastWeek = allSessions.filter(s => s.startTime >= startOfLastWeek && s.startTime < startOfWeek);
+        const thisMonth = allSessions.filter(s => s.startTime >= startOfMonth);
+        const lastMonth = allSessions.filter(s => s.startTime >= startOfLastMonth && s.startTime < startOfMonth);
+        const thisYear = allSessions.filter(s => s.startTime >= startOfYear);
+        const lastYear = allSessions.filter(s => s.startTime >= startOfLastYear && s.startTime < startOfYear);
+
+        return [
+            calculateStats(today, "Today"),
+            calculateStats(yesterday, "Yesterday"),
+            calculateStats(thisWeek, "This Week"),
+            calculateStats(lastWeek, "Last Week"),
+            calculateStats(thisMonth, "This Month"),
+            calculateStats(lastMonth, "Last Month"),
+            calculateStats(thisYear, "This Year"),
+            calculateStats(lastYear, "Last Year"),
+            calculateStats(allSessions, "Ever"),
+        ];
+    }, [allSessions]);
+
+    return (
+        <div className="mb-6 overflow-x-auto">
+            <h2 className="text-sm font-bold uppercase rn-clr-content-tertiary mb-2 tracking-wider">Summary</h2>
+            <div className="border rounded-lg overflow-hidden text-xs rn-clr-border-opaque">
+                <table className="w-full text-left rn-clr-background-primary">
+                    <thead className="rn-clr-background-secondary border-b rn-clr-border-opaque">
+                        <tr>
+                            <th className="p-2 font-bold rn-clr-content-secondary">Period</th>
+                            <th className="p-2 font-bold rn-clr-content-secondary text-right">Time</th>
+                            <th className="p-2 font-bold rn-clr-content-secondary text-right">Cards</th>
+                            <th className="p-2 font-bold rn-clr-content-secondary text-right">Inc. Rems</th>
+                            <th className="p-2 font-bold rn-clr-content-secondary text-right">Ret.</th>
+                            <th className="p-2 font-bold rn-clr-content-secondary text-right">Speed</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y rn-clr-divide-opaque">
+                        {stats.map((row) => (
+                            <tr key={row.label} className="hover:rn-clr-background-secondary transition-colors">
+                                <td className="p-2 font-medium rn-clr-content-primary">{row.label}</td>
+                                <td className="p-2 text-right font-mono rn-clr-content-secondary">
+                                    {row.totalTime > 0 ? formatTimeShort(row.totalTime) : "-"}
+                                </td>
+                                <td className="p-2 text-right">
+                                    {row.cardsCount > 0 ? (
+                                        <div>
+                                            <span className="font-bold rn-clr-content-primary">{row.cardsCount}</span>
+                                            <span className="rn-clr-content-tertiary text-[10px] ml-1">({formatTimeShort(row.cardsTime)})</span>
+                                        </div>
+                                    ) : <span className="rn-clr-content-tertiary">-</span>}
+                                </td>
+                                <td className="p-2 text-right">
+                                    {row.incRemsCount > 0 ? (
+                                        <div>
+                                            <span className="font-bold rn-clr-content-primary">{row.incRemsCount}</span>
+                                            <span className="rn-clr-content-tertiary text-[10px] ml-1">({formatTimeShort(row.incRemsTime)})</span>
+                                        </div>
+                                    ) : <span className="rn-clr-content-tertiary">-</span>}
+                                </td>
+                                <td className="p-2 text-right">
+                                    {row.cardsCount > 0 ? (
+                                        <span className={row.retentionRate >= 90 ? "text-green-600 font-bold" : (row.retentionRate < 80 ? "text-red-500 font-bold" : "text-yellow-600 font-bold")}>
+                                            {row.retentionRate.toFixed(0)}%
+                                        </span>
+                                    ) : <span className="rn-clr-content-tertiary">-</span>}
+                                </td>
+                                <td className="p-2 text-right">
+                                    {row.cardsCount > 0 ? (
+                                        <span><span className="rn-clr-content-primary">{row.avgSpeed.toFixed(1)}</span> <span className="rn-clr-content-tertiary text-[10px]">cpm</span></span>
+                                    ) : <span className="rn-clr-content-tertiary">-</span>}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
 
 function PracticedQueues() {
     const plugin = usePlugin();
@@ -99,21 +294,25 @@ function PracticedQueues() {
                     </div>
                 )}
 
-                {filteredData.length === 0 && (
+                {/* Statistics Summary */}
+                <SummaryTable allSessions={filteredData} />
+
+                {filteredData.length === 0 ? (
                     <div className="rn-clr-content-secondary">
                         No practice sessions recorded yet.
                     </div>
+                ) : (
+                    <div className="flex flex-col gap-2">
+                        <div className="uppercase text-xs font-bold text-gray-400 mb-2 tracking-wider">History Log</div>
+                        {filteredData.slice(0, NUM_TO_LOAD_IN_BATCH * numLoaded).map((session) => (
+                            <QueueSessionItem
+                                key={session.id}
+                                session={session}
+                                onDelete={() => deleteItem(session.id)}
+                            />
+                        ))}
+                    </div>
                 )}
-
-                <div className="flex flex-col gap-2">
-                    {filteredData.slice(0, NUM_TO_LOAD_IN_BATCH * numLoaded).map((session) => (
-                        <QueueSessionItem
-                            key={session.id}
-                            session={session}
-                            onDelete={() => deleteItem(session.id)}
-                        />
-                    ))}
-                </div>
 
                 {numUnloaded > 0 && (
                     <button

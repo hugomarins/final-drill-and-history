@@ -129,7 +129,7 @@ async function onActivate(plugin: ReactRNPlugin) {
             currentSession.endTime = Date.now();
 
             const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
-            await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history.slice(0, 99)]);
+            await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
             console.log("DEBUG: Final Drill Session saved via Heartbeat Monitor.");
           }
 
@@ -356,7 +356,7 @@ async function onActivate(plugin: ReactRNPlugin) {
         currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
 
         const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
-        await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history.slice(0, 99)]);
+        await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
       }
 
       currentSession = null;
@@ -383,7 +383,7 @@ async function onActivate(plugin: ReactRNPlugin) {
       // Only save if data exists
       if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
         const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
-        await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history.slice(0, 99)]);
+        await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
         console.log("DEBUG: Session saved via Force Save Event.");
       } else {
         console.log("DEBUG: Session empty, not saving.");
