@@ -227,11 +227,25 @@ async function onActivate(plugin: ReactRNPlugin) {
             const dates = card.repetitionHistory.map(h => h.date);
             if (dates.length > 0) {
               currentSession.currentCardAge = Math.min(...dates);
-              // Sync immediately for UI update
-              // await plugin.storage.setSession("activeQueueSession", currentSession); // Will sync below anyway
             }
+
+            // Calculate Total Time and Rep Count (ignoring skipped)
+            let totalCardTime = 0;
+            let totalCardReps = 0;
+            card.repetitionHistory.forEach(rep => {
+              if (rep.score !== QueueInteractionScore.TOO_EARLY) {
+                totalCardReps++;
+                if (rep.responseTime) {
+                  totalCardTime += rep.responseTime;
+                }
+              }
+            });
+            currentSession.currentCardTotalTime = totalCardTime;
+            currentSession.currentCardRepCount = totalCardReps;
           } else {
             currentSession.currentCardAge = undefined; // New card
+            currentSession.currentCardTotalTime = 0;
+            currentSession.currentCardRepCount = 0;
           }
           // Sync Live Updates
           await plugin.storage.setSession("activeQueueSession", currentSession);
