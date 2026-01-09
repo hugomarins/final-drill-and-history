@@ -25,14 +25,19 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ### 3. Practiced Queues History
 - **What it does:** Tracks your practice sessions and metrics. 
+- **Live Dashboard:** Displays real-time metrics for your currently active queue session, including current speed, retention rate, and the age of the exact card you are reviewing.
 - **Metrics Collected:** 
     - Total time spent studying.
+    - **Retention Rate:** Track your performance (Remembered vs. Forgot) and percentage.
+    - **Speed Analysis:** Cards per minute (CPM) and seconds per card, with visual speed indicators.
+    - **Sessions Summary:** A dashboard aggregating your stats for Today, Yesterday, This Week, Last Week, and more.
     - Number of Flashcards reviewed and time spent on them.
     - Number of "Incremental Rems" (from Incremental Everything plugin) processed and time spent on them.
-    - Average speed per card.
 - **Why use it:** Gain insights into your study habits, track your velocity, and monitor your usage of incremental reading tools alongside standard flashcards.
 - **Interaction:** Clicking on a session will open the document in the Editor, so that you can review the material again.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
+
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history-live.png)
 
 ### 4. Final Drill
 - **What it does:** Implements a "Final Drill" queue inspired by SuperMemo, accessible using the command `Final Drill` in the Omnibar or from the Left Sidebar End widget. 
@@ -74,6 +79,16 @@ This plugin extends the official RemNote History plugin functionality with two p
    ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-command.png)
 
 ## Changelog
+
+### v. 0.0.12 January 09th, 2026
+
+- **Practiced Queues Upgrade:**
+    - **Live Session Dashboard:** A new real-time view at the top of the widget showing your current session's progress.
+    - **History Summary:** A comprehensive table showing aggregated stats (Time, Cards, Speed, Retention) for Today, Yesterday, Last Week, etc.
+    - **New Metrics:**
+        - **Retention Rate:** See exactly how many cards you remembered vs. forgot.
+        - **Cards Per Minute (CPM):** Color-coded speed metric to track your velocity.
+        - **Card Age:** (Live View only) See the age (time since creation) of the card you are currently reviewing.
 
 ### v. 0.0.8 January 07th, 2026
 

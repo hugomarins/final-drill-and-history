@@ -24,14 +24,19 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ### 3. Histórico de Sessões Praticadas (Practiced Queues History)
 - **O que faz:** Rastreia suas sessões de prática e métricas.
+- **Painel ao Vivo:** Exibe métricas em tempo real para sua sessão de fila ativa atual, incluindo velocidade atual, taxa de retenção e a idade exata do cartão que você está revisando.
 - **Métricas Coletadas:**
     - Tempo total de estudo.
+    - **Taxa de Retenção:** Acompanhe seu desempenho (Lembrado vs. Esquecido) e porcentagem.
+    - **Análise de Velocidade:** Cartões por minuto (CPM) e segundos por cartão, com indicadores visuais de velocidade.
+    - **Resumo das Sessões:** Um painel agregando suas estatísticas para Hoje, Ontem, Esta Semana, Semana Passada e mais.
     - Número de flashcards revisados e tempo gasto neles.
     - Número de "Rems Incrementais" processados e tempo gasto neles.
-    - Velocidade média por cartão.
 - **Por que usar:** Obtenha insights sobre seus hábitos de estudo e monitore seu uso de ferramentas de leitura incremental.
 - **Interação:** Clicar em uma sessão abrirá o documento no Editor, para que você possa revisar o material novamente.
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history.png)
+
+![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history-live.png)
 
 ### 4. Final Drill
 - **O que faz:** Implementa uma fila de "Prática Final" inspirada no SuperMemo, acessível pelo comando `Final Drill` na Omnibar ou por um botão no widget que aparece ocasionalmentena parte inferior da barra lateral esquerda.
@@ -73,6 +78,16 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
    ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-command.png)
 
 ## Changelog
+
+### v. 0.0.12 09 de Janeiro de 2026
+
+- **Atualização de Filas Praticadas:**
+    - **Painel de Sessão ao Vivo:** Uma nova visualização em tempo real no topo do widget mostrando o progresso da sua sessão atual.
+    - **Resumo do Histórico:** Uma tabela abrangente mostrando estatísticas agregadas (Tempo, Cartões, Velocidade, Retenção) para Hoje, Ontem, Semana Passada, etc.
+    - **Novas Métricas:**
+        - **Taxa de Retenção:** Veja exatamente quantos cartões você lembrou vs. esqueceu.
+        - **Cartões Por Minuto (CPM):** Métrica de velocidade codificada por cores para rastrear sua velocidade.
+        - **Idade do Cartão:** (Apenas Visualização ao Vivo) Veja a idade (tempo desde a criação) do cartão que você está revisando atualmente.
 
 ### v. 0.0.8 07 de Janeiro de 2026
 
