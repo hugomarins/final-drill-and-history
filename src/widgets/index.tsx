@@ -136,6 +136,8 @@ async function onActivate(plugin: ReactRNPlugin) {
           currentSession = null;
           cardStartTimes.clear();
           currentIncRemStart = null;
+          // Clear Live Session
+          await plugin.storage.setSession("activeQueueSession", null);
           // Clear heartbeat to prevent loop
           await plugin.storage.setSession("finalDrillHeartbeat", 0);
         }
@@ -164,7 +166,9 @@ async function onActivate(plugin: ReactRNPlugin) {
         // If an IncRem was already open? Add its time.
         if (currentIncRemStart) {
           if (currentSession) {
-            currentSession.incRemsTime += (now - currentIncRemStart);
+            const duration = now - currentIncRemStart;
+            currentSession.incRemsTime += duration;
+            currentSession.totalTime += duration;
           }
         }
 
@@ -175,6 +179,11 @@ async function onActivate(plugin: ReactRNPlugin) {
         }
 
         currentIncRemStart = now;
+
+        // Sync Live Updates (IncRem started/counted)
+        if (currentSession) {
+          await plugin.storage.setSession("activeQueueSession", currentSession);
+        }
 
         // --- Attempt to Capture Scope for Incremental Rem ---
         if (currentSession && (currentSession.scopeName === "Untitled" || currentSession.scopeName === "Ad-hoc Queue" || !currentSession.scopeName)) {
@@ -193,7 +202,9 @@ async function onActivate(plugin: ReactRNPlugin) {
         // If we switched to a non-plugin card, close any open IncRem session
         if (currentIncRemStart) {
           if (currentSession) {
-            currentSession.incRemsTime += (now - currentIncRemStart);
+            const duration = now - currentIncRemStart;
+            currentSession.incRemsTime += duration;
+            currentSession.totalTime += duration;
           }
           currentIncRemStart = null;
         }
@@ -302,6 +313,9 @@ async function onActivate(plugin: ReactRNPlugin) {
         incRemsCount: 0,
         incRemsTime: 0,
       };
+      // Sync to Storage for Live View
+      await plugin.storage.setSession("activeQueueSession", currentSession);
+
       cardStartTimes.clear();
       currentIncRemStart = null;
     } catch (error) {
@@ -333,6 +347,8 @@ async function onActivate(plugin: ReactRNPlugin) {
       currentSession = null;
       cardStartTimes.clear();
       currentIncRemStart = null;
+      // Clear Live Session
+      await plugin.storage.setSession("activeQueueSession", null);
     }
   });
 
@@ -361,6 +377,8 @@ async function onActivate(plugin: ReactRNPlugin) {
       currentSession = null;
       cardStartTimes.clear();
       currentIncRemStart = null;
+      // Clear Live Session
+      await plugin.storage.setSession("activeQueueSession", null);
     } else {
       console.log("DEBUG: No active session to save.");
     }
@@ -426,9 +444,16 @@ async function onActivate(plugin: ReactRNPlugin) {
       } else {
         // Close any lingering IncRem
         if (currentIncRemStart && currentSession) {
-          currentSession.incRemsTime += (Date.now() - currentIncRemStart);
+          const duration = Date.now() - currentIncRemStart;
+          currentSession.incRemsTime += duration;
+          currentSession.totalTime += duration;
           currentIncRemStart = null;
         }
+      }
+
+      // Sync Live Updates
+      if (currentSession) {
+        await plugin.storage.setSession("activeQueueSession", currentSession);
       }
       // currentCardStartTime = null; // Reset for next card // This line is removed as per instruction
 

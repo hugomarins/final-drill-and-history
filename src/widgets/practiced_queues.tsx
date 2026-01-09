@@ -4,6 +4,7 @@ import {
     renderWidget,
     usePlugin,
     useSyncedStorageState,
+    useSessionStorageState,
 } from "@remnote/plugin-sdk";
 import { timeSince } from "../lib/utils";
 
@@ -33,6 +34,7 @@ function PracticedQueues() {
         "practicedQueuesHistory",
         []
     );
+    const [activeSession] = useSessionStorageState<PracticedQueueSession | null>("activeQueueSession", null);
 
     const [filteredData, setFilteredData] = useState<PracticedQueueSession[]>([]);
 
@@ -75,6 +77,26 @@ function PracticedQueues() {
         <div className="h-full w-full overflow-y-auto rn-clr-background-primary">
             <div className="p-4">
                 <h1 className="text-xl font-bold mb-4">Practiced Queues History</h1>
+
+                {/* Live Session Summary */}
+                {activeSession && (
+                    <div className="mb-6">
+                        <div className="uppercase text-xs font-bold rn-clr-content-tertiary mb-2 tracking-wider flex items-center gap-2">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            Active Session
+                        </div>
+                        <QueueSessionItem
+                            session={activeSession}
+                            isLive={true}
+                            onDelete={() => { }} // No delete for live session
+                        />
+                        <div className="h-px w-full rn-clr-background-elevation-10 mt-6 md:mt-4"></div>
+                    </div>
+                )}
+
                 {filteredData.length === 0 && (
                     <div className="rn-clr-content-secondary">
                         No practice sessions recorded yet.
@@ -104,10 +126,10 @@ function PracticedQueues() {
     );
 }
 
-function QueueSessionItem({ session, onDelete }: { session: PracticedQueueSession, onDelete: () => void }) {
+function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQueueSession, onDelete: () => void, isLive?: boolean }) {
     const plugin = usePlugin();
     // DEBUG LOG
-    console.log("DEBUG: Rendering Session Item", session);
+    // console.log("DEBUG: Rendering Session Item", session);
 
     const formatTime = (ms: number) => {
         if (!ms) return "0s";
@@ -134,7 +156,7 @@ function QueueSessionItem({ session, onDelete }: { session: PracticedQueueSessio
     }
 
     return (
-        <div className="p-3 border rounded-lg rn-clr-border-opaque hover:shadow-sm transition-shadow rn-clr-background-elevation-10">
+        <div className={`p-3 border rounded-lg rn-clr-border-opaque hover:shadow-sm transition-shadow rn-clr-background-elevation-10 ${isLive ? 'border-green-500/30' : ''}`}>
             <div className="flex justify-between items-start">
                 <div onClick={handleOpen} className="cursor-pointer flex-grow">
                     <div className="font-semibold text-lg hover:underline truncate" title={session.scopeName || "Ad-hoc Queue"}>
@@ -161,20 +183,22 @@ function QueueSessionItem({ session, onDelete }: { session: PracticedQueueSessio
                         </div>
                     </div>
                     <div className="text-xs rn-clr-content-tertiary mt-1">
-                        {timeSince(new Date(session.startTime))} ago
+                        {isLive ? (<span className="text-green-600 font-medium">Active now</span>) : (`${timeSince(new Date(session.startTime))} ago`)}
                     </div>
                 </div>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete();
-                    }}
-                    className="rn-clr-content-tertiary hover:text-red-500 p-1"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                {!isLive && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete();
+                        }}
+                        className="rn-clr-content-tertiary hover:text-red-500 p-1"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                )}
             </div>
         </div>
     )
