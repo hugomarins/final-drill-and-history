@@ -219,13 +219,26 @@ async function onActivate(plugin: ReactRNPlugin) {
         }
         await plugin.storage.setSession("finalDrillCurrentCardId", data.cardId);
 
-
+        // --- Card Age Logic ---
+        // Fetch card to determine age (first repetition)
+        if (currentSession) {
+          const card = await plugin.card.findOne(data.cardId);
+          if (card?.repetitionHistory?.length > 0) {
+            const dates = card.repetitionHistory.map(h => h.date);
+            if (dates.length > 0) {
+              currentSession.currentCardAge = Math.min(...dates);
+              // Sync immediately for UI update
+              // await plugin.storage.setSession("activeQueueSession", currentSession); // Will sync below anyway
+            }
+          } else {
+            currentSession.currentCardAge = undefined; // New card
+          }
+          // Sync Live Updates
+          await plugin.storage.setSession("activeQueueSession", currentSession);
+        }
 
         cardStartTimes.set(data.cardId, now);
 
-        // --- Verify Final Drill Scope ---
-        // If we labeled this as Final Drill, but the card is NOT in our Final Drill list,
-        // it means it's an Embedded Queue collision (Ad-hoc).
         // --- Verify Final Drill Scope ---
         // If we labeled this as Final Drill, but the card is NOT in our Final Drill list,
         // it means it's an Embedded Queue collision (Ad-hoc).
@@ -312,6 +325,8 @@ async function onActivate(plugin: ReactRNPlugin) {
         flashcardsTime: 0,
         incRemsCount: 0,
         incRemsTime: 0,
+        againCount: 0,
+        currentCardAge: undefined,
       };
       // Sync to Storage for Live View
       await plugin.storage.setSession("activeQueueSession", currentSession);
@@ -436,6 +451,9 @@ async function onActivate(plugin: ReactRNPlugin) {
           currentSession.totalTime += timeSpent;
           currentSession.flashcardsTime += timeSpent;
           currentSession.flashcardsCount++;
+          if (score === 0) {
+            currentSession.againCount = (currentSession.againCount || 0) + 1;
+          }
           cardStartTimes.delete(cardId);
           console.log(`DEBUG: Successfully recorded time for card ${cardId}: ${timeSpent}ms`);
         } else {
