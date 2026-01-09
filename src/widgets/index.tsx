@@ -29,7 +29,7 @@ async function onActivate(plugin: ReactRNPlugin) {
     "final_drill",
     WidgetLocation.Popup,
     {
-      dimensions: { height: "95vh" as any, width: "min(85vw, 1100px)" as any },
+      dimensions: { height: "100vh" as any, width: "min(85vw, 1100px)" as any },
 
     }
   );
