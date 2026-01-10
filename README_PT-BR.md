@@ -79,6 +79,10 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
+### v. 0.0.16 10 de Janeiro de 2026
+
+- **Correção de Bug:** Resolvido um problema onde sessões de prática não eram gravadas ao navegar para fora da fila (ex: clicando em um link ou abrindo um Rem) ao invés de usar o botão de fechar.
+
 ### v. 0.0.12 09 de Janeiro de 2026
 
 - **Atualização de Filas Praticadas:**

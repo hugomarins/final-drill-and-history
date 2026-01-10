@@ -79,6 +79,10 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.16 10 de Enero de 2026
+
+- **Corrección de Error:** Se resolvió un problema donde las sesiones de práctica no se registraban al navegar fuera de la cola (ej: haciendo clic en un enlace o abriendo un Rem) en lugar de usar el botón de cerrar.
+
 ### v. 0.0.12 09 de Enero de 2026
 
 - **Actualización de Colas Practicadas:**

@@ -80,6 +80,10 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.16 January 10th, 2026
+
+- **Bug Fix:** Solved an issue where practice sessions were not being recorded when navigating away from the queue (e.g., by clicking a link or opening a Rem) instead of using the close button.
+
 ### v. 0.0.12 January 09th, 2026
 
 - **Practiced Queues Upgrade:**

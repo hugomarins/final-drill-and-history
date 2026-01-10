@@ -27,6 +27,11 @@ export interface PracticedQueueSession {
     currentCardAge?: number; // Timestamp of the FIRST repetition (creation date), strictly for live view
     currentCardTotalTime?: number; // ms
     currentCardRepCount?: number;
+
+    // Previous Card Metrics (for live view context)
+    prevCardAge?: number;
+    prevCardTotalTime?: number;
+    prevCardRepCount?: number;
 }
 
 interface AggregatedStats {
@@ -472,6 +477,28 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                                 </span>
                             </div>
                         </div>
+
+                        {/* Previous Card Stats (Only Live, if available) */}
+                        {session.prevCardAge !== undefined && (
+                            <div className="bg-white/30 dark:bg-black/10 p-2 rounded opacity-75">
+                                <div className="text-xs uppercase font-bold text-gray-400 mb-1">Prev. Card</div>
+                                <div className="text-xl font-bold text-gray-500 dark:text-gray-400">
+                                    {formatAge(session.prevCardAge)}
+                                </div>
+                                <div className="mt-1 flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
+                                    <span title="Total Review Time" className="flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                                        </svg>
+                                        {formatTime(session.prevCardTotalTime || 0)}
+                                    </span>
+                                    <span className="w-px h-3 bg-gray-300 dark:bg-gray-600"></span>
+                                    <span title="Total Repetitions">
+                                        {session.prevCardRepCount} reps
+                                    </span>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="bg-white/50 dark:bg-black/20 p-2 rounded">
                             <div className="text-xs uppercase font-bold text-gray-500 mb-1">Cards</div>

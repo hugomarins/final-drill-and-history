@@ -106,11 +106,43 @@ async function onActivate(plugin: ReactRNPlugin) {
   // Track last Main Queue Entry time to debounce Sidebar Queue Entry
   let lastQueueEnterIsMain = 0;
 
+  // --- Helper: Save and Close Current Session ---
+  const saveCurrentSession = async (reason: string) => {
+    if (!currentSession) return;
+
+    console.log(`DEBUG: Saving session. Reason: ${reason}`, currentSession);
+
+    currentSession.endTime = Date.now();
+
+    // Finalize IncRem time if active
+    if (currentIncRemStart) {
+      currentSession.incRemsTime += (Date.now() - currentIncRemStart);
+    }
+    // Recalculate Total Time
+    currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
+
+    // Only save if data exists (user actually practiced)
+    if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
+      const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
+      await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
+      console.log("DEBUG: Session saved successfully.");
+    } else {
+      console.log("DEBUG: Session empty, skipping save.");
+    }
+
+    currentSession = null;
+    cardStartTimes.clear();
+    currentIncRemStart = null;
+    // Clear Live Session
+    await plugin.storage.setSession("activeQueueSession", null);
+    // Clear heartbeat
+    await plugin.storage.setSession("finalDrillHeartbeat", 0);
+  };
+
   // --- Heartbeat Monitor (Single Instance) ---
   setInterval(async () => {
     if (currentSession && currentSession.scopeName === "Final Drill") {
       // Grace Period: Don't kill session if it just started (e.g. < 5s)
-      // This allows the UI to mount and send the first heartbeat.
       if (Date.now() - currentSession.startTime < 5000) {
         return;
       }
@@ -119,27 +151,8 @@ async function onActivate(plugin: ReactRNPlugin) {
       if (lastHeartbeat) {
         const timeSinceHeartbeat = Date.now() - lastHeartbeat;
         if (timeSinceHeartbeat > 5000) {
-          console.log(`DEBUG: Final Drill Heartbeat stale (${timeSinceHeartbeat}ms). Forcing session save (Popup Closed).`);
-
-          if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
-            if (currentIncRemStart) {
-              currentSession.incRemsTime += (Date.now() - currentIncRemStart);
-            }
-            currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
-            currentSession.endTime = Date.now();
-
-            const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
-            await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
-            console.log("DEBUG: Final Drill Session saved via Heartbeat Monitor.");
-          }
-
-          currentSession = null;
-          cardStartTimes.clear();
-          currentIncRemStart = null;
-          // Clear Live Session
-          await plugin.storage.setSession("activeQueueSession", null);
-          // Clear heartbeat to prevent loop
-          await plugin.storage.setSession("finalDrillHeartbeat", 0);
+          console.log(`DEBUG: Final Drill Heartbeat stale (${timeSinceHeartbeat}ms). Forcing session save.`);
+          await saveCurrentSession("Heartbeat Stale");
         }
       }
     }
@@ -222,6 +235,13 @@ async function onActivate(plugin: ReactRNPlugin) {
         // --- Card Age Logic ---
         // Fetch card to determine age (first repetition)
         if (currentSession) {
+          // Shift Current Stats to Previous Stats (if meaningful)
+          if (currentSession.currentCardAge !== undefined) {
+            currentSession.prevCardAge = currentSession.currentCardAge;
+            currentSession.prevCardTotalTime = currentSession.currentCardTotalTime;
+            currentSession.prevCardRepCount = currentSession.currentCardRepCount;
+          }
+
           const card = await plugin.card.findOne(data.cardId);
           if (card?.repetitionHistory?.length > 0) {
             const dates = card.repetitionHistory.map(h => h.date);
@@ -289,6 +309,13 @@ async function onActivate(plugin: ReactRNPlugin) {
   plugin.event.addListener(AppEvents.QueueEnter, undefined, async (data: any) => {
     try {
       console.log("DEBUG: QueueEnter Data", data);
+
+      // Safety Net: If a session is already active (missed exit?), save it first.
+      if (currentSession) {
+        console.log("DEBUG: New Queue Entered while previous session active. Saving previous session first.");
+        await saveCurrentSession("QueueEnter Overwrite");
+      }
+
       const kbData = await plugin.kb.getCurrentKnowledgeBaseData();
 
       // --- Attempt to get Scope Name ---
@@ -353,61 +380,19 @@ async function onActivate(plugin: ReactRNPlugin) {
   });
 
   plugin.event.addListener(AppEvents.QueueExit, undefined, async () => {
-    // Unblock Final Drill when leaving any queue
+    console.log("DEBUG: AppEvents.QueueExit fired event.");
+    // Unblock Final Drill when leaving any queue (Implicitly handled by freeing session)
 
     if (currentSession) {
-      currentSession.endTime = Date.now();
-
-      // Only save if practiced at least one card or just save everything? 
-      // User said "record the documents that I have practiced the queue of flashcards".
-      // Usually implies actually practicing.
-      if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
-        // Finalize IncRem time if active
-        if (currentIncRemStart) {
-          currentSession.incRemsTime += (Date.now() - currentIncRemStart);
-        }
-        // Recalculate Total Time to be sum of parts logic
-        currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
-
-        const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
-        await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
-      }
-
-      currentSession = null;
-      cardStartTimes.clear();
-      currentIncRemStart = null;
-      // Clear Live Session
-      await plugin.storage.setSession("activeQueueSession", null);
+      await saveCurrentSession("QueueExit Event");
     }
   });
 
   // Listener to manually force save session (e.g. when Final Drill popup closes without QueueExit)
   plugin.event.addListener("force_save_session", undefined, async () => {
     console.log("DEBUG: Force Save Session triggered via Event.");
-    // Unblock Final Drill
-
     if (currentSession) {
-      // Finalize IncRem time if active
-      if (currentIncRemStart) {
-        currentSession.incRemsTime += (Date.now() - currentIncRemStart);
-      }
-      currentSession.totalTime = currentSession.flashcardsTime + currentSession.incRemsTime;
-      currentSession.endTime = Date.now();
-
-      // Only save if data exists
-      if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
-        const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
-        await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
-        console.log("DEBUG: Session saved via Force Save Event.");
-      } else {
-        console.log("DEBUG: Session empty, not saving.");
-      }
-
-      currentSession = null;
-      cardStartTimes.clear();
-      currentIncRemStart = null;
-      // Clear Live Session
-      await plugin.storage.setSession("activeQueueSession", null);
+      await saveCurrentSession("force_save_session Event");
     } else {
       console.log("DEBUG: No active session to save.");
     }
@@ -418,6 +403,12 @@ async function onActivate(plugin: ReactRNPlugin) {
     AppEvents.GlobalOpenRem,
     undefined,
     async (message) => {
+      console.log("DEBUG: GlobalOpenRem fired.", message);
+      // Fallback: If we are navigating away (GlobalOpenRem) and have an active session, save it.
+      if (currentSession) {
+        console.log("DEBUG: GlobalOpenRem fired while Queue Session ACTIVE. Saving/Closing Session.");
+        await saveCurrentSession("GlobalOpenRem Navigation");
+      }
       const currentRemId = message.remId as RemId;
       const currentRemData = (await plugin.storage.getSynced("remData")) as RemHistoryData[] || [];
 
