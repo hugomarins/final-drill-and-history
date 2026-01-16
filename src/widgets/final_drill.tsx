@@ -356,7 +356,6 @@ function FinalDrill() {
       <div className="flex-grow relative">
         {console.log("DEBUG: FinalDrill Rendering Queue Component")}
         <Queue
-          key={filteredIds.length}
           cardIds={filteredIds}
           width="100%"
           height="100%"

@@ -8,7 +8,7 @@
   "version": {
     "major": 0,
     "minor": 0,
-    "patch": 16
+    "patch": 17
   },
   "unlisted": false,
   "description": "Adds right sidebar tabs showing Rem, Card and Queue history, and Live Session Stats. \n Adds Final Drill to deliberately practice poorly rated cards.",
