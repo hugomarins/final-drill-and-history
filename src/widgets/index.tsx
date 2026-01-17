@@ -240,7 +240,9 @@ async function onActivate(plugin: ReactRNPlugin) {
             currentSession.prevCardAge = currentSession.currentCardAge;
             currentSession.prevCardTotalTime = currentSession.currentCardTotalTime;
             currentSession.prevCardRepCount = currentSession.currentCardRepCount;
+            currentSession.prevCardId = currentSession.currentCardId;
           }
+          currentSession.currentCardId = data.cardId;
 
           const card = await plugin.card.findOne(data.cardId);
           if (card?.repetitionHistory?.length > 0) {
@@ -459,6 +461,22 @@ async function onActivate(plugin: ReactRNPlugin) {
           if (score === 0) {
             currentSession.againCount = (currentSession.againCount || 0) + 1;
           }
+
+          // START Fix for Live Dashboard
+          // We must update the card-specific stats here because this is when the rep is actually finalized.
+          // We check if this card is the current one or the previous one in the session state.
+          if (score !== QueueInteractionScore.TOO_EARLY) {
+            if (currentSession.currentCardId === cardId) {
+              currentSession.currentCardTotalTime = (currentSession.currentCardTotalTime || 0) + timeSpent;
+              currentSession.currentCardRepCount = (currentSession.currentCardRepCount || 0) + 1;
+            }
+            if (currentSession.prevCardId === cardId) {
+              currentSession.prevCardTotalTime = (currentSession.prevCardTotalTime || 0) + timeSpent;
+              currentSession.prevCardRepCount = (currentSession.prevCardRepCount || 0) + 1;
+            }
+          }
+          // END Fix
+
           cardStartTimes.delete(cardId);
           console.log(`DEBUG: Successfully recorded time for card ${cardId}: ${timeSpent}ms`);
         } else {
@@ -473,6 +491,7 @@ async function onActivate(plugin: ReactRNPlugin) {
           currentIncRemStart = null;
         }
       }
+
 
       // Sync Live Updates
       if (currentSession) {

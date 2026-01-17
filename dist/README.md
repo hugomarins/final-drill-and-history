@@ -80,6 +80,18 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.18 January 18th, 2026
+
+- **Bug Fix:** The "Previous Card" stats in the live dashboard now reflect the final state of the card after it was reviewed, including the time spent and the repetition count increment.
+
+### v. 0.0.17 January 17th, 2026
+
+- **Bug Fix:** Solved an issue where the Final Drill was recording a separate session for each card reviewed, instead of a single continuous session.
+
+### v. 0.0.16 January 10th, 2026
+
+- **Bug Fix:** Solved an issue where practice sessions were not being recorded when navigating away from the queue (e.g., by clicking a link or opening a Rem) instead of using the close button.
+
 ### v. 0.0.12 January 09th, 2026
 
 - **Practiced Queues Upgrade:**

@@ -32,6 +32,10 @@ export interface PracticedQueueSession {
     prevCardAge?: number;
     prevCardTotalTime?: number;
     prevCardRepCount?: number;
+
+    // Internal ID tracking for logic
+    currentCardId?: string;
+    prevCardId?: string;
 }
 
 interface AggregatedStats {
