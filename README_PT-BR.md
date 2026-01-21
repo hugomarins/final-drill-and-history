@@ -79,6 +79,18 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
+### v. 0.0.19 20 de Janeiro de 2026
+
+- **Correção de Bug:** Corrigido um problema onde o widget Final Drill mostrava incorretamente "0 cartões" ou "Terminado" mesmo quando havia cartões restantes na fila.
+
+### v. 0.0.18 18 de Janeiro de 2026
+
+- **Correção de Bug:** As estatísticas do "Cartão Anterior" no painel ao vivo agora refletem o estado final do cartão após ser revisado, incluindo o tempo gasto e o incremento na contagem de repetição.
+
+### v. 0.0.17 17 de Janeiro de 2026
+
+- **Correção de Bug:** Resolvido um problema onde o Final Drill gravava uma sessão separada para cada cartão revisado, em vez de uma única sessão contínua.
+
 ### v. 0.0.16 10 de Janeiro de 2026
 
 - **Correção de Bug:** Resolvido um problema onde sessões de prática não eram gravadas ao navegar para fora da fila (ex: clicando em um link ou abrindo um Rem) ao invés de usar o botão de fechar.

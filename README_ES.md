@@ -79,6 +79,18 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.19 20 de Enero de 2026
+
+- **Corrección de Error:** Se arregló un problema donde el widget de Final Drill mostraba incorrectamente "0 tarjetas" o "Terminado" incluso cuando quedaban tarjetas en la cola.
+
+### v. 0.0.18 18 de Enero de 2026
+
+- **Corrección de Error:** Las estadísticas de "Tarjeta Anterior" en el panel en vivo ahora reflejan el estado final de la tarjeta después de ser revisada, incluyendo el tiempo invertido y el incremento en el recuento de repeticiones.
+
+### v. 0.0.17 17 de Enero de 2026
+
+- **Corrección de Error:** Se resolvió un problema donde el Final Drill registraba una sesión separada por cada tarjeta revisada, en lugar de una sesión continua.
+
 ### v. 0.0.16 10 de Enero de 2026
 
 - **Corrección de Error:** Se resolvió un problema donde las sesiones de práctica no se registraban al navegar fuera de la cola (ej: haciendo clic en un enlace o abriendo un Rem) en lugar de usar el botón de cerrar.
