@@ -80,6 +80,10 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.21 January 21st, 2026
+
+- **Bug Fix:** Reduced the maximum number of flashcards stored in history to 999 to prevent performance issues.
+
 ### v. 0.0.20 January 21st, 2026
 
 - **Bug Fix:** Implemented lazy session initialization in `index.tsx` to handle missing QueueEnter events on iOS.

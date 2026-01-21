@@ -51,8 +51,8 @@ function FlashcardHistory() {
 
       for (const item of needsBackfill) {
         const rem = await plugin.rem.findOne(item.remId);
-        const frontText = rem?.text ? await plugin.richText.toString(rem.text) : "";
-        const backText = rem?.backText ? await plugin.richText.toString(rem.backText) : "";
+        const frontText = rem?.text ? (await plugin.richText.toString(rem.text)).substring(0, 200) : "";
+        const backText = rem?.backText ? (await plugin.richText.toString(rem.backText)).substring(0, 200) : "";
         const text = `${frontText} ${backText}`.trim();
         updates.set(item.key, text);
       }
