@@ -80,6 +80,9 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.20 January 21st, 2026
+
+- **Bug Fix:** Implemented lazy session initialization in `index.tsx` to handle missing QueueEnter events on iOS.
 
 ### v. 0.0.19 January 20th, 2026
 

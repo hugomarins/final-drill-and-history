@@ -167,6 +167,46 @@ async function onActivate(plugin: ReactRNPlugin) {
       const type = await plugin.queue.getCurrentQueueScreenType();
       console.log("DEBUG: Queue Type", type);
 
+      // --- Lazy Session Initialization (Mobile Fix) ---
+      // If QueueEnter failed to fire (common on iOS), start session here.
+      if (!currentSession) {
+        console.log("DEBUG: QueueLoadCard detected NO active session. Lazily initializing session (Mobile Fix).");
+        try {
+          const kbData = await plugin.kb.getCurrentKnowledgeBaseData();
+          let scopeName = "Restored Mobile Session";
+          // Attempt to get context if possible, but data here is Card-specific, not Queue-specific usually.
+          // We'll rely on generic naming or later scope resolution if possible.
+
+          // Check if Final Drill (implied by type or state)
+          const isFinalDrillActive = await plugin.storage.getSession<boolean>("finalDrillActive");
+          if (isFinalDrillActive) {
+            scopeName = "Final Drill";
+          }
+
+          currentSession = {
+            id: Math.random().toString(36).substring(7),
+            startTime: Date.now(),
+            kbId: kbData._id,
+            // We lack queueId here unless we can retrieve it elsewhere, so undefined.
+            scopeName: scopeName,
+            totalTime: 0,
+            flashcardsCount: 0,
+            flashcardsTime: 0,
+            incRemsCount: 0,
+            incRemsTime: 0,
+            againCount: 0,
+            currentCardAge: undefined,
+          };
+          // Sync Live
+          await plugin.storage.setSession("activeQueueSession", currentSession);
+          cardStartTimes.clear();
+          currentIncRemStart = null;
+        } catch (err) {
+          console.error("ERROR: Failed to lazily initialize session", err);
+        }
+      }
+      // --- End Lazy Init ---
+
       // If generic/plugin type OR if type is undefined but we see IncRem signs (data.remId and no cardId)
       // Robust Check: If type is undefined, trust the data signature.
       // IncRems ALWAYs have but NO cardId. Sometimes remId is also missing in the event data,
