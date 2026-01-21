@@ -43,6 +43,16 @@ async function onActivate(plugin: ReactRNPlugin) {
     },
   });
 
+  // Debug Command: Clear Flashcard History
+  await plugin.app.registerCommand({
+    id: "debug_clear_flashcard_history",
+    name: "Debug: Clear Flashcard History (Fix Sync Error)",
+    action: async () => {
+      await plugin.storage.setSynced("flashcardHistoryData", []);
+      await plugin.app.toast("Flashcard History cleared!");
+    },
+  });
+
   // 2. Existing Document History Widget
   await plugin.app.registerWidget(
     "rem_history",
