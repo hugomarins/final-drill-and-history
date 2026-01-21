@@ -82,7 +82,8 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ### v. 0.0.21 January 21st, 2026
 
-- **Bug Fix:** Reduced the maximum number of flashcards stored in history to 999 to prevent performance issues.
+- **Bug Fix:** Reduced the maximum number of flashcards stored in history to 999 to prevent performance issues. 
+- **Feature:** Added a debug command to clear flashcard history in case the user faces syncing issues ("Debug: Clear Flashcard History").
 
 ### v. 0.0.20 January 21st, 2026
 

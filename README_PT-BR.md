@@ -79,6 +79,15 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
+### v. 0.0.21 21 de Janeiro de 2026
+
+- **Correção de Bug:** Reduzido o número máximo de flashcards armazenados no histórico para 999 para evitar problemas de desempenho. 
+- **Funcionalidade:** Adicionado um comando de depuração para limpar o histórico de flashcards caso o usuário enfrente problemas de sincronização ("Debug: Clear Flashcard History").
+
+### v. 0.0.20 21 de Janeiro de 2026
+
+- **Correção de Bug:** Implementada inicialização de sessão "preguiçosa" no `index.tsx` para lidar com eventos QueueEnter não disparando no iOS.
+
 ### v. 0.0.19 20 de Janeiro de 2026
 
 - **Correção de Bug:** Corrigido um problema onde o widget Final Drill mostrava incorretamente "0 cartões" ou "Terminado" mesmo quando havia cartões restantes na fila.

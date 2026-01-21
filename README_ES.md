@@ -79,6 +79,15 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.21 21 de Enero de 2026
+
+- **Corrección de Error:** Se redujo el número máximo de flashcards almacenadas en el historial a 999 para evitar problemas de rendimiento. 
+- **Funcionalidad:** Se añadió un comando de depuración para limpiar el historial de flashcards en caso de que el usuario tenga problemas de sincronización ("Debug: Clear Flashcard History").
+
+### v. 0.0.20 21 de Enero de 2026
+
+- **Corrección de Error:** Implementada la inicialización de sesión perezosa en `index.tsx` para manejar eventos QueueEnter perdidos en iOS.
+
 ### v. 0.0.19 20 de Enero de 2026
 
 - **Corrección de Error:** Se arregló un problema donde el widget de Final Drill mostraba incorrectamente "0 tarjetas" o "Terminado" incluso cuando quedaban tarjetas en la cola.
