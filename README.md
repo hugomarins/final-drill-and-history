@@ -80,6 +80,11 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+
+### v. 0.0.19 January 20th, 2026
+
+- **Bug Fix:** Fixed an issue where the Final Drill widget was incorrectly showing "0 cards" or "Finished" even when there were cards remaining in the queue.
+
 ### v. 0.0.18 January 18th, 2026
 
 - **Bug Fix:** The "Previous Card" stats in the live dashboard now reflect the final state of the card after it was reviewed, including the time spent and the repetition count increment.

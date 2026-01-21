@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   renderWidget,
   useSyncedStorageState,
@@ -23,6 +23,21 @@ function FinalDrill() {
   const [filteredIds, setFilteredIds] = useState<string[]>([]);
   // State for old items count
   const [oldItemsCount, setOldItemsCount] = useState<number>(0);
+
+  // Queue Key to force re-render ONLY on 0 -> N transitions (fixes empty state bug without fragmenting sessions)
+  const [queueKey, setQueueKey] = useState<number>(0);
+  const prevFilteredIdsLength = useRef<number>(0);
+
+  useEffect(() => {
+    // Only increment key if we transitioned from 0 items to some items.
+    // This allows the Queue to initialize correctly when data arrives.
+    // But keeps the key STABLE when items are removed during practice (N -> N-1), preserving the session.
+    if (filteredIds.length > 0 && prevFilteredIdsLength.current === 0) {
+      console.log("DEBUG: Final Drill Data Loaded (0 -> N). Refreshing Queue Component.");
+      setQueueKey(prev => prev + 1);
+    }
+    prevFilteredIdsLength.current = filteredIds.length;
+  }, [filteredIds.length]);
 
   // Settings
   const oldItemThreshold = useTrackerPlugin(async (reactivePlugin) => {
@@ -354,8 +369,9 @@ function FinalDrill() {
       </div>
 
       <div className="flex-grow relative">
-        {console.log("DEBUG: FinalDrill Rendering Queue Component")}
+        {console.log("DEBUG: FinalDrill Rendering Queue Component", { queueKey, count: filteredIds.length })}
         <Queue
+          key={queueKey}
           cardIds={filteredIds}
           width="100%"
           height="100%"
