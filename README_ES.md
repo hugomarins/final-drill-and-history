@@ -51,7 +51,7 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 - **Gestión de la Cola:**
     - **Ítems Antiguos (Clear Old):** Si los ítems permanecen en la cola por mucho tiempo (por defecto 7 días), aparecerá una advertencia. Puedes borrar estos ítems obsoletos con un solo clic para mantener tu sesión de práctica enfocada en material fresco. El umbral se puede configurar en los ajustes del complemento.
     - **Borrar Cola (Clear Queue):** Un botón "Borrar Cola" te permite vaciar la cola de Final Drill en cualquier momento si quieres empezar de nuevo o simplemente limpiar.
-- **Limitaciones:** no es respondente a atajos de teclado, y no tiene acceso a los botones Editar / Previsualizar. Como una solución alternativa, un Editor UI es accesible por botones (como alternativa, un botón "Ir al Rem" para saltar al Rem en el Editor RemNote nativo).
+- **Limitaciones:** no es respondente a atajos de teclado, y no tiene acceso a los botones Editar / Previsualizar. Como una solución alternativa, un Editor UI es accesible por botones (como alternativas, un botón "Editar Depois" remover el cartão da fila do Final Drill e adicionar o Edit Later powerup nativo do RemNote, y un botón "Ir al Rem" para saltar al Rem en el Editor RemNote nativo).
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 

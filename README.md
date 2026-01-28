@@ -52,7 +52,7 @@ This plugin extends the official RemNote History plugin functionality with two p
 - **Queue Management:**
     - **Old Items:** If items linger in the queue for too long (default 7 days), a warning will appear. You can clear these stale items with a single click to keep your drill session focused on fresh material. The threshold can be configured in the plugin settings.
     - **Clear Queue:** A "Clear Queue" button allows you to empty the Final Drill queue at any time if you want to start fresh or simply declutter.
-- **Know limitations:** irresponsive to keyboard shortcuts, and no access to Edit / Preview buttons. As a workaound, a Editor UI is accessible by buttons (as it is still limited, there is a "Go to Rem" button to jump to the Rem in RemNote native Editor).
+- **Know limitations:** irresponsive to keyboard shortcuts, and no access to Edit / Preview buttons. As a workaound, a Editor UI is accessible by buttons (as it is still limited, there is an "Edit Later" to remove the card from the Final Drill queue and add the Edit Later built-in powerup, and a "Go to Rem" button to jump to the Rem in RemNote native Editor).
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 

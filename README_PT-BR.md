@@ -51,7 +51,7 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 - **Gerenciamento da Fila:**
     - **Itens Antigos (Clear Old):** Se os itens permanecerem na fila por muito tempo (padrão 7 dias), um aviso aparecerá. Você pode limpar esses itens obsoletos com um único clique para manter sua sessão de prática focada em material fresco. O limite pode ser configurado nas configurações do plugin.
     - **Limpar Fila (Clear Queue):** Um botão "Limpar Fila" permite esvaziar a fila do Final Drill a qualquer momento se você quiser começar do zero ou simplesmente organizar.
-- **Limitações:** não responde a atalhos de teclado, e não tem acesso aos botões Editar / Pré-visualizar. Como uma solução alternativa, uma interface de edição é acessível por botões (como alternativa, um botão "Ir para Rem" para pular ao Rem no Editor nativo do RemNote).
+- **Limitações:** não responde a atalhos de teclado, e não tem acesso aos botões Editar / Pré-visualizar. Como uma solução alternativa, uma interface de edição é acessível por botões (como alternativas, um botão "Editar Depois" remover o cartão da fila do Final Drill e adicionar o Edit Later powerup nativo do RemNote, e um botão "Ir para Rem" para pular ao Rem no Editor nativo do RemNote).
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
