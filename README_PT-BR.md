@@ -79,6 +79,11 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
+### v. 0.0.22 28 de Janeiro de 2026
+
+- **Correção de Bug:** Corrigido um problema onde cartões pulados (`TOO_EARLY`) eram incorretamente adicionados à fila do Final Drill. Agora apenas cartões explicitamente classificados como **Esqueci (Again)** ou **Difícil (Hard)** são adicionados.
+- **Nova Funcionalidade:** Adicionado um botão **Editar Depois (Edit Later)** ao widget Final Drill (entre "Ir para Rem" e "Editar Anterior"). Ao clicar, marca o Rem do cartão atual com o powerup "Editar Depois" e o remove da fila de prática, permitindo adiar a edição sem perder o acompanhamento.
+
 ### v. 0.0.21 21 de Janeiro de 2026
 
 - **Correção de Bug:** Reduzido o número máximo de flashcards armazenados no histórico para 999 para evitar problemas de desempenho. 

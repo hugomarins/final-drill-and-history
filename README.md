@@ -80,6 +80,11 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.22 January 28th, 2026
+
+- **Bug Fix:** Fixed an issue where skipped cards (`TOO_EARLY`) were incorrectly being added to the Final Drill queue. Now only cards explicitly rated **Again** or **Hard** are added.
+- **New Feature:** Added an **Edit Later** button to the Final Drill widget (between "Go to Rem" and "Edit Previous"). Clicking it marks the current card's Rem with the "Edit Later" powerup and removes the card from the drill queue, allowing you to defer editing without losing track of it.
+
 ### v. 0.0.21 January 21st, 2026
 
 - **Bug Fix:** Reduced the maximum number of flashcards stored in history to 999 to prevent performance issues. 

@@ -79,6 +79,11 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.22 28 de Enero de 2026
+
+- **Corrección de Error:** Se corrigió un problema donde las tarjetas omitidas (`TOO_EARLY`) se agregaban incorrectamente a la cola de Final Drill. Ahora solo se agregan las tarjetas calificadas explícitamente como **Olvidé (Again)** o **Difícil (Hard)**.
+- **Nueva Funcionalidad:** Se agregó un botón **Editar Después (Edit Later)** al widget de Final Drill (entre "Ir al Rem" y "Editar Anterior"). Al hacer clic, marca el Rem del cartón actual con el powerup "Editar Después" y lo elimina de la cola de prática, permitiéndote diferir la edición sin perder el seguimiento.
+
 ### v. 0.0.21 21 de Enero de 2026
 
 - **Corrección de Error:** Se redujo el número máximo de flashcards almacenadas en el historial a 999 para evitar problemas de rendimiento. 

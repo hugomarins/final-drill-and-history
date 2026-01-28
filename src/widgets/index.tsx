@@ -598,7 +598,8 @@ async function onActivate(plugin: ReactRNPlugin) {
       // Helper to extract ID regardless of format
       const getCardId = (item: FinalDrillItem) => typeof item === 'string' ? item : item.cardId;
 
-      if (score <= QueueInteractionScore.HARD) {
+      // Only add cards that were explicitly rated AGAIN or HARD (not TOO_EARLY, RESET, etc.)
+      if (score === QueueInteractionScore.AGAIN || score === QueueInteractionScore.HARD) {
         // Add if not present
         if (!finalDrillIds.some(item => getCardId(item) === cardId)) {
           // Store as object with KB ID and addedAt timestamp

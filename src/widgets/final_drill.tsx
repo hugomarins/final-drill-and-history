@@ -9,6 +9,7 @@ import {
   AppEvents,
   RemHierarchyEditorTree, // Import Editor
   RemRichTextEditor,
+  BuiltInPowerupCodes,
 } from "@remnote/plugin-sdk";
 
 // Define the mixed type here as well
@@ -320,6 +321,36 @@ function FinalDrill() {
               title="Go to the current Rem (closes popup)"
             >
               Go to Rem
+            </button>
+
+            {/* Edit Later - Marks card for editing and removes from drill */}
+            <button
+              onClick={async () => {
+                const cardId = await plugin.storage.getSession<string>("finalDrillCurrentCardId");
+                if (cardId) {
+                  const card = await plugin.card.findOne(cardId);
+                  if (card && card.remId) {
+                    const rem = await plugin.rem.findOne(card.remId);
+                    if (rem) {
+                      // Add EditLater powerup
+                      await rem.addPowerup(BuiltInPowerupCodes.EditLater);
+                      // Remove from Final Drill queue (synced storage)
+                      const getCardId = (item: FinalDrillItem) => typeof item === 'string' ? item : item.cardId;
+                      const newIds = finalDrillIdsRaw.filter(item => getCardId(item) !== cardId);
+                      await setFinalDrillIdsRaw(newIds);
+                      // Advance to the next card without remounting the Queue (preserves session)
+                      await plugin.queue.removeCurrentCardFromQueue(false);
+                      await plugin.app.toast("Card marked for Edit Later and removed from drill.");
+                    }
+                  }
+                } else {
+                  await plugin.app.toast("No current card found.");
+                }
+              }}
+              className="px-3 py-1.5 text-sm rounded bg-orange-500 text-white hover:bg-orange-600 font-medium transition-colors shadow-md"
+              title="Mark for Edit Later and remove from drill"
+            >
+              Edit Later
             </button>
 
             <button
