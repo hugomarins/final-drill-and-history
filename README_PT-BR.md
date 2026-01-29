@@ -79,6 +79,10 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
+### v. 0.0.23 29 de Janeiro de 2026
+
+- **Melhoria:** Aumentado o limite de texto de busca do histórico de flashcards de 200 para 1000 caracteres por lado (frente/verso), melhorando significativamente a cobertura de busca para flashcards mais longos.
+
 ### v. 0.0.22 28 de Janeiro de 2026
 
 - **Correção de Bug:** Corrigido um problema onde cartões pulados (`TOO_EARLY`) eram incorretamente adicionados à fila do Final Drill. Agora apenas cartões explicitamente classificados como **Esqueci (Again)** ou **Difícil (Hard)** são adicionados.

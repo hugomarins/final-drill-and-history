@@ -569,8 +569,8 @@ async function onActivate(plugin: ReactRNPlugin) {
         // Fetch text for search. Note: We use the REM's text, not the card's specific question/answer,
         // as the scope is usually the Rem itself.
         const rem = await plugin.rem.findOne(remId);
-        const frontText = rem?.text ? (await plugin.richText.toString(rem.text)).substring(0, 200) : "";
-        const backText = rem?.backText ? (await plugin.richText.toString(rem.backText)).substring(0, 200) : "";
+        const frontText = rem?.text ? (await plugin.richText.toString(rem.text)).substring(0, 1000) : "";
+        const backText = rem?.backText ? (await plugin.richText.toString(rem.backText)).substring(0, 1000) : "";
         const text = `${frontText} ${backText}`.trim();
 
         await plugin.storage.setSynced("flashcardHistoryData", [

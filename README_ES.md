@@ -79,6 +79,10 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.23 29 de Enero de 2026
+
+- **Mejora:** Se aumentó el límite de texto de búsqueda del historial de flashcards de 200 a 1000 caracteres por lado (frente/reverso), mejorando significativamente la cobertura de búsqueda para flashcards más largos.
+
 ### v. 0.0.22 28 de Enero de 2026
 
 - **Corrección de Error:** Se corrigió un problema donde las tarjetas omitidas (`TOO_EARLY`) se agregaban incorrectamente a la cola de Final Drill. Ahora solo se agregan las tarjetas calificadas explícitamente como **Olvidé (Again)** o **Difícil (Hard)**.
