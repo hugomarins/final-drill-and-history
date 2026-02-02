@@ -80,6 +80,10 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.24 February 2nd, 2026
+
+- **Improvement:** Enhanced the Live Session card display to show the **interval** (time until next review) for both the current and previous card. For the previous card, also displays the **total coverage** (time span from card creation to next due date), providing insight into your learning progress.
+
 ### v. 0.0.23 January 29th, 2026
 
 - **Improvement:** Increased the flashcard history search text limit from 200 to 1000 characters per side (front/back), significantly improving search coverage for longer flashcards.

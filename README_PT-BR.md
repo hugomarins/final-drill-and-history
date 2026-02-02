@@ -79,6 +79,10 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
+### v. 0.0.24 2 de Fevereiro de 2026
+
+- **Melhoria:** Aprimorada a exibição de cartões na Sessão ao Vivo para mostrar o **intervalo** (tempo até a próxima revisão) tanto para o cartão atual quanto para o anterior. Para o cartão anterior, também exibe a **cobertura total** (período de tempo desde a criação do cartão até a próxima data de revisão), fornecendo insights sobre seu progresso de aprendizado.
+
 ### v. 0.0.23 29 de Janeiro de 2026
 
 - **Melhoria:** Aumentado o limite de texto de busca do histórico de flashcards de 200 para 1000 caracteres por lado (frente/verso), melhorando significativamente a cobertura de busca para flashcards mais longos.
