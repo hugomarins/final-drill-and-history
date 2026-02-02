@@ -498,18 +498,33 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                                     </span>
                                 )}
                             </div>
-                            <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                <span title="Total Review Time" className="flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                            <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                <span title="Total Review Time" className="inline-flex items-center gap-1 align-baseline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 self-center" viewBox="0 0 20 20" fill="currentColor">
                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                                     </svg>
-                                    {session.currentCardTotalTime !== undefined ? formatTime(session.currentCardTotalTime) : '-'}
+                                    <span>{session.currentCardTotalTime !== undefined ? formatTime(session.currentCardTotalTime) : '-'}</span>
                                 </span>
-                                <span className="w-px h-3 bg-gray-300 dark:bg-gray-600"></span>
+                                <span className="mx-2 text-gray-300 dark:text-gray-600">|</span>
                                 <span title="Total Repetitions">
                                     {session.currentCardRepCount !== undefined ? `${session.currentCardRepCount} reps` : '-'}
                                 </span>
                             </div>
+                            {/* Cost: total time (min) / age (years) */}
+                            {session.currentCardTotalTime !== undefined && session.currentCardFirstRep && (() => {
+                                const ageMs = Date.now() - session.currentCardFirstRep;
+                                const ageYears = ageMs / (1000 * 60 * 60 * 24 * 365);
+                                const totalTimeMinutes = session.currentCardTotalTime / (1000 * 60);
+                                if (ageYears > 0) {
+                                    const cost = totalTimeMinutes / ageYears;
+                                    return (
+                                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400" title="Cost: Total time (min) / Age (years)">
+                                            💰 Cost: {cost.toFixed(1)} min/year
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            })()}
                         </div>
 
                         {/* Previous Card Stats (Only Live, if available) */}
@@ -538,9 +553,26 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                                 </div>
                                 {/* Coverage: Age + Next Interval = total time from creation to next due */}
                                 {session.prevCardNextRepTime && (
-                                    <div className="mt-1 text-xs text-gray-400 dark:text-gray-500" title="Total time coverage from card creation to next scheduled review">
-                                        📊 Coverage: {formatCoverage(session.prevCardFirstRep, session.prevCardNextRepTime)}
-                                    </div>
+                                    <>
+                                        <div className="mt-1 text-xs text-gray-400 dark:text-gray-500" title="Total time coverage from card creation to next scheduled review">
+                                            📊 Coverage: {formatCoverage(session.prevCardFirstRep, session.prevCardNextRepTime)}
+                                        </div>
+                                        {/* Cost: total time (min) / coverage (years) */}
+                                        {session.prevCardTotalTime && session.prevCardFirstRep && (() => {
+                                            const coverageMs = session.prevCardNextRepTime - session.prevCardFirstRep;
+                                            const coverageYears = coverageMs / (1000 * 60 * 60 * 24 * 365);
+                                            const totalTimeMinutes = session.prevCardTotalTime / (1000 * 60);
+                                            if (coverageYears > 0) {
+                                                const cost = totalTimeMinutes / coverageYears;
+                                                return (
+                                                    <div className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                                                        💰 Cost: {cost.toFixed(1)} min/year
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
+                                    </>
                                 )}
                             </div>
                         )}

@@ -80,9 +80,13 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
-### v. 0.0.24 February 2nd, 2026
+### v. 0.0.25 February 2nd, 2026
 
 - **Improvement:** Enhanced the Live Session card display to show the **interval** (time until next review) for both the current and previous card. For the previous card, also displays the **total coverage** (time span from card creation to next due date), providing insight into your learning progress.
+- **New Metric:** Added a **Cost** metric (minutes per year) to the Live Session dashboard.
+    - **Previous Card Box:** Shows the cost as `Total Time (min) / Coverage (years)`.
+    - **Current Card Box:** Shows the cost as `Total Time (min) / Card Age (years)`.
+- **UI Improvement:** The metrics in the Current Card box now wrap naturally to fit available space.
 
 ### v. 0.0.23 January 29th, 2026
 

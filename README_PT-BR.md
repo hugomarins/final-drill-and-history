@@ -79,9 +79,13 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
-### v. 0.0.24 2 de Fevereiro de 2026
+### v. 0.0.25 2 de Fevereiro de 2026
 
 - **Melhoria:** Aprimorada a exibição de cartões na Sessão ao Vivo para mostrar o **intervalo** (tempo até a próxima revisão) tanto para o cartão atual quanto para o anterior. Para o cartão anterior, também exibe a **cobertura total** (período de tempo desde a criação do cartão até a próxima data de revisão), fornecendo insights sobre seu progresso de aprendizado.
+- **Nova Métrica:** Adicionada uma métrica de **Custo** (minutos por ano) ao painel da Sessão ao Vivo.
+    - **Caixa do Cartão Anterior:** Mostra o custo como `Tempo Total (min) / Cobertura (anos)`.
+    - **Caixa do Cartão Atual:** Mostra o custo como `Tempo Total (min) / Idade do Cartão (anos)`.
+- **Melhoria de UI:** As métricas na caixa do Cartão Atual agora se ajustam naturalmente para caber no espaço disponível.
 
 ### v. 0.0.23 29 de Janeiro de 2026
 

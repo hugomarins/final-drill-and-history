@@ -79,9 +79,13 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
-### v. 0.0.24 2 de Febrero de 2026
+### v. 0.0.25 2 de Febrero de 2026
 
 - **Mejora:** Se mejoró la visualización de tarjetas en la Sesión en Vivo para mostrar el **intervalo** (tiempo hasta la próxima revisión) tanto para la tarjeta actual como para la anterior. Para la tarjeta anterior, también se muestra la **cobertura total** (período de tiempo desde la creación de la tarjeta hasta la próxima fecha de revisión), proporcionando información sobre tu progreso de aprendizaje.
+- **Nueva Métrica:** Se añadió una métrica de **Costo** (minutos por año) al tablero de la Sesión en Vivo.
+    - **Caja de Tarjeta Anterior:** Muestra el costo como `Tiempo Total (min) / Cobertura (años)`.
+    - **Caja de Tarjeta Actual:** Muestra el costo como `Tiempo Total (min) / Edad de la Tarjeta (años)`.
+- **Mejora de UI:** Las métricas en la caja de la Tarjeta Actual ahora se ajustan naturalmente para caber en el espacio disponible.
 
 ### v. 0.0.23 29 de Enero de 2026
 
