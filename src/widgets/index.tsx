@@ -120,7 +120,6 @@ async function onActivate(plugin: ReactRNPlugin) {
   const saveCurrentSession = async (reason: string) => {
     if (!currentSession) return;
 
-    console.log(`DEBUG: Saving session. Reason: ${reason}`, currentSession);
 
     currentSession.endTime = Date.now();
 
@@ -135,9 +134,7 @@ async function onActivate(plugin: ReactRNPlugin) {
     if (currentSession.flashcardsCount > 0 || currentSession.incRemsCount > 0) {
       const history = (await plugin.storage.getSynced("practicedQueuesHistory")) as PracticedQueueSession[] || [];
       await plugin.storage.setSynced("practicedQueuesHistory", [currentSession, ...history]);
-      console.log("DEBUG: Session saved successfully.");
     } else {
-      console.log("DEBUG: Session empty, skipping save.");
     }
 
     currentSession = null;
@@ -161,7 +158,6 @@ async function onActivate(plugin: ReactRNPlugin) {
       if (lastHeartbeat) {
         const timeSinceHeartbeat = Date.now() - lastHeartbeat;
         if (timeSinceHeartbeat > 5000) {
-          console.log(`DEBUG: Final Drill Heartbeat stale (${timeSinceHeartbeat}ms). Forcing session save.`);
           await saveCurrentSession("Heartbeat Stale");
         }
       }
@@ -171,16 +167,13 @@ async function onActivate(plugin: ReactRNPlugin) {
   plugin.event.addListener(AppEvents.QueueLoadCard, undefined, async (data: any) => {
     try {
       const now = Date.now();
-      console.log("DEBUG: QueueLoadCard", data);
 
       // Retry getting the queue type. When switching sidebar tabs, it can momentarily be undefined.
       const type = await plugin.queue.getCurrentQueueScreenType();
-      console.log("DEBUG: Queue Type", type);
 
       // --- Lazy Session Initialization (Mobile Fix) ---
       // If QueueEnter failed to fire (common on iOS), start session here.
       if (!currentSession) {
-        console.log("DEBUG: QueueLoadCard detected NO active session. Lazily initializing session (Mobile Fix).");
         try {
           const kbData = await plugin.kb.getCurrentKnowledgeBaseData();
           let scopeName = "Restored Mobile Session";
@@ -205,7 +198,7 @@ async function onActivate(plugin: ReactRNPlugin) {
             incRemsCount: 0,
             incRemsTime: 0,
             againCount: 0,
-            currentCardAge: undefined,
+            currentCardFirstRep: undefined,
           };
           // Sync Live
           await plugin.storage.setSession("activeQueueSession", currentSession);
@@ -223,7 +216,6 @@ async function onActivate(plugin: ReactRNPlugin) {
       // so we assume anything without a cardId is an IncRem when Type is undefined.
       const isLikelyIncRem = type === QueueItemType.Plugin || ((type === undefined || type === null) && !data?.cardId);
 
-      console.log(`DEBUG: isLikelyIncRem Check: Type=${type}, data.remId=${data?.remId}, data.cardId=${data?.cardId} -> RESULT=${isLikelyIncRem}`);
 
       if (isLikelyIncRem) {
         // If an IncRem was already open? Add its time.
@@ -250,12 +242,10 @@ async function onActivate(plugin: ReactRNPlugin) {
 
         // --- Attempt to Capture Scope for Incremental Rem ---
         if (currentSession && (currentSession.scopeName === "Untitled" || currentSession.scopeName === "Ad-hoc Queue" || !currentSession.scopeName)) {
-          console.log("DEBUG: Attempting to resolve IncRem scope name. Data:", data);
           if (data && data.remId) {
             const rem = await plugin.rem.findOne(data.remId);
             if (rem) {
               const text = rem.text ? await plugin.richText.toString(rem.text) : "";
-              console.log("DEBUG: Resolved IncRem scope name:", text);
               if (text) currentSession.scopeName = text;
             }
           }
@@ -286,11 +276,12 @@ async function onActivate(plugin: ReactRNPlugin) {
         // Fetch card to determine age (first repetition)
         if (currentSession) {
           // Shift Current Stats to Previous Stats (if meaningful)
-          if (currentSession.currentCardAge !== undefined) {
-            currentSession.prevCardAge = currentSession.currentCardAge;
+          if (currentSession.currentCardFirstRep !== undefined) {
+            currentSession.prevCardFirstRep = currentSession.currentCardFirstRep;
             currentSession.prevCardTotalTime = currentSession.currentCardTotalTime;
             currentSession.prevCardRepCount = currentSession.currentCardRepCount;
             currentSession.prevCardId = currentSession.currentCardId;
+            // Note: prevCardInterval and prevCardNextRepTime will be updated after rating in QueueCompleteCard
           }
           currentSession.currentCardId = data.cardId;
 
@@ -298,7 +289,16 @@ async function onActivate(plugin: ReactRNPlugin) {
           if (card?.repetitionHistory?.length > 0) {
             const dates = card.repetitionHistory.map(h => h.date);
             if (dates.length > 0) {
-              currentSession.currentCardAge = Math.min(...dates);
+              currentSession.currentCardFirstRep = Math.min(...dates);
+            }
+
+            // Calculate current interval (before this rep)
+            // Note: card.lastRepetitionTime may be undefined, so we derive it from history
+            const lastRepTime = card.lastRepetitionTime || (dates.length > 0 ? Math.max(...dates) : undefined);
+            if (card.nextRepetitionTime && lastRepTime) {
+              currentSession.currentCardInterval = card.nextRepetitionTime - lastRepTime;
+            } else {
+              currentSession.currentCardInterval = undefined;
             }
 
             // Calculate Total Time and Rep Count (ignoring skipped)
@@ -315,9 +315,10 @@ async function onActivate(plugin: ReactRNPlugin) {
             currentSession.currentCardTotalTime = totalCardTime;
             currentSession.currentCardRepCount = totalCardReps;
           } else {
-            currentSession.currentCardAge = undefined; // New card
+            currentSession.currentCardFirstRep = undefined; // New card
             currentSession.currentCardTotalTime = 0;
             currentSession.currentCardRepCount = 0;
+            currentSession.currentCardInterval = undefined;
           }
           // Sync Live Updates
           await plugin.storage.setSession("activeQueueSession", currentSession);
@@ -337,19 +338,14 @@ async function onActivate(plugin: ReactRNPlugin) {
           if (finalDrillItems.length > 0) {
             isOurCard = finalDrillItems.some(item => {
               const id = typeof item === 'string' ? item : item.cardId;
-              // console.log(`DEBUG: Checking ${id} vs ${data.cardId}`);
               return id === data.cardId;
             });
-            console.log(`DEBUG: Verification result for ${data.cardId}: ${isOurCard}. List size: ${finalDrillItems.length}`);
           } else {
-            console.log("DEBUG: Final Drill list is empty during verification.");
           }
 
           if (!isOurCard) {
-            console.log("DEBUG: Card not in Final Drill list. Renaming to Ad-hoc Session.");
             currentSession.scopeName = "Ad-hoc Session";
           } else {
-            console.log("DEBUG: Card verified as Final Drill item.");
           }
         }
       }
@@ -360,11 +356,9 @@ async function onActivate(plugin: ReactRNPlugin) {
 
   plugin.event.addListener(AppEvents.QueueEnter, undefined, async (data: any) => {
     try {
-      console.log("DEBUG: QueueEnter Data", data);
 
       // Safety Net: If a session is already active (missed exit?), save it first.
       if (currentSession) {
-        console.log("DEBUG: New Queue Entered while previous session active. Saving previous session first.");
         await saveCurrentSession("QueueEnter Overwrite");
       }
 
@@ -373,7 +367,6 @@ async function onActivate(plugin: ReactRNPlugin) {
       // --- Attempt to get Scope Name ---
       let scopeName = "Ad-hoc Queue";
       let queueId = data?.subQueueId;
-      console.log("DEBUG: subQueueId", queueId);
 
       // Validate queueId: check if it's a valid ID string (not a random specific number '0.xxxx')
       const isValidId = queueId && typeof queueId === 'string' && !queueId.startsWith("0.");
@@ -405,7 +398,6 @@ async function onActivate(plugin: ReactRNPlugin) {
         }
       }
 
-      console.log("DEBUG: Final Scope Name:", scopeName);
 
       currentSession = {
         id: Math.random().toString(36).substring(7),
@@ -419,7 +411,7 @@ async function onActivate(plugin: ReactRNPlugin) {
         incRemsCount: 0,
         incRemsTime: 0,
         againCount: 0,
-        currentCardAge: undefined,
+        currentCardFirstRep: undefined,
       };
       // Sync to Storage for Live View
       await plugin.storage.setSession("activeQueueSession", currentSession);
@@ -432,7 +424,6 @@ async function onActivate(plugin: ReactRNPlugin) {
   });
 
   plugin.event.addListener(AppEvents.QueueExit, undefined, async () => {
-    console.log("DEBUG: AppEvents.QueueExit fired event.");
     // Unblock Final Drill when leaving any queue (Implicitly handled by freeing session)
 
     if (currentSession) {
@@ -442,11 +433,9 @@ async function onActivate(plugin: ReactRNPlugin) {
 
   // Listener to manually force save session (e.g. when Final Drill popup closes without QueueExit)
   plugin.event.addListener("force_save_session", undefined, async () => {
-    console.log("DEBUG: Force Save Session triggered via Event.");
     if (currentSession) {
       await saveCurrentSession("force_save_session Event");
     } else {
-      console.log("DEBUG: No active session to save.");
     }
   });
 
@@ -455,10 +444,8 @@ async function onActivate(plugin: ReactRNPlugin) {
     AppEvents.GlobalOpenRem,
     undefined,
     async (message) => {
-      console.log("DEBUG: GlobalOpenRem fired.", message);
       // Fallback: If we are navigating away (GlobalOpenRem) and have an active session, save it.
       if (currentSession) {
-        console.log("DEBUG: GlobalOpenRem fired while Queue Session ACTIVE. Saving/Closing Session.");
         await saveCurrentSession("GlobalOpenRem Navigation");
       }
       const currentRemId = message.remId as RemId;
@@ -498,7 +485,6 @@ async function onActivate(plugin: ReactRNPlugin) {
     undefined,
     async (message) => {
       const { cardId, score } = message as { cardId: string; score: QueueInteractionScore };
-      console.log(`DEBUG: QueueCompleteCard fired for ${cardId}. Score: ${score}. Session Active: ${!!currentSession}`);
 
       if (currentSession && cardId) {
         // It's a Flashcard Completion (IncRems typically don't fire this or lack ID)
@@ -528,7 +514,6 @@ async function onActivate(plugin: ReactRNPlugin) {
           // END Fix
 
           cardStartTimes.delete(cardId);
-          console.log(`DEBUG: Successfully recorded time for card ${cardId}: ${timeSpent}ms`);
         } else {
           console.warn(`DEBUG: No start time found for completed card ${cardId}`);
         }
@@ -555,6 +540,36 @@ async function onActivate(plugin: ReactRNPlugin) {
       if (!card) return;
 
       const remId = card.remId;
+
+      // --- Update Previous Card Interval/Coverage after rating ---
+      // When a card is rated, we can now get its new interval (after the scheduler updates)
+      // If this card was the "current" card at the time of rating, it will become "prev" when next card loads.
+      // However, we update prevCard data here if this cardId matches prevCardId (i.e., we're completing a card that was already moved to prev)
+      // OR if it matches currentCardId (the card we just rated, which will become prev when Next card loads).
+      if (currentSession && score !== QueueInteractionScore.TOO_EARLY) {
+        // The card we just completed will be shown as "prev" after the next card loads.
+        // So we update the "prev" interval/nextRepTime now with the NEWLY scheduled values.
+        if (currentSession.currentCardId === cardId || currentSession.prevCardId === cardId) {
+          // Derive lastRepTime from history if SDK doesn't provide it
+          const dates = card.repetitionHistory?.map(h => h.date) || [];
+          const lastRepTime = card.lastRepetitionTime || (dates.length > 0 ? Math.max(...dates) : undefined);
+
+          if (card.nextRepetitionTime && lastRepTime) {
+            // New interval after this rep
+            const newInterval = card.nextRepetitionTime - lastRepTime;
+            // If this is the current card, it will become prev on next load, so update prev fields
+            if (currentSession.currentCardId === cardId) {
+              currentSession.prevCardInterval = newInterval;
+              currentSession.prevCardNextRepTime = card.nextRepetitionTime;
+            } else if (currentSession.prevCardId === cardId) {
+              currentSession.prevCardInterval = newInterval;
+              currentSession.prevCardNextRepTime = card.nextRepetitionTime;
+            }
+            // Sync updated session
+            await plugin.storage.setSession("activeQueueSession", currentSession);
+          }
+        }
+      }
 
       // REMOVED Fallback Update Scope Name as per user request (Ancestor Traversal)
 

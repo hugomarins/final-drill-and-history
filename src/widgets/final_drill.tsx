@@ -34,7 +34,6 @@ function FinalDrill() {
     // This allows the Queue to initialize correctly when data arrives.
     // But keeps the key STABLE when items are removed during practice (N -> N-1), preserving the session.
     if (filteredIds.length > 0 && prevFilteredIdsLength.current === 0) {
-      console.log("DEBUG: Final Drill Data Loaded (0 -> N). Refreshing Queue Component.");
       setQueueKey(prev => prev + 1);
     }
     prevFilteredIdsLength.current = filteredIds.length;
@@ -150,7 +149,6 @@ function FinalDrill() {
     }
     const card = await plugin.card.findOne(cardId);
     if (card && card.remId) {
-      console.log(`DEBUG: Editing Rem ID: ${card.remId} for Card: ${cardId}`);
       setEditingRemId(card.remId);
     } else {
       await plugin.app.toast(`Could not find Rem for card ${cardId}`);
@@ -163,7 +161,6 @@ function FinalDrill() {
   useEffect(() => {
     // Only signal Active if NOT blocked.
     // This prevents index.tsx from "seeing" the Final Drill when it's technically suppressed.
-    console.log(`DEBUG: FinalDrill useEffect. Setting finalDrillActive to true`);
     plugin.storage.setSession("finalDrillActive", true);
 
     // Heartbeat: Signal we are alive every 2 seconds
@@ -173,7 +170,6 @@ function FinalDrill() {
 
     return () => {
       clearInterval(heartbeatInterval);
-      console.log("DEBUG: FinalDrill Cleanup.");
       plugin.storage.setSession("finalDrillActive", false);
     };
   }, [plugin]);
@@ -400,7 +396,6 @@ function FinalDrill() {
       </div>
 
       <div className="flex-grow relative">
-        {console.log("DEBUG: FinalDrill Rendering Queue Component", { queueKey, count: filteredIds.length })}
         <Queue
           key={queueKey}
           cardIds={filteredIds}

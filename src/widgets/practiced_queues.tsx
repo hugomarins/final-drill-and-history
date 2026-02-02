@@ -24,14 +24,17 @@ export interface PracticedQueueSession {
     incRemsCount: number;
     incRemsTime: number; // ms
     againCount: number; // For Retention Rate (Forgot count)
-    currentCardAge?: number; // Timestamp of the FIRST repetition (creation date), strictly for live view
+    currentCardFirstRep?: number; // Timestamp of the FIRST repetition, strictly for live view
     currentCardTotalTime?: number; // ms
     currentCardRepCount?: number;
+    currentCardInterval?: number; // ms - interval before this rep (nextRepetitionTime - lastRepetitionTime)
 
     // Previous Card Metrics (for live view context)
-    prevCardAge?: number;
+    prevCardFirstRep?: number;
     prevCardTotalTime?: number;
     prevCardRepCount?: number;
+    prevCardInterval?: number; // ms - new interval after rating
+    prevCardNextRepTime?: number; // timestamp - next scheduled rep after rating
 
     // Internal ID tracking for logic
     currentCardId?: string;
@@ -366,6 +369,28 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
         return "New";
     }
 
+    // Format interval (ms) using same style as age
+    const formatInterval = (intervalMs?: number) => {
+        if (!intervalMs || intervalMs <= 0) return "-";
+        const days = Math.floor(intervalMs / (1000 * 60 * 60 * 24));
+        const months = Math.floor(days / 30);
+        const years = Math.floor(days / 365);
+
+        if (years > 0) return `${years}.${Math.floor((days % 365) / 30)}y`;
+        if (months > 0) return `${months}.${Math.floor(days % 30 / 3)}m`;
+        if (days > 0) return `${days}d`;
+        const hours = Math.floor(intervalMs / (1000 * 60 * 60));
+        if (hours > 0) return `${hours}h`;
+        return "<1h";
+    }
+
+    // Format total coverage (from card creation to next rep time)
+    const formatCoverage = (createdAt?: number, nextRepTime?: number) => {
+        if (!createdAt || !nextRepTime) return "-";
+        const totalMs = nextRepTime - createdAt;
+        return formatInterval(totalMs);
+    }
+
     const handleOpen = async () => {
         if (session.queueId) {
             // Try to open the queue if possible (not directly supported by simple API, but we can try opening the Rem)
@@ -466,7 +491,12 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                         <div className="bg-white/50 dark:bg-black/20 p-2 rounded">
                             <div className="text-xs uppercase font-bold text-gray-500 mb-1">Card Age</div>
                             <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                                {formatAge(session.currentCardAge)}
+                                {formatAge(session.currentCardFirstRep)}
+                                {session.currentCardInterval && (
+                                    <span className="text-sm font-normal text-gray-400 dark:text-gray-500 ml-1">
+                                        (Ivl: {formatInterval(session.currentCardInterval)})
+                                    </span>
+                                )}
                             </div>
                             <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                 <span title="Total Review Time" className="flex items-center gap-1">
@@ -483,11 +513,16 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                         </div>
 
                         {/* Previous Card Stats (Only Live, if available) */}
-                        {session.prevCardAge !== undefined && (
+                        {session.prevCardFirstRep !== undefined && (
                             <div className="bg-white/30 dark:bg-black/10 p-2 rounded opacity-75">
                                 <div className="text-xs uppercase font-bold text-gray-400 mb-1">Prev. Card</div>
                                 <div className="text-xl font-bold text-gray-500 dark:text-gray-400">
-                                    {formatAge(session.prevCardAge)}
+                                    {formatAge(session.prevCardFirstRep)}
+                                    {session.prevCardInterval && (
+                                        <span className="text-sm font-normal text-gray-400 dark:text-gray-500 ml-1">
+                                            (Ivl: {formatInterval(session.prevCardInterval)})
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="mt-1 flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
                                     <span title="Total Review Time" className="flex items-center gap-1">
@@ -501,6 +536,12 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                                         {session.prevCardRepCount} reps
                                     </span>
                                 </div>
+                                {/* Coverage: Age + Next Interval = total time from creation to next due */}
+                                {session.prevCardNextRepTime && (
+                                    <div className="mt-1 text-xs text-gray-400 dark:text-gray-500" title="Total time coverage from card creation to next scheduled review">
+                                        📊 Coverage: {formatCoverage(session.prevCardFirstRep, session.prevCardNextRepTime)}
+                                    </div>
+                                )}
                             </div>
                         )}
 
