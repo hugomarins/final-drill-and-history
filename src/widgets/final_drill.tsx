@@ -263,6 +263,80 @@ function FinalDrill() {
   }
 
   // Standard Drill View
+  if (showClearOldConfirm) {
+    return (
+      <div
+        className="h-full w-full flex flex-col items-center justify-center p-4 text-center"
+        style={{
+          backgroundColor: 'var(--rn-clr-background-primary)',
+          color: 'var(--rn-clr-content-primary)'
+        }}
+      >
+        <h3 className="text-lg font-bold mb-2">Clear Old Items?</h3>
+        <p className="mb-6 text-sm" style={{ color: 'var(--rn-clr-content-secondary)' }}>
+          This will remove {oldItemsCount} items that have been in the queue for more than {oldItemThreshold} days. {filteredIds.length - oldItemsCount} items will remain.
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={() => setShowClearOldConfirm(false)}
+            className="px-4 py-2 rounded transition-colors"
+            style={{
+              border: '1px solid var(--rn-clr-border-primary)',
+              color: 'var(--rn-clr-content-primary)',
+              backgroundColor: 'var(--rn-clr-background-secondary)'
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={clearOldItems}
+            className="px-4 py-2 rounded text-white transition-colors"
+            style={{ backgroundColor: '#ea5e5e' }}
+          >
+            Clear Old Items
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (showClearAllConfirm) {
+    return (
+      <div
+        className="h-full w-full flex flex-col items-center justify-center p-4 text-center"
+        style={{
+          backgroundColor: 'var(--rn-clr-background-primary)',
+          color: 'var(--rn-clr-content-primary)'
+        }}
+      >
+        <h3 className="text-lg font-bold mb-2">Clear Final Drill Queue?</h3>
+        <p className="mb-6 text-sm" style={{ color: 'var(--rn-clr-content-secondary)' }}>
+          This will remove all {filteredIds.length} items from the final drill queue for this Knowledge Base.
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={() => setShowClearAllConfirm(false)}
+            className="px-4 py-2 rounded transition-colors"
+            style={{
+              border: '1px solid var(--rn-clr-border-primary)',
+              color: 'var(--rn-clr-content-primary)',
+              backgroundColor: 'var(--rn-clr-background-secondary)'
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={clearAllItems}
+            className="px-4 py-2 rounded text-white transition-colors"
+            style={{ backgroundColor: '#ea5e5e' }}
+          >
+            Clear All
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
@@ -403,8 +477,6 @@ function FinalDrill() {
           height="100%"
         />
       </div>
-
-
     </div>
   );
 }

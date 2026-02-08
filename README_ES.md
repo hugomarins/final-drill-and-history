@@ -79,6 +79,10 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.27 08 de Febrero de 2026
+
+- **Corrección de Error:** Se corrigieron los botones **Borrar Cola (Clear Queue)** y **Borrar Antiguos (Clear Old)** que no mostraban los cuadros de diálogo de confirmación.
+
 ### v. 0.0.25 2 de Febrero de 2026
 
 - **Mejora:** Se mejoró la visualización de tarjetas en la Sesión en Vivo para mostrar el **intervalo** (tiempo hasta la próxima revisión) tanto para la tarjeta actual como para la anterior. Para la tarjeta anterior, también se muestra la **cobertura total** (período de tiempo desde la creación de la tarjeta hasta la próxima fecha de revisión), proporcionando información sobre tu progreso de aprendizaje.

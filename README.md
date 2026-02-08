@@ -80,6 +80,10 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.27 February 08th, 2026
+
+- **Bug Fix:** Fixed the **Clear Queue** and **Clear Old** buttons not showing the confirmation dialogs.
+
 ### v. 0.0.25 February 2nd, 2026
 
 - **Improvement:** Enhanced the Live Session card display to show the **interval** (time until next review) for both the current and previous card. For the previous card, also displays the **total coverage** (time span from card creation to next due date), providing insight into your learning progress.

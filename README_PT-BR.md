@@ -79,6 +79,10 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ## Changelog
 
+### v. 0.0.27 08 de Fevereiro de 2026
+
+- **Correção de Bug:** Corrigidos os botões **Limpar Fila (Clear Queue)** e **Limpar Antigos (Clear Old)** que não estavam mostrando as caixas de diálogo de confirmação.
+
 ### v. 0.0.25 2 de Fevereiro de 2026
 
 - **Melhoria:** Aprimorada a exibição de cartões na Sessão ao Vivo para mostrar o **intervalo** (tempo até a próxima revisão) tanto para o cartão atual quanto para o anterior. Para o cartão anterior, também exibe a **cobertura total** (período de tempo desde a criação do cartão até a próxima data de revisão), fornecendo insights sobre seu progresso de aprendizado.
