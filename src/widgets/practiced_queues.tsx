@@ -459,6 +459,22 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                             <div className="text-2xl font-mono font-semibold">{formatTime(session.totalTime)}</div>
                         </div>
 
+
+                        <div className="bg-white/50 dark:bg-black/20 p-2 rounded">
+                            <div className="text-xs uppercase font-bold text-gray-500 mb-1">Cards</div>
+                            <div className="text-xl font-semibold">
+                                {count} <span className="text-xs font-normal text-gray-400">({formatTime(session.flashcardsTime)})</span>
+                            </div>
+                        </div>
+                        {session.incRemsCount > 0 && (
+                            <div className="bg-white/50 dark:bg-black/20 p-2 rounded">
+                                <div className="text-xs uppercase font-bold text-gray-500 mb-1">Inc. Rems</div>
+                                <div className="text-xl font-semibold">
+                                    {session.incRemsCount} <span className="text-xs font-normal text-gray-400">({formatTime(session.incRemsTime)})</span>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Speed */}
                         <div className="bg-white/50 dark:bg-black/20 p-2 rounded">
                             <div className="text-xs uppercase font-bold text-gray-500 mb-1">Speed</div>
@@ -577,20 +593,6 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                             </div>
                         )}
 
-                        <div className="bg-white/50 dark:bg-black/20 p-2 rounded">
-                            <div className="text-xs uppercase font-bold text-gray-500 mb-1">Cards</div>
-                            <div className="text-xl font-semibold">
-                                {count} <span className="text-xs font-normal text-gray-400">({formatTime(session.flashcardsTime)})</span>
-                            </div>
-                        </div>
-                        {session.incRemsCount > 0 && (
-                            <div className="bg-white/50 dark:bg-black/20 p-2 rounded">
-                                <div className="text-xs uppercase font-bold text-gray-500 mb-1">Inc. Rems</div>
-                                <div className="text-xl font-semibold">
-                                    {session.incRemsCount} <span className="text-xs font-normal text-gray-400">({formatTime(session.incRemsTime)})</span>
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     <div className="text-xs text-green-600 font-medium mt-3 flex items-center gap-1">
