@@ -1,8 +1,8 @@
-# Final Drill & History
+# Histórico, Dashboard de Filas e Prática para Maestria (Mastery Drill)
 
 🇬🇧 [English](README.md) | 🇪🇸 [Español](README_ES.md)
 
-Este plugin estende as funcionalidades do plugin oficial do RemNote **History** com duas ferramentas de estudo poderosas: um histórico de flashcards revisados e uma fila de "Final Drill" (Prática Final) para focar em material difícil.
+Este plugin expande as capacidades do RemNote com um conjunto poderoso de ferramentas de histórico e prática. Ele apresenta um **Painel de Sessão ao Vivo** para métricas de estudo em tempo real (velocidade, retenção, idade do cartão), um **Histórico de Filas Praticadas** para acompanhar suas sessões ao longo do tempo, um **Histórico de Flashcards** para encontrar e editar rapidamente cartões revisados recentemente, um **Histórico de Rems Visitados** para rastrear sua navegação na base de conhecimento, e uma fila de **Prática para Maestria** (Mastery Drill) para focar em material difícil.
 
 ## Funcionalidades
 
@@ -38,20 +38,20 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history-live.png)
 
-### 4. Final Drill
-- **O que faz:** Implementa uma fila de "Prática Final" inspirada no SuperMemo, acessível pelo comando `Final Drill` na Omnibar ou por um botão no widget que aparece ocasionalmentena parte inferior da barra lateral esquerda.
+### 4. Mastery Drill
+- **O que faz:** Implementa uma fila de "Prática de Maestria" (Mastery Drill) inspirada no "Final Drill" do SuperMemo, acessível pelo comando `Mastery Drill` na Omnibar ou por um botão no widget que aparece ocasionalmentena parte inferior da barra lateral esquerda.
 - **Como funciona:**
-    - Qualquer flashcard que você classificar como **Esqueci (Forgot)** ou **Difícil (Hard)** é automaticamente adicionado à fila do Final Drill.
-      - **Esqueci** geralmente já possui uma etapa de reaprendizagem. Se você realizar essa etapa de reaprendizagem com sucesso, o cartão será removido da fila do Final Drill; se não, fazê-lo no Final Drill será o mesmo que fazê-lo fora dele. O objetivo de ter esses cartões na prática é garantir que você cumpra a etapa de reaprendizagem (caso você geralmente faça flashcards em filas de documentos em vez da fila global).
+    - Qualquer flashcard que você classificar como **Esqueci (Forgot)** ou **Difícil (Hard)** é automaticamente adicionado à fila do Mastery Drill.
+      - **Esqueci** geralmente já possui uma etapa de reaprendizagem. Se você realizar essa etapa de reaprendizagem com sucesso, o cartão será removido da fila do Mastery Drill; se não, fazê-lo no Mastery Drill será o mesmo que fazê-lo fora dele. O objetivo de ter esses cartões na prática é garantir que você cumpra a etapa de reaprendizagem (caso você geralmente faça flashcards em filas de documentos em vez da fila global).
       - **Difícil** é o que traz a verdadeira diferença. Praticar esses cartões é como se você estivesse revisando antecipadamente; algoritmos (especialmente FSRS) levam isso em conta, e o intervalo gerado será praticamente o mesmo que o já atribuído. O objetivo de tê-los na prática é garantir que você elevou a recuperabilidade para perto de 100% (o mesmo objetivo da etapa de reaprendizagem para itens esquecidos).
       - Ao contrário do _SuperMemo_, essas revisões serão registradas no seu histórico de repetições.
-    - Esses cartões permanecem nesta fila separada até que você os classifique como **Bom (Good)** ou **Fácil (Easy)** dentro do widget Final Drill.
-- **Por que usar:** Use isso no final do seu dia de aprendizado (ou sempre que estiver com vontade) para revisar apenas os itens com os quais você teve dificuldades recentemente, garantindo que você os domine antes de terminar sua sessão. Ele foi projetado para garantir que você elevou a recuperabilidade do material mais difícil para perto de 100% (em outras palavras, que você enraizou o conteúdo e o conhece).
+    - Esses cartões permanecem nesta fila separada até que você os classifique como **Bom (Good)** ou **Fácil (Easy)** dentro do widget Mastery Drill.
+- **Por que usar:** Use isso para revisar apenas os itens com os quais você teve dificuldades recentemente, garantindo que você os domine antes de terminar sua sessão. Ele foi projetado para garantir que você elevou a recuperabilidade do material mais difícil para perto de 100% (em outras palavras, que você enraizou o conteúdo e o conhece).
 - **Eu tenho que usar isso?:** Tenha em mente que esta é uma etapa opcional do processo de aprendizagem. Não usá-lo não trará consequências negativas para o seu processo de aprendizagem, pois na próxima repetição agendada, você será testado novamente, e as falhas serão tratadas de acordo pelo algoritmo. Mas usar a prática não custará muito e aumentará as chances de sucesso nas repetições subsequentes.
 - **Gerenciamento da Fila:**
     - **Itens Antigos (Clear Old):** Se os itens permanecerem na fila por muito tempo (padrão 7 dias), um aviso aparecerá. Você pode limpar esses itens obsoletos com um único clique para manter sua sessão de prática focada em material fresco. O limite pode ser configurado nas configurações do plugin.
-    - **Limpar Fila (Clear Queue):** Um botão "Limpar Fila" permite esvaziar a fila do Final Drill a qualquer momento se você quiser começar do zero ou simplesmente organizar.
-- **Limitações:** não responde a atalhos de teclado, e não tem acesso aos botões Editar / Pré-visualizar. Como uma solução alternativa, uma interface de edição é acessível por botões (como alternativas, um botão "Editar Depois" remover o cartão da fila do Final Drill e adicionar o Edit Later powerup nativo do RemNote, e um botão "Ir para Rem" para pular ao Rem no Editor nativo do RemNote).
+    - **Limpar Fila (Clear Queue):** Um botão "Limpar Fila" permite esvaziar a fila do Mastery Drill a qualquer momento se você quiser começar do zero ou simplesmente organizar.
+- **Limitações:** não responde a atalhos de teclado, e não tem acesso aos botões Editar / Pré-visualizar. Como uma solução alternativa, uma interface de edição é acessível por botões (como alternativas, um botão "Editar Depois" remover o cartão da fila do Mastery Drill e adicionar o Edit Later powerup nativo do RemNote, e um botão "Ir para Rem" para pular ao Rem no Editor nativo do RemNote).
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
@@ -69,9 +69,9 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 4. **Aba Histórico de Sessões Praticadas**:
    - Quer voltar a uma fila que você começou mas não terminou? Clique no nome da fila para navegar de volta para ela.
    - Monitore aqui as estatísticas de suas filas praticadas.
-5.   **Comando Final Drill**:
+5.   **Comando Mastery Drill**:
    - Se você classificar um cartão como "Esqueci" ou "Difícil" durante sua fila regular (ou em qualquer outro lugar), um emblema vermelho aparecerá nesta aba indicando que há cartões pendentes.
-   - Use o comando `Final Drill` na Omnibar para praticar esses cartões específicos.
+   - Use o comando `Mastery Drill` na Omnibar para praticar esses cartões específicos.
    - A fila será limpa automaticamente à medida que você dominar os cartões (classifique-os como Bom/Fácil).
    ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-notification.png)
 
@@ -83,6 +83,7 @@ Este plugin estende as funcionalidades do plugin oficial do RemNote **History** 
 
 - **Correção de Bug:** Corrigido o painel "Cartão Anterior" mostrando dados antigos quando o cartão atual é "Novo" (sem histórico).
 - **Melhoria:** "Idade do Cartão" e intervalos agora exibem horas e minutos para durações inferiores a 24 horas (ex: "4h", "30min") em vez de "Novo".
+- **Renomeação:** "Final Drill" foi renomeado para **Mastery Drill** para refletir melhor seu propósito e evitar confusão com outras ferramentas.
 
 ### v. 0.0.27 08 de Fevereiro de 2026
 

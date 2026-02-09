@@ -309,9 +309,9 @@ function FinalDrill() {
           color: 'var(--rn-clr-content-primary)'
         }}
       >
-        <h3 className="text-lg font-bold mb-2">Clear Final Drill Queue?</h3>
+        <h3 className="text-lg font-bold mb-2">Clear Mastery Drill Queue?</h3>
         <p className="mb-6 text-sm" style={{ color: 'var(--rn-clr-content-secondary)' }}>
-          This will remove all {filteredIds.length} items from the final drill queue for this Knowledge Base.
+          This will remove all {filteredIds.length} items from the Mastery Drill queue for this Knowledge Base.
         </p>
         <div className="flex gap-4">
           <button
@@ -349,12 +349,12 @@ function FinalDrill() {
         <div className="flex justify-between items-center p-2">
           {/* Left: Title + Standard Queue Controls */}
           <div className="flex gap-3 items-center">
-            <span className="font-bold text-lg">Final Drill</span>
+            <span className="font-bold text-lg">Mastery Drill</span>
             <div className="flex gap-2 items-center">
               <button
                 onClick={() => setShowClearAllConfirm(true)}
                 className="text-xs px-2 py-1 rounded border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
-                title="Clear all items from the Final Drill queue"
+                title="Clear all items from the Mastery Drill queue"
               >
                 Clear Queue
               </button>
@@ -464,7 +464,7 @@ function FinalDrill() {
         <div className="px-2 pb-2 flex flex-col gap-0.5">
           <span className="text-sm px-2">Deliberately practice again your poorly rated flashcards.</span>
           <span className="text-xs px-2 text-gray-500 dark:text-gray-400">
-            Flashcards you have rated <i>Again</i> or <i>Hard</i> will appear in the Final Drill and will remain here until you rate them <i>Good</i> or better.
+            Flashcards you have rated <i>Again</i> or <i>Hard</i> will appear in the Mastery Drill and will remain here until you rate them <i>Good</i> or better.
           </span>
         </div>
       </div>

@@ -1,8 +1,8 @@
-# Final Drill & History
+# History, Queue Dashboard and Mastery Drill
 
 🇪🇸 [Español](https://github.com/hugomarins/final-drill-and-history/blob/main/README_ES.md) | 🇧🇷 [Português Brasileiro](https://github.com/hugomarins/final-drill-and-history/blob/main/README_PT-BR.md)
 
-This plugin extends the official RemNote History plugin functionality with two powerful study tools: a history of reviewed flashcards and a "Final Drill" queue for targeting difficult material.
+This plugin extends RemNote's capabilities with a powerful suite of history and practice tools. It features a **Live Session Dashboard** for real-time study metrics (speed, retention, card age), a **Practiced Queues History** to track your sessions over time, a **Flashcard History** to quickly find and edit recently reviewed cards, a **Visited Rem History** to track your navigation in the knowledge base, and a **Mastery Drill** queue to target difficult material.
 
 ## Features
 
@@ -39,20 +39,20 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history-live.png)
 
-### 4. Final Drill
-- **What it does:** Implements a "Final Drill" queue inspired by SuperMemo, accessible using the command `Final Drill` in the Omnibar or from the Left Sidebar End widget. 
+### 4. Mastery Drill
+- **What it does:** Implements a "Mastery Drill" queue inspired by SuperMemo's "Final Drill", accessible using the command `Mastery Drill` in the Omnibar or from the Left Sidebar End widget. 
 - **How it works:** 
-    - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Final Drill queue.
-      - **Forgot** usually already have a relearning step. If you do this relearning step successfully, the card will be cleared from the Final Drill queue; if not, doing it in the Final Drill will be the same as doing it away from it. The purpose of having these cards in the drill is to ensure you accomplish the relearning step (in case you usually make flashcards in document queues rather than in the global queue).
+    - Any flashcard you rate as **Forgot** or **Hard** is automatically added to the Mastery Drill queue.
+      - **Forgot** usually already have a relearning step. If you do this relearning step successfully, the card will be cleared from the Mastery Drill queue; if not, doing it in the Mastery Drill will be the same as doing it away from it. The purpose of having these cards in the drill is to ensure you accomplish the relearning step (in case you usually make flashcards in document queues rather than in the global queue).
       - **Hard** is what brings the real difference. Drilling these cards is as if you were reviewing ahead of time; algorithms (especially FSRS) account for that, and the interval rendered will be practically the same as the one already assigned. The purpose of having them in the drill is to ensure you have raised retrievability close to 100% (the same purpose of the relearning step for forgotten items).
       - Unlike _SuperMemo_, these reviews will be recorded in your repetition history.
-    - These cards stay in this separate queue until you rate them **Good** or **Easy** inside the Final Drill widget.
-- **Why use it:** Use this at the end of your learning day (or whenever you are in the mood for it) to review only the items you struggled with recently, ensuring you master them before finishing your session. It is designed to ensure you have raised retrievability of the most difficult material close to 100% (in other words, that you have ingrained the content and knows it).
+    - These cards stay in this separate queue until you rate them **Good** or **Easy** inside the Mastery Drill widget.
+- **Why use it:** Use this to review only the items you struggled with recently, ensuring you master them before finishing your session. It is designed to ensure you have raised retrievability of the most difficult material close to 100% (in other words, that you have ingrained the content and know it).
 - **Do I have to use it?:** Have in mind that this is an optional stage of the learning process. Not using it will not bring negative consequences for your learning process, as in the next scheduled repetition, you'll be tested again, and failures will be treated accordingly by the algorithm. But using the drill will not cost much and will increase the chances of success in the subsequent repetitions.
 - **Queue Management:**
     - **Old Items:** If items linger in the queue for too long (default 7 days), a warning will appear. You can clear these stale items with a single click to keep your drill session focused on fresh material. The threshold can be configured in the plugin settings.
-    - **Clear Queue:** A "Clear Queue" button allows you to empty the Final Drill queue at any time if you want to start fresh or simply declutter.
-- **Know limitations:** irresponsive to keyboard shortcuts, and no access to Edit / Preview buttons. As a workaound, a Editor UI is accessible by buttons (as it is still limited, there is an "Edit Later" to remove the card from the Final Drill queue and add the Edit Later built-in powerup, and a "Go to Rem" button to jump to the Rem in RemNote native Editor).
+    - **Clear Queue:** A "Clear Queue" button allows you to empty the Mastery Drill queue at any time if you want to start fresh or simply declutter.
+- **Know limitations:** irresponsive to keyboard shortcuts, and no access to Edit / Preview buttons. As a workaound, a Editor UI is accessible by buttons (as it is still limited, there is an "Edit Later" to remove the card from the Mastery Drill queue and add the Edit Later built-in powerup, and a "Go to Rem" button to jump to the Rem in RemNote native Editor).
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
@@ -70,9 +70,9 @@ This plugin extends the official RemNote History plugin functionality with two p
 4. **Practiced Queue History Tab**: 
    - Want to go back to queues you started but was not able to finish? Click on the queue name to navigate back to it.
    - Monitor here the stats of your practiced queues.
-5. **Final Drill command**: 
+5. **Mastery Drill command**: 
    - If you rate a card "Forgot" or "Hard" during your regular queue (or anywhere else), a red badge will appear on this tab indicating cards are pending.
-   - Use the command `Final Drill` in the Omnibar to practice these specific cards (or press the button of the widget that appears from time to time in the Left Sidebar End).
+   - Use the command `Mastery Drill` in the Omnibar to practice these specific cards (or press the button of the widget that appears from time to time in the Left Sidebar End).
    - The queue will automatically clear as you master the cards (rate them Good/Easy).
    ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-notification.png)
 
@@ -84,6 +84,7 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 - **Bug Fix:** Fixed the "Previous Card" box showing stale data when the current card is "New" (no history).
 - **Improvement:** "Card Age" and intervals now display hours and minutes for durations under 24 hours (e.g., "4h", "30min") instead of "New".
+- **Renaming:** "Final Drill" has been renamed to **Mastery Drill** to better reflect its purpose and avoid confusion with other tools.
 
 ### v. 0.0.27 February 08th, 2026
 

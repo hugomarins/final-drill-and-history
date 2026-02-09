@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "final_drill_and_history",
-  "name": "History and Final Drill",
+  "name": "History, Queue Dashboard and Mastery Drill",
   "author": "hugomarins",
   "repoUrl": "https://github.com/hugomarins/final-drill-and-history",
   "enableOnMobile": true,
@@ -11,7 +11,7 @@
     "patch": 28
   },
   "unlisted": false,
-  "description": "Adds right sidebar tabs showing Rem, Card and Queue history, and Live Session Stats. \n Adds Final Drill to deliberately practice poorly rated cards.",
+  "description": "Adds right sidebar tabs showing Rem, Card and Queue history, and Live Session Stats. \n Adds Mastery Drill to deliberately practice poorly rated cards.",
   "requestNative": true,
   "requiredScopes": [
     {

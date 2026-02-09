@@ -1,8 +1,8 @@
-# Final Drill & History
+# Historial, Panel de Colas y Práctica de Maestría (Mastery Drill)
 
 🇬🇧 [English](README.md) | 🇧🇷 [Português Brasileiro](README_PT-BR.md)
 
-Este complemento amplía la funcionalidad del plugin oficial **History** de RemNote con dos poderosas herramientas de estudio: un historial de tarjetas revisadas y una cola de "Final Drill" (Práctica Final) para enfocarse en material difícil.
+Este complemento amplía las capacidades de RemNote con un poderoso conjunto de herramientas de historial y práctica. Cuenta con un **Panel de Sesión en Vivo** para métricas de estudio en tiempo real (velocidad, retención, edad de la tarjeta), un **Historial de Colas Practicadas** para rastrear sus sesiones a lo largo del tiempo, un **Historial de Flashcards** para encontrar y editar rápidamente tarjetas revisadas recientemente, un **Historial de Rems Visitados** para rastrear su navegación en la base de conocimientos, y una cola de **Práctica de Maestría** (Mastery Drill) para enfocarse en material difícil.
 
 ## Características
 
@@ -38,20 +38,20 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/queue-history-live.png)
 
-### 4. Final Drill
-- **Qué hace:** Implementa una cola de "Práctica Final" inspirada en SuperMemo, accesible usando el comando `Final Drill` en la Omnibar o desde el widget del extremo de la barra lateral izquierda.
+### 4. Mastery Drill
+- **Qué hace:** Implementa una cola de "Práctica de Maestría" (Mastery Drill) inspirada en el "Final Drill" de SuperMemo, accesible usando el comando `Mastery Drill` en la Omnibar o desde el widget del extremo de la barra lateral izquierda.
 - **Cómo funciona:**
-    - Cualquier tarjeta que califiques como **Olvidé (Forgot)** o **Difícil (Hard)** se agrega automáticamente a la cola de Final Drill.
-      - **Olvidé** generalmente ya tiene un paso de reaprendizaje. Si realizas este paso de reaprendizaje con éxito, la tarjeta se borrará de la cola de Final Drill; si no, hacerlo en el Final Drill será lo mismo que hacerlo fuera de él. El propósito de tener estas tarjetas en la práctica es asegurar que cumplas con el paso de reaprendizaje (en caso de que usualmente hagas tarjetas en colas de documentos en lugar de en la cola global).
+    - Cualquier tarjeta que califiques como **Olvidé (Forgot)** o **Difícil (Hard)** se agrega automáticamente a la cola de Mastery Drill.
+      - **Olvidé** generalmente ya tiene un paso de reaprendizaje. Si realizas este paso de reaprendizaje con éxito, la tarjeta se borrará de la cola de Mastery Drill; si no, hacerlo en el Mastery Drill será lo mismo que hacerlo fuera de él. El propósito de tener estas tarjetas en la práctica es asegurar que cumplas con el paso de reaprendizaje (en caso de que usualmente hagas tarjetas en colas de documentos en lugar de en la cola global).
       - **Difícil** es lo que marca la verdadera diferencia. Practicar estas tarjetas es como si estuvieras revisando antes de tiempo; los algoritmos (especialmente FSRS) tienen esto en cuenta, y el intervalo generado será prácticamente el mismo que el ya asignado. El propósito de tenerlas en la práctica es asegurar que has elevado la retuperabilidad cerca del 100% (el mismo propósito del paso de reaprendizaje para ítems olvidados).
       - A diferencia de _SuperMemo_, estas revisiones se registrarán en tu historial de repeticiones.
-    - Estas tarjetas permanecen en esta cola separada hasta que las califiques como **Bien (Good)** o **Fácil (Easy)** dentro del widget de Final Drill.
-- **Por qué usarlo:** Úsalo al final de tu día de aprendizaje (o cuando estés de humor) para revisar solo los ítems con los que tuviste dificultades recientemente, asegurando que los domines antes de terminar tu sesión. Está diseñado para asegurar que has elevado la recuperabilidad del material más difícil cerca del 100% (en otras palabras, que has asimilado el contenido y lo conoces).
+    - Estas tarjetas permanecen en esta cola separada hasta que las califiques como **Bien (Good)** o **Fácil (Easy)** dentro del widget de Mastery Drill.
+- **Por qué usarlo:** Úsalo para revisar solo los ítems con los que tuviste dificultades recientemente, asegurando que los domines antes de terminar tu sesión. Está diseñado para asegurar que has elevado la recuperabilidad del material más difícil cerca del 100% (en otras palabras, que has asimilado el contenido y lo conoces).
 - **¿Tengo que usarlo?:** Ten en cuenta que esta es una etapa opcional del proceso de aprendizaje. No usarlo no traerá consecuencias negativas para tu proceso de aprendizaje, ya que en la próxima repetición programada, serás evaluado nuevamente, y los fallos serán tratados en consecuencia por el algoritmo. Pero usar la práctica no costará mucho y aumentará las posibilidades de éxito en las repeticiones subsiguientes.
 - **Gestión de la Cola:**
     - **Ítems Antiguos (Clear Old):** Si los ítems permanecen en la cola por mucho tiempo (por defecto 7 días), aparecerá una advertencia. Puedes borrar estos ítems obsoletos con un solo clic para mantener tu sesión de práctica enfocada en material fresco. El umbral se puede configurar en los ajustes del complemento.
-    - **Borrar Cola (Clear Queue):** Un botón "Borrar Cola" te permite vaciar la cola de Final Drill en cualquier momento si quieres empezar de nuevo o simplemente limpiar.
-- **Limitaciones:** no es respondente a atajos de teclado, y no tiene acceso a los botones Editar / Previsualizar. Como una solución alternativa, un Editor UI es accesible por botones (como alternativas, un botón "Editar Depois" remover el cartão da fila do Final Drill e adicionar o Edit Later powerup nativo do RemNote, y un botón "Ir al Rem" para saltar al Rem en el Editor RemNote nativo).
+    - **Borrar Cola (Clear Queue):** Un botón "Borrar Cola" te permite vaciar la cola de Mastery Drill en cualquier momento si quieres empezar de nuevo o simplemente limpiar.
+- **Limitaciones:** no es respondente a atajos de teclado, y no tiene acceso a los botones Editar / Previsualizar. Como una solución alternativa, un Editor UI es accesible por botones (como alternativas, un botón "Editar Después" para eliminar la tarjeta de la cola de Mastery Drill y agregar el powerup Edit Later nativo de RemNote, y un botón "Ir al Rem" para saltar al Rem en el Editor RemNote nativo).
 
 ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill.png)
 
@@ -69,9 +69,9 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 4. **Pestaña Historial de Colas Practicadas**: 
    - ¿Quieres volver a las colas que empezaste pero no pudiste terminar? Haz clic en el nombre de la cola para volver a ella.
    - Supervisa aquí las estadísticas de tus colas practicadas.
-5. **Comando Final Drill**: 
+5. **Comando Mastery Drill**: 
    - Si calificas una tarjeta como "Olvidé" o "Difícil" durante tu cola regular (o en cualquier otro lugar), aparecerá una insignia roja en esta pestaña indicando que hay tarjetas pendientes.
-   - Usa el comando `Final Drill` en la Omnibar para practicar estas tarjetas específicas (o presiona el botón del widget que aparece de vez en cuando en el extremo de la barra lateral izquierda).
+   - Usa el comando `Mastery Drill` en la Omnibar para practicar estas tarjetas específicas (o presiona el botón del widget que aparece de vez en cuando en el extremo de la barra lateral izquierda).
    - La cola se vaciará automáticamente a medida que domines las tarjetas (califícalas como Bien/Fácil).
    ![](https://raw.githubusercontent.com/hugomarins/final-drill-and-history/main/images/final-drill-notification.png)
 
@@ -83,6 +83,7 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 - **Corrección de Error:** Se corrigió el cuadro "Tarjeta Anterior" que mostraba datos obsoletos cuando la tarjeta actual es "Nueva" (sin historial).
 - **Mejora:** "Edad de la Tarjeta" e intervalos ahora muestran horas y minutos para duraciones menores a 24 horas (ej: "4h", "30min") en lugar de "Nuevo".
+- **Cambio de Nombre:** "Final Drill" ha sido renombrado a **Mastery Drill** para reflejar mejor su propósito y evitar confusiones con otras herramientas.
 
 ### v. 0.0.27 08 de Febrero de 2026
 

@@ -19,7 +19,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   // Register Setting for Old Items Threshold
   await plugin.settings.registerNumberSetting({
     id: "old_item_threshold",
-    title: "Old Items Threshold (Days) for Final Drill",
+    title: "Old Items Threshold (Days) for Mastery Drill",
     description: "Items older than this number of days will trigger a warning.",
     defaultValue: 7,
   });
@@ -37,7 +37,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   // Command to open Final Drill
   await plugin.app.registerCommand({
     id: "open_final_drill",
-    name: "Final Drill: deliberately practice poorly rated cards",
+    name: "Mastery Drill: deliberately practice poorly rated cards",
     action: async () => {
       await plugin.widget.openPopup("final_drill");
     },
@@ -99,7 +99,7 @@ async function onActivate(plugin: ReactRNPlugin) {
   // Settings
   await plugin.settings.registerBooleanSetting({
     id: "disable_final_drill_notification",
-    title: "Disable Final Drill Notifications",
+    title: "Disable Mastery Drill Notifications",
     defaultValue: false,
   });
 
@@ -148,7 +148,7 @@ async function onActivate(plugin: ReactRNPlugin) {
 
   // --- Heartbeat Monitor (Single Instance) ---
   setInterval(async () => {
-    if (currentSession && currentSession.scopeName === "Final Drill") {
+    if (currentSession && currentSession.scopeName === "Mastery Drill") {
       // Grace Period: Don't kill session if it just started (e.g. < 5s)
       if (Date.now() - currentSession.startTime < 5000) {
         return;
@@ -183,7 +183,7 @@ async function onActivate(plugin: ReactRNPlugin) {
           // Check if Final Drill (implied by type or state)
           const isFinalDrillActive = await plugin.storage.getSession<boolean>("finalDrillActive");
           if (isFinalDrillActive) {
-            scopeName = "Final Drill";
+            scopeName = "Mastery Drill";
           }
 
           currentSession = {
@@ -328,7 +328,7 @@ async function onActivate(plugin: ReactRNPlugin) {
         // --- Verify Final Drill Scope ---
         // If we labeled this as Final Drill, but the card is NOT in our Final Drill list,
         // it means it's an Embedded Queue collision (Ad-hoc).
-        if (currentSession && currentSession.scopeName === "Final Drill") {
+        if (currentSession && currentSession.scopeName === "Mastery Drill") {
           const finalDrillItems = (await plugin.storage.getSynced("finalDrillIds")) as (string | { cardId: string })[] || [];
 
           let isOurCard = false;
@@ -391,7 +391,7 @@ async function onActivate(plugin: ReactRNPlugin) {
         const isFresh = lastHeartbeat && (Date.now() - lastHeartbeat < 4000);
 
         if (isFinalDrillActive || isFresh) {
-          scopeName = "Final Drill";
+          scopeName = "Mastery Drill";
         } else {
           scopeName = "Ad-hoc Session";
         }

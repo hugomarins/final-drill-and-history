@@ -5,13 +5,13 @@ import React, { useEffect, useState } from "react";
 const MOTIVATIONAL_PHRASES = [
     "Deliberately practice the material you are struggling with.",
     "Drill your most difficult cards.",
-    "Leave no blind spots - do your Final Drill.",
+    "Leave no blind spots - do your Mastery Drill.",
     "Mastery comes from attacking your weaknesses.",
     "Don't just review; intentionally improve.",
     "Turn your hardest cards into your easiest ones.",
     "Focus where it hurts—that's where the growth is.",
     "A smooth sea never made a skilled sailor.",
-    "Final Drill: because \"good enough\" isn't.",
+    "Mastery Drill: because \"good enough\" isn't.",
     "Sharpen the saw on your toughest concepts.",
     "Embrace the struggle; the learning happens here.",
     "Your future self will thank you for this drill.",
@@ -27,7 +27,7 @@ const MOTIVATIONAL_PHRASES = [
     "Consistency in the hard stuff brings mastery.",
     "You can handle this. Drill it till you know it.",
     "Level up your weak stats.",
-    "Final Drill is the gym for your brain.",
+    "Mastery Drill is the gym for your brain.",
     "No more guessing. Know it for sure.",
     "The obstruction is the path.",
     "Transform confusion into clarity.",
@@ -172,7 +172,7 @@ export const FinalDrillNotification = () => {
                         alt="Drill"
                         className="w-6 h-6"
                     />
-                    <span className="font-semibold text-sm">Final Drill</span>
+                    <span className="font-semibold text-sm">Mastery Drill</span>
                 </div>
                 <button
                     onClick={() => setDismissed(true)}
