@@ -79,6 +79,11 @@ Este complemento amplía la funcionalidad del plugin oficial **History** de RemN
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.28 09 de Febrero de 2026
+
+- **Corrección de Error:** Se corrigió el cuadro "Tarjeta Anterior" que mostraba datos obsoletos cuando la tarjeta actual es "Nueva" (sin historial).
+- **Mejora:** "Edad de la Tarjeta" e intervalos ahora muestran horas y minutos para duraciones menores a 24 horas (ej: "4h", "30min") en lugar de "Nuevo".
+
 ### v. 0.0.27 08 de Febrero de 2026
 
 - **Corrección de Error:** Se corrigieron los botones **Borrar Cola (Clear Queue)** y **Borrar Antiguos (Clear Old)** que no mostraban los cuadros de diálogo de confirmación.

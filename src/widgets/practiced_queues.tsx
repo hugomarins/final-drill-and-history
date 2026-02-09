@@ -366,7 +366,13 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
         if (years > 0) return `${years}.${Math.floor((days % 365) / 30)}y`; // e.g. 1.5y
         if (months > 0) return `${months}.${Math.floor(days % 30 / 3)}m`; // e.g. 5.1m (approx)
         if (days > 0) return `${days}d`;
-        return "New";
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        if (hours > 0) return `${hours}h`;
+        const minutes = Math.floor(diff / (1000 * 60));
+        if (minutes > 0) return `${minutes}min`;
+
+        return "Just now";
     }
 
     // Format interval (ms) using same style as age
@@ -544,7 +550,7 @@ function QueueSessionItem({ session, onDelete, isLive }: { session: PracticedQue
                         </div>
 
                         {/* Previous Card Stats (Only Live, if available) */}
-                        {session.prevCardFirstRep !== undefined && (
+                        {session.prevCardId && (
                             <div className="bg-white/30 dark:bg-black/10 p-2 rounded opacity-75">
                                 <div className="text-xs uppercase font-bold text-gray-400 mb-1">Prev. Card</div>
                                 <div className="text-xl font-bold text-gray-500 dark:text-gray-400">

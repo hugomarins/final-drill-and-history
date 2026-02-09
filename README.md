@@ -80,6 +80,11 @@ This plugin extends the official RemNote History plugin functionality with two p
 
 ## Changelog
 
+### v. 0.0.28 February 09th, 2026
+
+- **Bug Fix:** Fixed the "Previous Card" box showing stale data when the current card is "New" (no history).
+- **Improvement:** "Card Age" and intervals now display hours and minutes for durations under 24 hours (e.g., "4h", "30min") instead of "New".
+
 ### v. 0.0.27 February 08th, 2026
 
 - **Bug Fix:** Fixed the **Clear Queue** and **Clear Old** buttons not showing the confirmation dialogs.

@@ -276,13 +276,12 @@ async function onActivate(plugin: ReactRNPlugin) {
         // Fetch card to determine age (first repetition)
         if (currentSession) {
           // Shift Current Stats to Previous Stats (if meaningful)
-          if (currentSession.currentCardFirstRep !== undefined) {
-            currentSession.prevCardFirstRep = currentSession.currentCardFirstRep;
-            currentSession.prevCardTotalTime = currentSession.currentCardTotalTime;
-            currentSession.prevCardRepCount = currentSession.currentCardRepCount;
-            currentSession.prevCardId = currentSession.currentCardId;
-            // Note: prevCardInterval and prevCardNextRepTime will be updated after rating in QueueCompleteCard
-          }
+          // Shift Current Stats to Previous Stats (always, even if it was a New card)
+          currentSession.prevCardFirstRep = currentSession.currentCardFirstRep;
+          currentSession.prevCardTotalTime = currentSession.currentCardTotalTime;
+          currentSession.prevCardRepCount = currentSession.currentCardRepCount;
+          currentSession.prevCardId = currentSession.currentCardId;
+          // Note: prevCardInterval and prevCardNextRepTime will be updated after rating in QueueCompleteCard
           currentSession.currentCardId = data.cardId;
 
           const card = await plugin.card.findOne(data.cardId);
