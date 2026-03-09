@@ -10,6 +10,7 @@ import {
 import { FlashcardHistoryData } from "./flashcard_history"
 import { RemHistoryData } from "./rem_history"
 import { PracticedQueueSession } from "./practiced_queues"
+import { safeRemTextToString } from "../lib/utils";
 import "../style.css";
 
 // Union type for Final Drill to support legacy (string) and new (object) formats
@@ -245,8 +246,8 @@ async function onActivate(plugin: ReactRNPlugin) {
           if (data && data.remId) {
             const rem = await plugin.rem.findOne(data.remId);
             if (rem) {
-              const text = rem.text ? await plugin.richText.toString(rem.text) : "";
-              if (text) currentSession.scopeName = text;
+              const text = rem?.text ? await safeRemTextToString(plugin, rem.text) : "";
+              if (text && text !== 'Untitled') currentSession.scopeName = text;
             }
           }
         }
@@ -275,7 +276,6 @@ async function onActivate(plugin: ReactRNPlugin) {
         // --- Card Age Logic ---
         // Fetch card to determine age (first repetition)
         if (currentSession) {
-          // Shift Current Stats to Previous Stats (if meaningful)
           // Shift Current Stats to Previous Stats (always, even if it was a New card)
           currentSession.prevCardFirstRep = currentSession.currentCardFirstRep;
           currentSession.prevCardTotalTime = currentSession.currentCardTotalTime;
@@ -374,8 +374,8 @@ async function onActivate(plugin: ReactRNPlugin) {
         const rem = await plugin.rem.findOne(queueId);
         if (rem) {
           // Prefer text property, fallback to generic
-          const text = rem.text ? await plugin.richText.toString(rem.text) : "";
-          if (text && text.trim().length > 0) {
+          const text = rem.text ? await safeRemTextToString(plugin, rem.text) : "";
+          if (text && text !== 'Untitled') {
             scopeName = text;
           } else {
             scopeName = "Untitled";
@@ -456,10 +456,11 @@ async function onActivate(plugin: ReactRNPlugin) {
 
       if (currentRemData[0]?.remId != currentRemId) {
         // Fetch text for search
-        // Fetch text for search
         const rem = await plugin.rem.findOne(currentRemId);
-        const frontText = rem?.text ? await plugin.richText.toString(rem.text) : "";
-        const backText = rem?.backText ? await plugin.richText.toString(rem.backText) : "";
+        const frontRaw = rem?.text ? await safeRemTextToString(plugin, rem.text) : "";
+        const backRaw = rem?.backText ? await safeRemTextToString(plugin, rem.backText) : "";
+        const frontText = frontRaw !== 'Untitled' ? frontRaw : "";
+        const backText = backRaw !== 'Untitled' ? backRaw : "";
         const text = `${frontText} ${backText}`.trim();
 
         await plugin.storage.setSynced("remData", [
@@ -583,8 +584,11 @@ async function onActivate(plugin: ReactRNPlugin) {
         // Fetch text for search. Note: We use the REM's text, not the card's specific question/answer,
         // as the scope is usually the Rem itself.
         const rem = await plugin.rem.findOne(remId);
-        const frontText = rem?.text ? (await plugin.richText.toString(rem.text)).substring(0, 1000) : "";
-        const backText = rem?.backText ? (await plugin.richText.toString(rem.backText)).substring(0, 1000) : "";
+
+        const frontRaw = rem?.text ? await safeRemTextToString(plugin, rem.text) : "";
+        const backRaw = rem?.backText ? await safeRemTextToString(plugin, rem.backText) : "";
+        const frontText = frontRaw !== 'Untitled' ? frontRaw.substring(0, 1000) : "";
+        const backText = backRaw !== 'Untitled' ? backRaw.substring(0, 1000) : "";
         const text = `${frontText} ${backText}`.trim();
 
         await plugin.storage.setSynced("flashcardHistoryData", [

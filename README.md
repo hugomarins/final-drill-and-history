@@ -80,6 +80,10 @@ This plugin extends RemNote's capabilities with a powerful suite of history and 
 
 ## Changelog
 
+### v. 0.0.30 March 09th, 2026
+
+- **Bug Fix:** Fixed issue caused by audio or other complex media elements inside flashcards leading to the "Invalid input" error, halting the script execution.
+
 ### v. 0.0.28 February 09th, 2026
 
 - **Bug Fix:** Fixed the "Previous Card" box showing stale data when the current card is "New" (no history).
