@@ -80,7 +80,7 @@ This plugin extends RemNote's capabilities with a powerful suite of history and 
 
 ## Changelog
 
-### v. 0.0.30 March 09th, 2026
+### v. 0.0.31 March 09th, 2026
 
 - **Bug Fix:** Fixed issue caused by audio or other complex media elements inside flashcards leading to the "Invalid input" error, halting the script execution.
 

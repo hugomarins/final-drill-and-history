@@ -457,10 +457,22 @@ async function onActivate(plugin: ReactRNPlugin) {
       if (currentRemData[0]?.remId != currentRemId) {
         // Fetch text for search
         const rem = await plugin.rem.findOne(currentRemId);
-        const frontRaw = rem?.text ? await safeRemTextToString(plugin, rem.text) : "";
-        const backRaw = rem?.backText ? await safeRemTextToString(plugin, rem.backText) : "";
-        const frontText = frontRaw !== 'Untitled' ? frontRaw : "";
-        const backText = backRaw !== 'Untitled' ? backRaw : "";
+
+        let frontText = "";
+        let backText = "";
+
+        try {
+          const frontRaw = rem?.text ? await safeRemTextToString(plugin, rem.text) : "";
+          const backRaw = rem?.backText ? await safeRemTextToString(plugin, rem.backText) : "";
+
+          // Verify string explicitly before assignment to prevent TypeErrors
+          frontText = (typeof frontRaw === 'string' && frontRaw !== 'Untitled') ? frontRaw : "";
+          backText = (typeof backRaw === 'string' && backRaw !== 'Untitled') ? backRaw : "";
+        } catch (error) {
+          console.warn("Error parsing Rem text, falling back to safe label:", error);
+          frontText = "[Complex Media Rem]";
+        }
+
         const text = `${frontText} ${backText}`.trim();
 
         await plugin.storage.setSynced("remData", [
@@ -585,10 +597,21 @@ async function onActivate(plugin: ReactRNPlugin) {
         // as the scope is usually the Rem itself.
         const rem = await plugin.rem.findOne(remId);
 
-        const frontRaw = rem?.text ? await safeRemTextToString(plugin, rem.text) : "";
-        const backRaw = rem?.backText ? await safeRemTextToString(plugin, rem.backText) : "";
-        const frontText = frontRaw !== 'Untitled' ? frontRaw.substring(0, 1000) : "";
-        const backText = backRaw !== 'Untitled' ? backRaw.substring(0, 1000) : "";
+        let frontText = "";
+        let backText = "";
+
+        try {
+          const frontRaw = rem?.text ? await safeRemTextToString(plugin, rem.text) : "";
+          const backRaw = rem?.backText ? await safeRemTextToString(plugin, rem.backText) : "";
+
+          // Strictly verify it is a string before calling substring
+          frontText = (typeof frontRaw === 'string' && frontRaw !== 'Untitled') ? frontRaw.substring(0, 1000) : "";
+          backText = (typeof backRaw === 'string' && backRaw !== 'Untitled') ? backRaw.substring(0, 1000) : "";
+        } catch (error) {
+          console.warn("Error parsing Rem text, falling back to safe label:", error);
+          frontText = "[Complex Media Rem]";
+        }
+
         const text = `${frontText} ${backText}`.trim();
 
         await plugin.storage.setSynced("flashcardHistoryData", [
