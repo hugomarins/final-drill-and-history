@@ -80,6 +80,10 @@ This plugin extends RemNote's capabilities with a powerful suite of history and 
 
 ## Changelog
 
+### v. 0.0.32 March 10th, 2026
+
+- Applied fix to the webpack.config.js to bundle snippet.css and App.css into their distributions, which should prevent the 403 (Forbidden) error.
+
 ### v. 0.0.31 March 09th, 2026
 
 - **Bug Fix:** Fixed issue caused by audio or other complex media elements inside flashcards leading to the "Invalid input" error, halting the script execution.
