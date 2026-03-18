@@ -79,6 +79,11 @@ Este plugin expande as capacidades do RemNote com um conjunto poderoso de ferram
 
 ## Changelog
 
+### v. 0.0.33 18 de Março de 2026
+
+- **Nova Funcionalidade (Sessões Praticadas):** Adicionada a função de **Exportar e Importar**. Agora você pode fazer o backup do seu histórico de sessões (de todas as Bases de Conhecimento) para um arquivo JSON local e importá-lo novamente a qualquer momento (sessões duplicadas são ignoradas automaticamente).
+- **Melhoria:** Implementada uma configuração de **Limite de Tempo de Resposta de Flashcards** (padrão: 180s) que reflete o comportamento nativo do RemNote. Se você se afastar do computador com um cartão aberto, o tempo de estudo registrado será limitado, mantendo suas métricas de tempo e velocidade mais precisas.
+
 ### v. 0.0.28 09 de Fevereiro de 2026
 
 - **Correção de Bug:** Corrigido o painel "Cartão Anterior" mostrando dados antigos quando o cartão atual é "Novo" (sem histórico).

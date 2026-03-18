@@ -79,6 +79,11 @@ Este complemento amplía las capacidades de RemNote con un poderoso conjunto de 
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.33 18 de Marzo de 2026
+
+- **Nueva Funcionalidad (Sesiones Practicadas):** Añadida la función de **Exportar e Importar**. Ahora puedes hacer una copia de seguridad (backup) de tu historial de sesiones de práctica (de todas las Bases de Conocimiento) en un archivo JSON local e importarlo nuevamente en cualquier momento (las sesiones duplicadas se omiten automáticamente).
+- **Mejora:** Implementada una configuración de **Límite de Tiempo de Respuesta de Flashcards** (por defecto: 180s) que refleja el comportamiento nativo de RemNote. Si te alejas de tu dispositivo con una tarjeta abierta, el tiempo de estudio registrado se limitará, manteniendo así la precisión de tus métricas de velocidad y tiempo total.
+
 ### v. 0.0.28 09 de Febrero de 2026
 
 - **Corrección de Error:** Se corrigió el cuadro "Tarjeta Anterior" que mostraba datos obsoletos cuando la tarjeta actual es "Nueva" (sin historial).

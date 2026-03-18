@@ -80,6 +80,11 @@ This plugin extends RemNote's capabilities with a powerful suite of history and 
 
 ## Changelog
 
+### v. 0.0.33 March 18th, 2026
+
+- **New Feature (Practiced Queues):** Added **Export and Import** functionality. You can now back up your practice session history across all Knowledge Bases to a local JSON file and import it back at any time (duplicate sessions are automatically skipped). 
+- **Improvement:** Implemented a **Flashcard Response Time Limit** setting (default: 180s) that mirrors RemNote's native behavior. If you walk away from your device with a card open, the recorded study time is capped to keep your speed and total time metrics accurate.
+
 ### v. 0.0.32 March 10th, 2026
 
 - Applied fix to the webpack.config.js to bundle snippet.css and App.css into their distributions, which should prevent the 403 (Forbidden) error.
