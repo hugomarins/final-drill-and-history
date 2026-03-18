@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import {
     RemViewer,
     renderWidget,
@@ -246,6 +246,7 @@ function PracticedQueues() {
         []
     );
     const [activeSession] = useSessionStorageState<PracticedQueueSession | null>("activeQueueSession", null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [filteredData, setFilteredData] = useState<PracticedQueueSession[]>([]);
 
@@ -284,6 +285,103 @@ function PracticedQueues() {
         }
     };
 
+    // --- Export / Import Logic ---
+
+    const handleExport = useCallback(() => {
+        const envelope = {
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            count: historyRaw.length,
+            sessions: historyRaw,
+        };
+        const json = JSON.stringify(envelope, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `practiced-queues-backup-${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        plugin.app.toast(`Exported ${historyRaw.length} sessions`);
+    }, [historyRaw, plugin]);
+
+    const handleImport = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const text = event.target?.result as string;
+                const data = JSON.parse(text);
+
+                // Validate envelope structure
+                if (!data || !Array.isArray(data.sessions)) {
+                    plugin.app.toast("Invalid backup file: missing 'sessions' array.");
+                    return;
+                }
+
+                const incoming = data.sessions as PracticedQueueSession[];
+
+                // Validate each session has required fields
+                const valid = incoming.filter(
+                    (s: any) => s && typeof s.id === "string" && typeof s.startTime === "number"
+                );
+                if (valid.length === 0) {
+                    plugin.app.toast("No valid sessions found in backup file.");
+                    return;
+                }
+
+                // Deduplicate: only add sessions whose id doesn't already exist
+                const existingIds = new Set(historyRaw.map(s => s.id));
+                const newSessions = valid.filter(s => !existingIds.has(s.id));
+                const duplicateCount = valid.length - newSessions.length;
+
+                if (newSessions.length === 0) {
+                    plugin.app.toast(`All ${duplicateCount} sessions already exist. Nothing imported.`);
+                    return;
+                }
+
+                // Merge and sort by startTime descending
+                const merged = [...historyRaw, ...newSessions].sort(
+                    (a, b) => b.startTime - a.startTime
+                );
+                setHistory(merged);
+                plugin.app.toast(
+                    `Imported ${newSessions.length} new sessions` +
+                    (duplicateCount > 0 ? ` (${duplicateCount} duplicates skipped)` : "")
+                );
+            } catch (err) {
+                plugin.app.toast("Failed to parse backup file. Is it valid JSON?");
+                console.error("Import error:", err);
+            }
+        };
+        reader.readAsText(file);
+
+        // Reset the input so the same file can be re-selected
+        e.target.value = "";
+    }, [historyRaw, setHistory, plugin]);
+
+    // Listen for command-triggered export/import events
+    useEffect(() => {
+        const unsubExport = plugin.event.addListener(
+            "trigger_export_sessions",
+            undefined,
+            () => handleExport()
+        );
+        const unsubImport = plugin.event.addListener(
+            "trigger_import_sessions",
+            undefined,
+            () => fileInputRef.current?.click()
+        );
+        return () => {
+            // Cleanup not strictly required for plugin events but good practice
+        };
+    }, [handleExport, plugin]);
+
     return (
         <div className="h-full w-full overflow-y-auto rn-clr-background-primary">
             <div className="p-4">
@@ -310,6 +408,40 @@ function PracticedQueues() {
 
                 {/* Statistics Summary */}
                 <SummaryTable allSessions={filteredData} />
+
+                {/* Export / Import Buttons */}
+                <div className="flex items-center gap-2 mb-4">
+                    <button
+                        onClick={handleExport}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border rn-clr-border-opaque rn-clr-content-secondary hover:rn-clr-background-secondary transition-colors"
+                        title="Export all sessions (all KBs) as a JSON backup file"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
+                        </svg>
+                        Export
+                    </button>
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border rn-clr-border-opaque rn-clr-content-secondary hover:rn-clr-background-secondary transition-colors"
+                        title="Import sessions from a JSON backup file (duplicates are skipped)"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 6l-4-4m0 0L8 6m4-4v13" />
+                        </svg>
+                        Import
+                    </button>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        onChange={handleImport}
+                        className="hidden"
+                    />
+                    <span className="text-[10px] rn-clr-content-tertiary ml-1">
+                        {historyRaw.length} sessions total (all KBs)
+                    </span>
+                </div>
 
                 {filteredData.length === 0 ? (
                     <div className="rn-clr-content-secondary">
