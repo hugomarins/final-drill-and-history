@@ -25,6 +25,17 @@ async function onActivate(plugin: ReactRNPlugin) {
     defaultValue: 7,
   });
 
+  // Flashcard Response Time Limit (mirrors RemNote's native setting)
+  await plugin.settings.registerNumberSetting({
+    id: "flashcard_response_time_limit",
+    title: "Flashcard Response Time Limit (seconds)",
+    description:
+      "If you take longer to answer a flashcard than this (e.g. because you walked away), " +
+      "only this much time will be counted in session statistics. " +
+      "Matches RemNote's native 'Flashcard Response Time Limit' setting. Default: 180s.",
+    defaultValue: 180,
+  });
+
   // 1. New Final Drill Widget
   await plugin.app.registerWidget(
     "final_drill",
@@ -285,7 +296,7 @@ async function onActivate(plugin: ReactRNPlugin) {
           currentSession.currentCardId = data.cardId;
 
           const card = await plugin.card.findOne(data.cardId);
-          if (card?.repetitionHistory?.length > 0) {
+          if (card && card.repetitionHistory && card.repetitionHistory.length > 0) {
             const dates = card.repetitionHistory.map(h => h.date);
             if (dates.length > 0) {
               currentSession.currentCardFirstRep = Math.min(...dates);
@@ -502,7 +513,11 @@ async function onActivate(plugin: ReactRNPlugin) {
         // It's a Flashcard Completion (IncRems typically don't fire this or lack ID)
         const startTime = cardStartTimes.get(cardId);
         if (startTime) {
-          const timeSpent = Date.now() - startTime;
+          const rawTimeSpent = Date.now() - startTime;
+          // Cap per-card time to the configured Flashcard Response Time Limit
+          const timeLimitSec = await plugin.settings.getSetting<number>("flashcard_response_time_limit");
+          const timeLimitMs = (timeLimitSec || 180) * 1000;
+          const timeSpent = Math.min(rawTimeSpent, timeLimitMs);
           currentSession.totalTime += timeSpent;
           currentSession.flashcardsTime += timeSpent;
           currentSession.flashcardsCount++;
