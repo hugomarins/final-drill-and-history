@@ -80,6 +80,10 @@ This plugin extends RemNote's capabilities with a powerful suite of history and 
 
 ## Changelog
 
+### v. 0.0.34 March 19th, 2026
+
+- **Bug Fix (Mastery Drill):** Fixed a crash that could occur when re-opening the Mastery Drill after a previous session. The root cause was a React lifecycle issue: the Queue component was being mounted immediately with an empty card list (before the asynchronous Knowledge Base data had loaded), then re-mounted once the real data arrived. This double-mount left the first Queue instance with in-flight async operations that tried to update state after the component was already unmounted, causing the *"Transaction failed: popCard – Sub queue Rem not loaded"* crash on the next open. The fix delays rendering the Queue until after the KB data is confirmed, so the Queue is only ever mounted once with complete data.
+
 ### v. 0.0.33 March 18th, 2026
 
 - **New Feature (Practiced Queues):** Added **Export and Import** functionality. You can now back up your practice session history across all Knowledge Bases to a local JSON file and import it back at any time (duplicate sessions are automatically skipped). 

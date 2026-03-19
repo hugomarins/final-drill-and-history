@@ -20,24 +20,14 @@ function FinalDrill() {
   // Access the synced list (now using the mixed type)
   const [finalDrillIdsRaw, setFinalDrillIdsRaw] = useSyncedStorageState<FinalDrillItem[]>("finalDrillIds", []);
 
+  // We delay rendering the Queue until filteredIds has been computed at least once
+  // (after the async KB lookup). This prevents the 0→N key churn that was causing
+  // the double-Queue bug and the "state update on unmounted component" warning.
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   // State for IDs filtered by current KB
   const [filteredIds, setFilteredIds] = useState<string[]>([]);
   // State for old items count
   const [oldItemsCount, setOldItemsCount] = useState<number>(0);
-
-  // Queue Key to force re-render ONLY on 0 -> N transitions (fixes empty state bug without fragmenting sessions)
-  const [queueKey, setQueueKey] = useState<number>(0);
-  const prevFilteredIdsLength = useRef<number>(0);
-
-  useEffect(() => {
-    // Only increment key if we transitioned from 0 items to some items.
-    // This allows the Queue to initialize correctly when data arrives.
-    // But keeps the key STABLE when items are removed during practice (N -> N-1), preserving the session.
-    if (filteredIds.length > 0 && prevFilteredIdsLength.current === 0) {
-      setQueueKey(prev => prev + 1);
-    }
-    prevFilteredIdsLength.current = filteredIds.length;
-  }, [filteredIds.length]);
 
   // Settings
   const oldItemThreshold = useTrackerPlugin(async (reactivePlugin) => {
@@ -49,6 +39,7 @@ function FinalDrill() {
   const [showClearAllConfirm, setShowClearAllConfirm] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     async function updateDerivedState() {
       // Fetch KB Metadata
       const currentKb = await plugin.kb.getCurrentKnowledgeBaseData();
@@ -89,13 +80,19 @@ function FinalDrill() {
         }
       });
 
-      setFilteredIds(relevantIds);
-      setOldItemsCount(oldCount);
+      if (!cancelled) {
+        setFilteredIds(relevantIds);
+        setOldItemsCount(oldCount);
+        setIsLoaded(true);
+      }
     }
 
     if (plugin) {
       updateDerivedState();
     }
+    return () => {
+      cancelled = true;
+    };
   }, [finalDrillIdsRaw, plugin, oldItemThreshold]);
 
   const clearOldItems = async () => {
@@ -337,6 +334,32 @@ function FinalDrill() {
     );
   }
 
+  // If there are no items to drill, show a friendly empty state instead of the Queue which can error on empty data.
+  if (filteredIds.length === 0) {
+    return (
+      <div
+        ref={containerRef}
+        tabIndex={-1}
+        className="h-full w-full flex flex-col items-center justify-center text-center"
+        style={{
+          backgroundColor: 'var(--rn-clr-background-primary)',
+          color: 'var(--rn-clr-content-primary)',
+        }}
+      >
+        <h3 className="text-lg font-bold mb-2">Mastery Drill Queue Empty</h3>
+        <p className="text-sm" style={{ color: 'var(--rn-clr-content-secondary)' }}>
+          No cards are currently in the Mastery Drill queue for this Knowledge Base.
+        </p>
+        <button
+          onClick={() => setShowClearAllConfirm(true)}
+          className="mt-4 px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+        >
+          Open Settings
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
@@ -470,12 +493,17 @@ function FinalDrill() {
       </div>
 
       <div className="flex-grow relative">
-        <Queue
-          key={queueKey}
-          cardIds={filteredIds}
-          width="100%"
-          height="100%"
-        />
+        {isLoaded ? (
+          <Queue
+            cardIds={filteredIds}
+            width="100%"
+            height="100%"
+          />
+        ) : (
+          <div className="h-full w-full flex items-center justify-center" style={{ color: 'var(--rn-clr-content-secondary)' }}>
+            Loading…
+          </div>
+        )}
       </div>
     </div>
   );
