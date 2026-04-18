@@ -2,6 +2,27 @@
 
 🇪🇸 [Español](https://github.com/hugomarins/final-drill-and-history/blob/main/README_ES.md) | 🇧🇷 [Português Brasileiro](https://github.com/hugomarins/final-drill-and-history/blob/main/README_PT-BR.md)
 
+---
+
+> ## ⚠️ Deprecation Notice — Incremental Everything users should read this
+>
+> All features of this plugin have been **fully integrated into the [Incremental Everything](https://www.remnote.com/plugins/incremental-everything) plugin** as of v0.2.182. This standalone plugin will **no longer be maintained or updated**.
+>
+> If you use Incremental Everything, you should migrate and uninstall this plugin. The integration includes additional improvements not available here, including cluster-aware flashcard history, per-sibling Mastery Drill tracking, and per-sibling practiced queue card counts.
+>
+> ### Migration Steps
+>
+> 1. **Enable *Skip Mastery Drill* in IE settings and reload RemNote.** This disables IE's drill entirely, preventing duplicate Command Palette entries and double AGAIN/HARD tracking while both plugins coexist.
+> 2. **Complete your Mastery Drill queue in this plugin** *(optional — skip if you don't mind losing pending items; they will repopulate in IE naturally).*
+> 3. **Export your Practiced Queues history** from the *Practiced Queues History* sidebar tab in this plugin.
+> 4. **Uninstall this plugin** (RemNote Settings → Plugins).
+> 5. **Disable *Skip Mastery Drill* in IE settings and reload RemNote.**
+> 6. **Import your Practiced Queues history** into IE's *Practiced Queues History* sidebar tab. Duplicate sessions are skipped automatically.
+>
+> Flashcard History and Visited Rem History cannot be migrated; Incremental Everything has been building its own copies since it was installed. See the [full migration guide](https://github.com/hugomarins/incremental-everything/wiki/History-Queue-Dashboard-and-Mastery-Drill#migrating-from-the-standalone-plugin) for details.
+
+---
+
 This plugin extends RemNote's capabilities with a powerful suite of history and practice tools. It features a **Live Session Dashboard** for real-time study metrics (speed, retention, card age), a **Practiced Queues History** to track your sessions over time, a **Flashcard History** to quickly find and edit recently reviewed cards, a **Visited Rem History** to track your navigation in the knowledge base, and a **Mastery Drill** queue to target difficult material.
 
 ## Features
