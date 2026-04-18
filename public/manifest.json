@@ -11,7 +11,7 @@
     "patch": 35
   },
   "unlisted": false,
-  "description": "Adds right sidebar tabs showing Rem, Card and Queue history, and Live Session Stats. \n Adds Mastery Drill to deliberately practice poorly rated cards. \n ⚠️ DEPRECATED — No longer maintained. These features are now built into the Incremental Everything plugin (v0.2.182+). If you use Incremental Everything, do NOT install this plugin — running both causes conflicts. See the IE wiki for migration steps.",
+  "description": "⚠️ DEPRECATED — No longer maintained. These features are now built into the Incremental Everything plugin (v0.2.182+). \n If you use Incremental Everything, do NOT install this plugin — running both causes conflicts. See the IE wiki for migration steps.",
   "requestNative": true,
   "requiredScopes": [
     {
