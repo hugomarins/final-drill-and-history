@@ -2,6 +2,27 @@
 
 🇬🇧 [English](README.md) | 🇧🇷 [Português Brasileiro](README_PT-BR.md)
 
+---
+
+> ## ⚠️ Aviso de Depreciación — Los usuarios de Incremental Everything deben leer esto
+>
+> Todas las funciones de este complemento han sido **totalmente integradas en el complemento [Incremental Everything](https://www.remnote.com/plugins/incremental-everything)** a partir de la v0.2.182. Este complemento independiente **ya no recibirá mantenimiento ni actualizaciones**.
+>
+> Si utilizas Incremental Everything, deberías migrar y desinstalar este complemento. La integración incluye mejoras adicionales no disponibles aquí, incluyendo el historial de flashcards consciente de grupos (clusters), el seguimiento del Mastery Drill por hermano (sibling) y el recuento de tarjetas de colas practicadas por hermano.
+>
+> ### Pasos de Migración
+>
+> 1. **Activa *Skip Mastery Drill* en los ajustes de IE y recarga RemNote.** Esto desactiva el drill de IE por completo, evitando entradas duplicadas en la paleta de comandos y el rastreo doble de AGAIN/HARD mientras ambos complementos coexisten.
+> 2. **Completa tu cola de Mastery Drill en este complemento** *(opcional — omítelo si no te importa perder los elementos pendientes; se volverán a llenar en IE de forma natural).*
+> 3. **Exporta tu historial de Practiced Queues** desde la pestaña lateral *Practiced Queues History* en este complemento.
+> 4. **Desinstala este complemento** (Ajustes de RemNote → Plugins).
+> 5. **Desactiva *Skip Mastery Drill* en los ajustes de IE y recarga RemNote.**
+> 6. **Importa tu historial de Practiced Queues** en la pestaña lateral *Practiced Queues History* de IE. Las sesiones duplicadas se omitirán automáticamente.
+>
+> El Historial de Flashcards (Flashcard History) y el Historial de Rems Visitados (Visited Rem History) no pueden ser migrados; Incremental Everything ha estado construyendo sus propias copias desde que se instaló. Consulta la [guía completa de migración](https://github.com/hugomarins/incremental-everything/wiki/History-Queue-Dashboard-and-Mastery-Drill#migrating-from-the-standalone-plugin) para más detalles.
+
+---
+
 Este complemento amplía las capacidades de RemNote con un poderoso conjunto de herramientas de historial y práctica. Cuenta con un **Panel de Sesión en Vivo** para métricas de estudio en tiempo real (velocidad, retención, edad de la tarjeta), un **Historial de Colas Practicadas** para rastrear sus sesiones a lo largo del tiempo, un **Historial de Flashcards** para encontrar y editar rápidamente tarjetas revisadas recientemente, un **Historial de Rems Visitados** para rastrear su navegación en la base de conocimientos, y una cola de **Práctica de Maestría** (Mastery Drill) para enfocarse en material difícil.
 
 ## Características
@@ -79,10 +100,26 @@ Este complemento amplía las capacidades de RemNote con un poderoso conjunto de 
 
 ## Registro de Cambios (Changelog)
 
+### v. 0.0.36 18 de Abril de 2026
+
+- **Aviso de Depreciación:** Este plugin está ahora depreciado. Todas las funciones han sido integradas totalmente en el plugin [Incremental Everything](https://www.remnote.com/plugins/incremental-everything) a partir de la v0.2.182. Se recomienda a los usuarios migrar y desinstalar esta versión independiente. Por favor, consulte el aviso en la parte superior de este documento para los pasos de migración.
+
+### v. 0.0.34 19 de Marzo de 2026
+
+- **Corrección de Error (Mastery Drill):** Se corrigió un cierre inesperado (crash) que podía ocurrir al volver a abrir el Mastery Drill después de una sesión anterior. La causa raíz era un problema del ciclo de vida de React: el componente Queue se montaba inmediatamente con una lista de tarjetas vacía (antes de que se cargaran los datos asíncronos de la Base de Conocimientos) y luego se volvía a montar una vez que llegaban los datos reales. Este doble montaje dejaba a la primera instancia de Queue con operaciones asíncronas en curso que intentaban actualizar el estado después de que el componente ya se había desmontado, causando el error *"Transaction failed: popCard – Sub queue Rem not loaded"* en la siguiente apertura. La solución retrasa el renderizado de la Queue hasta que se confirmen los datos de la KB, de modo que la Queue solo se monta una vez con los datos completos.
+
 ### v. 0.0.33 18 de Marzo de 2026
 
 - **Nueva Funcionalidad (Sesiones Practicadas):** Añadida la función de **Exportar e Importar**. Ahora puedes hacer una copia de seguridad (backup) de tu historial de sesiones de práctica (de todas las Bases de Conocimiento) en un archivo JSON local e importarlo nuevamente en cualquier momento (las sesiones duplicadas se omiten automáticamente).
 - **Mejora:** Implementada una configuración de **Límite de Tiempo de Respuesta de Flashcards** (por defecto: 180s) que refleja el comportamiento nativo de RemNote. Si te alejas de tu dispositivo con una tarjeta abierta, el tiempo de estudio registrado se limitará, manteniendo así la precisión de tus métricas de velocidad y tiempo total.
+
+### v. 0.0.32 10 de Marzo de 2026
+
+- Se aplicó una corrección al archivo webpack.config.js para empaquetar snippet.css y App.css en sus distribuciones, lo que debería evitar el error 403 (Prohibido).
+
+### v. 0.0.31 09 de Marzo de 2026
+
+- **Corrección de Error:** Se corrigió un problema causado por elementos de audio u otros medios complejos dentro de las tarjetas que generaban el error "Invalid input", deteniendo la ejecución del script.
 
 ### v. 0.0.28 09 de Febrero de 2026
 
