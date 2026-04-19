@@ -8,7 +8,7 @@
   "version": {
     "major": 0,
     "minor": 0,
-    "patch": 36
+    "patch": 37
   },
   "unlisted": false,
   "description": "⚠️ DEPRECATED — No longer maintained. These features are now built into the Incremental Everything plugin. \n Running both plugins causes conflicts. See the IE wiki for migration steps.",

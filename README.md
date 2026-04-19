@@ -8,7 +8,7 @@
 >
 > All features of this plugin have been **fully integrated into the [Incremental Everything](https://www.remnote.com/plugins/incremental-everything) plugin** as of v0.2.182. This standalone plugin will **no longer be maintained or updated**.
 >
-> If you use Incremental Everything, you should migrate and uninstall this plugin. The integration includes additional improvements not available here, including cluster-aware flashcard history, per-sibling Mastery Drill tracking, and per-sibling practiced queue card counts.
+> If you use Incremental Everything, you should migrate and uninstall this plugin. The integration includes additional improvements not available here, including keyboard navigation and grading for Mastery Drill component, priority handling, cluster-aware flashcard history, per-sibling Mastery Drill tracking, and per-sibling practiced queue card counts.
 >
 > ### Migration Steps
 >

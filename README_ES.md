@@ -8,7 +8,7 @@
 >
 > Todas las funciones de este complemento han sido **totalmente integradas en el complemento [Incremental Everything](https://www.remnote.com/plugins/incremental-everything)** a partir de la v0.2.182. Este complemento independiente **ya no recibirá mantenimiento ni actualizaciones**.
 >
-> Si utilizas Incremental Everything, deberías migrar y desinstalar este complemento. La integración incluye mejoras adicionales no disponibles aquí, incluyendo el historial de flashcards consciente de grupos (clusters), el seguimiento del Mastery Drill por hermano (sibling) y el recuento de tarjetas de colas practicadas por hermano.
+> Si utilizas Incremental Everything, deberías migrar y desinstalar este complemento. La integración incluye mejoras adicionales no disponibles aquí, incluyendo navegación por teclado y atribución de respuesta (grading) via teclado para el componente Mastery Drill, manejo de prioridades, historial de flashcards consciente de grupos (clusters), el seguimiento del Mastery Drill por hermano (sibling) y el recuento de tarjetas de colas practicadas por hermano.
 >
 > ### Pasos de Migración
 >
